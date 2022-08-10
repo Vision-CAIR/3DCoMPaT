@@ -26,6 +26,13 @@ To get the most out of the github repository, please download the data associate
 ## Browser
 You can browse the 3D models using the following link: [3D CoMPaT Browser](http://54.235.12.220:50/index.html)
 
+## Benchmarks
+### BPNET
+The code is in BPNeT Folders:
+
+
+
+### PointGroup (TODO)
 
 ## License
 This code is released under MIT License (see LICENSE file for details). In simple words, if you copy/use parts of this code please keep the copyright note in place.
