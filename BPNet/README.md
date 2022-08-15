@@ -1,7 +1,4 @@
-
-### Our 3dcompat recognition task on is Modified from [BPNet Github Repo](https://github.com/wbhu/BPNet)
-
-
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/bidirectional-projection-network-for-cross/semantic-segmentation-on-scannet)](https://paperswithcode.com/sota/semantic-segmentation-on-scannet?p=bidirectional-projection-network-for-cross)
 # Bidirectional Projection Network for Cross Dimension Scene Understanding
 
 ***CVPR 2021 (Oral)***
@@ -11,6 +8,8 @@
 Existing segmentation methods are mostly unidirectional, i.e. utilizing 3D for 2D segmentation or vice versa. Obviously 2D and 3D information can nicely complement each other in both directions, during the segmentation. This is the goal of bidirectional projection network.
 
 ![bpnet](imgs/bpnet.jpg)
+
+Our 3dcompat recognition task on is Modified from [BPNet Github Repo](https://github.com/wbhu/BPNet)
 
 ## Environment
 
@@ -48,16 +47,19 @@ $ pip install imageio==2.8.0 opencv-python==4.2.0.32 pillow==7.0.0 pyyaml==5.3 s
 
 ## Training
 
+```
 - Start training:
-```sh tool/trainstylenew.sh style1a config/scannet/bpnet_5cm_cls_style_new_single.yaml NUMBER_OF_THREADS```
+```sh tool/train.sh EXP_NAME /PATH/TO/CONFIG NUMBER_OF_THREADS```
 
+- Resume: 
+```sh tool/resume.sh EXP_NAME /PATH/TO/CONFIG(copied one) NUMBER_OF_THREADS```
 
 NUMBER_OF_THREADS is the threads to use per process (gpu), so optimally, it should be **Total_threads / gpu_number_used**
 
 ## Testing
 
 - Testing using your trained model or our [pre-trained model](https://drive.google.com/file/d/1AWUigQGDONoSpoPL5MCTE-tMFWhY2Y09/view?usp=sharing) (voxel_size: 5cm):
-```sh tool/test.sh style1a config/scannet/bpnet_5cm_cls_style_new_single.yaml  NUMBER_OF_THREADS```
+```sh tool/test.sh EXP_NAME /PATH/TO/CONFIG(copied one) NUMBER_OF_THREADS)```
 
 
 ## Copyright and License
@@ -71,4 +73,15 @@ You are granted with the [LICENSE](./LICENSE) for both academic and commercial u
 Our code is based on [MinkowskiEngine](https://github.com/NVIDIA/MinkowskiEngine). We also referred to [SparseConvNet](https://github.com/facebookresearch/SparseConvNet) and [semseg](https://github.com/hszhao/semseg).
 
 
+
+## Citation
+
+```tex
+@inproceedings{hu-2021-bidirectional,
+        author      = {Wenbo Hu, Hengshuang Zhao, Li Jiang, Jiaya Jia and Tien-Tsin Wong},
+        title       = {Bidirectional Projection Network for Cross Dimensional Scene Understanding},
+        booktitle   = {CVPR},
+        year        = {2021}
+    }
+```
 

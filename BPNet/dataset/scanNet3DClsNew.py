@@ -301,7 +301,6 @@ class ScanNet3D(data.Dataset):
     ELASTIC_DISTORT_PARAMS = ((0.2, 0.4), (0.8, 1.6))
     ROTATION_AXIS = 'z'
     LOCFEAT_IDX = 2
-
     def __init__(self, dataPathPrefix='Data', voxelSize=0.05,
                  split='train', aug=False, memCacheInit=True, identifier=1233, loop=1,
                  data_aug_color_trans_ratio=0.1, data_aug_color_jitter_std=0.05, data_aug_hue_max=0.5,
@@ -334,40 +333,27 @@ class ScanNet3D(data.Dataset):
             self.input_transforms = t.Compose(input_transforms)
         model_ids = defaultdict(list)
         # split files
-        with open("/ibex/scratch/liy0r/cvpr/BPNet/data/split.txt", "r") as f:
+        with open("data/split.txt", "r") as f:
             for line in f:
                 # print(line)
                 ids, label = line.rstrip().split(',')
                 model_ids[label].append(ids)
-        # self.data_paths = model_ids[split]
-        # self.data_paths_index = dict(zip(self.data_paths, range(len(self.data_paths))))
         # read parts info
         cat = sorted(np.genfromtxt('data/parts.txt', dtype='str'))
         # parts index and reversed index
         cat.insert(0, "none")
         self.part_classes = dict(zip(cat, range(len(cat))))
-        # r_classes = {}
-        # for k, v in self.classes.items():
-        #     self.r_classes[v] = k
         if memCacheInit and (not exists("/dev/shm/wbhu_scannet_3d_%s_%06d_locs_%08d" % (split, identifier, 0))):
-
             print('[*] Starting shared memory init ...')
             # WORKING_DIR = dataPathPrefix
-
             with h5py.File(os.path.join("data", "new{}.hdf5".format(split)), "r") as f:
                 xyzs = np.array(f['pc'][:]).astype('float32')
                 colors = np.array(f['color']).astype('float32')
                 segment = np.array(f['seg'][:]).astype('int64')
                 id = f['id'][:].astype('str')
             self.data_paths = id.tolist()
-            # print(self.data_paths)
             self.data_paths_index = dict(zip([i[0] for i in self.data_paths], range(len(self.data_paths))))
-            # print(id.shape[0])
-            # print(len(self.data_paths))
-            # assert id.shape[0] == len(self.data_paths)
-            # self.xyzs = xyzs
-            # self.colors = colors
-            # self.segment = segment
+
             print("load xyz color ,segment {},{},{}".format(len(xyzs), colors.shape, segment.shape))
             try:
                 for i in range(len(id)):

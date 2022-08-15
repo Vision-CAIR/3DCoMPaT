@@ -244,15 +244,14 @@ class ScanNetCross(ScanNet3D):
     VIEW_NUM = 4
     IMG_DIM = (400, 400)
 
-    def __init__(self, dataPathPrefix='3ddata',
-                 dataPathPrefix2D='2ddata', voxelSize=0.05,
+    def __init__(self, dataPathPrefix='glbfile',
+                 dataPathPrefix2D='img1', voxelSize=0.05,
                  split='train', aug=False, memCacheInit=False,
                  identifier=10233, loop=1,
                  data_aug_color_trans_ratio=0.1,
                  data_aug_color_jitter_std=0.05, data_aug_hue_max=0.5,
                  data_aug_saturation_max=0.2, eval_all=False,
                  val_benchmark=False, args=None
-
                  ):
         super(ScanNetCross, self).__init__(dataPathPrefix=dataPathPrefix,
                                            voxelSize=voxelSize,
@@ -276,54 +275,44 @@ class ScanNetCross(ScanNet3D):
         # Todo what is this: The number of models
         self.model_maps = {}
         # 2d image address
-        root_2d = '/var/remote/lustre/project/k1546/ujjwal/data/canonical_v0'
-        root_2d1 = "/var/remote/lustre/scratch/project/k1546/data/canonical_v1"
+        root_2d = '/ibex/scratch/projects/c2090/3dcompat/canonical_new'
         lines = []
         stylev0 = (np.genfromtxt('data/style10v0.txt', dtype='str'))
         stylev1 = (np.genfromtxt('data/style10v1.txt', dtype='str'))
-
+        import pickle
+        with open('data/resnet50_preds.pickle', 'rb') as handle:
+            resnet_predictions = pickle.load(handle)
+        style=list(resnet_predictions.keys())
         df = pd.read_csv("data/meta-data/materials_df.csv")
         df = df.loc[:, ["name", "type"]]
         df.append({'name': 'none', 'type': 'none'}, ignore_index=True)
         self.mat_ids = df.applymap(lambda s: s.lower() if type(s) == str else s)
         # shape categories finished self
         self.cls = self.get_model_ids()
-
         df = pd.read_csv('data/part_mat_tuples.csv')
         part_mat = dict(zip(df['model_id'], df['tuples']))
-
         for ii in part_mat:
             tem = {}
             for i, j in ast.literal_eval(part_mat[ii]):
                 tem[i] = j
             part_mat[ii] = tem
-
         self.part_mat = part_mat
-
         df = pd.read_csv('data/part_index.csv')
         self.part_index = dict(zip(df['orgin'].tolist(), df['new'].tolist()))
-        jj = 0
-        for el in tqdm(stylev0):
+
+        for el in tqdm(list(stylev0) + list(stylev1)):
             _id = el.split('_')[0]
             if _id not in self.data_paths_index:
+                if not os.path.exists(os.path.join(root_2d, _id)):
+                    print(os.path.join(root_2d, _id))
                 continue
-            # if jj > 100:
-            #     break
-            # else:
-            #     jj += 1
-            # if _id not in self.data_paths:
-            #     continue
-            # misspart = False
-            # for view in range(4):
-            #     tmp = el + '_' + str(view)
-            #     if not os.path.exists(os.path.join(root_2d, tmp)) or not os.path.exists(
-            #             os.path.join(root_2d, _id)):
-            #         misspart = True
-            #         break
-            # if misspart:
-            #     continue
+            if not os.path.exists(os.path.join(root_2d, _id)):
+                print(os.path.join(root_2d, _id))
+                continue
+            if not os.path.exists(os.path.join(root_2d, _id, 'segmentation.json')) :
+                continue
+
             self.json_paths.append(os.path.join(root_2d, _id, 'segmentation.json'))
-            # self.mat_map.append(os.path.join(root_mat, el))
             for view in range(4):
                 tmp = el + '_' + str(view)
                 self.data2D_paths[view].append(os.path.join(root_2d, tmp, "Image0080.png"))
@@ -331,38 +320,10 @@ class ScanNetCross(ScanNet3D):
                     os.path.join(root_2d, _id, "Segmentation0080" + "_" + str(view) + ".png"))
                 self.depth2D_paths[view].append(
                     os.path.join(root_2d, _id, 'Depth0080' + "_" + str(view) + ".png"))
-        jj = 0
-
-        for el in tqdm(stylev1):
-            _id = el.split('_')[0]
-            if _id not in self.data_paths_index:
-                continue
-            # if jj > 100:
-            #     break
-            # else:
-            #     jj += 1
-            # misspart = False
-            # for view in range(4):
-            #     tmp = el + '_' + str(view)
-            #     if not os.path.exists(os.path.join(root_2d, tmp)) or not os.path.exists(
-            #             os.path.join(root_2d, _id)):
-            #         misspart = True
-            #         break
-            # if misspart:
-            #     continue
-            self.json_paths.append(os.path.join(root_2d1, _id, 'segmentation.json'))
-            # self.mat_map.append(os.path.join(root_mat, el))
-            for view in range(4):
-                tmp = el + '_' + str(view)
-                self.data2D_paths[view].append(os.path.join(root_2d1, tmp, "Image0080.png"))
-                self.seg2D_paths[view].append(
-                    os.path.join(root_2d1, _id, "Segmentation0080" + "_" + str(view) + ".png"))
-                self.depth2D_paths[view].append(
-                    os.path.join(root_2d1, _id, 'Depth0080' + "_" + str(view) + ".png"))
-
+        print(len(self.depth2D_paths[0]))
         for view in range(4):
             print("{} on view: {} with {} images".format(split, view, len(self.data2D_paths[view])))
-        np.savetxt("com1.txt",self.data2D_paths[view],fmt="%s")
+        np.savetxt("com1.txt", self.data2D_paths[view], fmt="%s")
         self.linkCreator = LinkCreator(voxelSize=voxelSize)
 
         # 2D AUG
@@ -386,6 +347,7 @@ class ScanNetCross(ScanNet3D):
                 t_2d.Normalize(mean=mean, std=std)])
 
     def get_model_ids(self):
+        # test_dir = '/ibex/scratch/liy0r/cvpr/BPNet/'
         df = pd.read_csv("data/model.csv")
         part_index = dict(zip(df['id'].tolist(), df['model'].tolist()))
         cat = sorted(list(set(df['model'].tolist())))
@@ -399,10 +361,6 @@ class ScanNetCross(ScanNet3D):
         f = self.data2D_paths[0][index]
         model_id = f.split('/')[-2].split('_')[0]
         model_index = self.data_paths_index[model_id]
-        # locs_in = self.xyzs[model_index]
-        # feats_in =self.colors[model_index]
-        # labels_in =self.segment[model_index]
-
         locs_in = SA.attach("shm://wbhu_scannet_3d_%s_%06d_locs_%08d" % (self.split, self.identifier, model_index))
         feats_in = SA.attach("shm://wbhu_scannet_3d_%s_%06d_feats_%08d" % (self.split, self.identifier, model_index))
         labels_in = SA.attach("shm://wbhu_scannet_3d_%s_%06d_labels_%08d" % (self.split, self.identifier, model_index))
@@ -410,8 +368,6 @@ class ScanNetCross(ScanNet3D):
         category = torch.tensor(self.cls[model_id])
         locs = self.prevoxel_transforms(locs_in) if self.aug else locs_in
         locs, feats, labels, inds_reconstruct, links = self.voxelizer.voxelize(locs, feats_in, labels_in, link=links)
-        # if self.eval_all:
-        #     labels = labels_in
         if self.aug:
             locs, feats, labels = self.input_transforms(locs, feats, labels)
         mat_3d = labels.copy()
@@ -435,8 +391,8 @@ class ScanNetCross(ScanNet3D):
         mat_3d = torch.from_numpy(mat_3d).long()
         if self.eval_all:
             return coords, feats, labels, colors, labels_2d, links, torch.from_numpy(
-                inds_reconstruct).long(), category, materials, mat_3d
-        return coords, feats, labels, colors, labels_2d, links, category, materials, mat_3d
+                inds_reconstruct).long(), category, materials, mat_3d, part13, f.split('/')[-2]
+        return coords, feats, labels, colors, labels_2d, links, category, materials, mat_3d, part13, f.split('/')[-2]  # compositions id
 
     def get_2d(self, room_id, coords: np.ndarray, name: str):
         """
@@ -450,6 +406,7 @@ d        """
         # frames_path = self.data2D_paths[room_id]
         # partial = int(len(frames_path) / self.VIEW_NUM)
         imgs, labels, links, materials = [], [], [], []
+        # print(self.json_paths[room_id])
         seg = json.load(open(self.json_paths[room_id]))
         seg1 = {}
 
@@ -471,7 +428,7 @@ d        """
                         part_name = difflib.get_close_matches(g_name.split('_')[0], self.part_classes.keys())[0]
                     except:
                         if g_name.startswith('archmodels59_footstool1'):
-                            part_name=g_name[24:]
+                            part_name = g_name[24:]
                         if part_name not in self.part_index:
                             part_name = "none"
                             print("doesn't find part names files of {}".format(g_name))
@@ -503,14 +460,9 @@ d        """
                     except:
                         part_name = "none"
                         print("doesn't find part names files of {}".format(g_name))
-            # part_bb[self.part_classes[part_name]] = material1[m_name]
-            # print(m_name)
-            # print('part name {}: {} material:{}'.format(g_name,part_name,m_name))
             if m_name == 'velvet':
                 print(name)
             part13[self.part_classes[part_name]] = mat_id[m_name]
-            # part13[self.part_classes[part_name]] = mat_id[
-            #     self.mat_ids.loc[self.mat_ids.index[self.mat_ids['name'] == m_name]]['type'].tolist()[0]]
         for v in range(self.VIEW_NUM):
             f = self.data2D_paths[v][room_id]
             self.remapper = np.zeros(194) * 12
@@ -604,7 +556,7 @@ def collation_fn(batch):
                 links:  N x 4 x V (B,H,W,mask)
 
     """
-    coords, feats, labels, colors, labels_2d, links, cls, mat, mat_3d = list(zip(*batch))
+    coords, feats, labels, colors, labels_2d, links, cls, mat, mat_3d, part13, model_id = list(zip(*batch))
     # pdb.set_trace()
 
     for i in range(len(coords)):
@@ -612,7 +564,7 @@ def collation_fn(batch):
         links[i][:, 0, :] *= i
     return torch.cat(coords), torch.cat(feats), torch.cat(labels), \
            torch.stack(colors), torch.stack(labels_2d), torch.cat(links), torch.stack(cls), torch.stack(
-        mat), torch.cat(mat_3d)
+        mat), torch.cat(mat_3d), part13, model_id
 
 
 def collation_fn_eval_all(batch):
@@ -628,7 +580,8 @@ def collation_fn_eval_all(batch):
 
     """
     try:
-        coords, feats, labels, colors, labels_2d, links, inds_recons, cls, mat, mat_3d = list(zip(*batch))
+        coords, feats, labels, colors, labels_2d, links, inds_recons, cls, mat, mat_3d, part13, model_id = list(
+            zip(*batch))
     except:
         coords, feats, labels, colors, labels_2d, links, inds_recons = list(zip(*batch))
         cls = 0
@@ -645,7 +598,7 @@ def collation_fn_eval_all(batch):
 
     return torch.cat(coords), torch.cat(feats), torch.cat(labels), \
            torch.stack(colors), torch.stack(labels_2d), torch.cat(links), torch.cat(inds_recons), torch.stack(
-        cls), torch.stack(mat), torch.cat(mat_3d)
+        cls), torch.stack(mat), torch.cat(mat_3d), part13, model_id
 
 
 if __name__ == '__main__':
@@ -654,8 +607,10 @@ if __name__ == '__main__':
 
     # if we use style model how would we solve it.
     # data_root = '/research/dept6/wbhu/Dataset/ScanNet'
-    data_root = '/data/dataset/processed_models'
-    data_root2d = '/data/compat/2d_image'
+    # data_root = '/data/dataset/processed_models'
+    # data_root2d = '/data/compat/2d_image'
+    data_root2d = '/var/remote/lustre/project/k1546/ujjwal/data/canonical_v0'
+    data_root = '/ibex/scratch/liy0r/processed_models_v5'
     # train_data = ScanNetCross(dataPathPrefix=data_root, dataPathPrefix2D=data_root2d, aug=False, split='train',
     #                           memCacheInit=True, voxelSize=0.05)
     val_data = ScanNetCross(dataPathPrefix=data_root, dataPathPrefix2D=data_root2d, aug=False, split='test',
@@ -712,7 +667,7 @@ if __name__ == '__main__':
 
         for step, (coords, feats, labels, colors, labels_2d, links, inds_reverse, categories, mat, mat_3d) in enumerate(
                 val_loader):
-            print("cor{},labels{}".format(coords.shape,labels.shape))
+            print("cor{},labels{}".format(coords.shape, labels.shape))
             print(
                 'time: {}/{}--{}'.format(step + 1, len(val_loader), time.time() - end))
             valLog.add_histogram('voxel_coord_x', coords[:, 0], global_step=step)

@@ -548,7 +548,8 @@ def train_cross(train_loader, model, criterion, optimizer, epoch):
     for i, batch_data in enumerate(train_loader):
         data_time.update(time.time() - end)
         if args.data_name == 'scannet_cross':
-            (coords, feat, label_3d, color, label_2d, link, cls, mat, mat_3d) = batch_data
+            (coords, feat, label_3d, color, label_2d, link, cls, mat, mat_3d, part13,
+             model_id) = batch_data
             # For some networks, making the network invariant to even, odd coords is important
             coords[:, 1:4] += (torch.rand(3) * 100).type_as(coords)
             # 2d colors, labels_2d, links
@@ -557,25 +558,7 @@ def train_cross(train_loader, model, criterion, optimizer, epoch):
 
             label_3d, label_2d = label_3d.cuda(non_blocking=True), label_2d.cuda(non_blocking=True)
             cls, mat, mat_3d = cls.cuda(non_blocking=True), mat.cuda(non_blocking=True), mat_3d.cuda(non_blocking=True)
-            # print(label_2d.type())
-            # print(mat.type())
-            # for i in range(len(label_2d)):
-            #     print(label_2d[i, 200:300, 200:300, 0])
-            #
-            # for i in range(len(mat)):
-            #     print(mat[i, 200:250, 200:250, 0])
-            # print("start to check the ranges")
-            # print(torch.unique(label_3d))
-            # print(torch.unique(label_2d))
-            # print(torch.unique(cls))
-            # print(torch.unique(mat))
-            # print(torch.unique(mat_3d))
-            # print("check the shapes of them")
-            # print(label_3d.shape)
-            # print(label_2d.shape)
-            # print(cls.shape)
-            # print(mat.shape)
-            # print(mat_3d.shape)
+
 
             # print(label_2d.shape)
             output_3d, output_2d, output_cls, output_mat, output_3dmat = model(sinput, color, link)
@@ -870,7 +853,8 @@ def validate_cross(val_loader, model, criterion):
         # outseg, outcls, outmat, gtcls, gtseg, gtmat, gtseg3d, outseg3d = [], [], [], [], [], [], [], []
         for i, batch_data in enumerate(val_loader):
             if args.data_name == 'scannet_cross':
-                (coords, feat, label_3d, color, label_2d, link, inds_reverse, cls, mat, mat3d) = batch_data
+                (coords, feat, label_3d, color, label_2d, link, inds_reverse, cls, mat, mat3d, part13,
+                 model_id) = batch_data
                 sinput = SparseTensor(feat.cuda(non_blocking=True), coords)
                 color, link = color.cuda(non_blocking=True), link.cuda(non_blocking=True)
                 label_3d, label_2d, = label_3d.cuda(non_blocking=True), label_2d.cuda(non_blocking=True)
