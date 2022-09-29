@@ -23,12 +23,12 @@ Download alignment **3DCoMPaT** [here](https://shapenet.cs.stanford.edu/media/mo
 ## e.g., pointnet2_ssg 
 python train_classification.py --model pointnet2_cls_ssg --log_dir pointnet2_cls_ssg
 python test_classification.py --log_dir pointnet2_cls_ssg
-
+```
 
 ### Performance
 | Model | Accuracy |
 |--|--|
-| PointNet2_SSG  |  92.2|
+| PointNet2_SSG  |  74.89|
 | PointNet2_MSG  |  **92.8**|
 
 ## Part Segmentation (ShapeNet)
@@ -59,7 +59,7 @@ python show3d_balls.py
 ![](/visualizer/pic.png)
 ### Using MeshLab
 ![](/visualizer/pic2.png)
-
+```
 
 This code repository is heavily borrowed from [Pointnet_Pointnet2_pytorch](https://github.com/yanx27/Pointnet_Pointnet2_pytorch), [DGCNN](https://github.com/WangYueFt/dgcnn), [PCT](https://github.com/Strawberry-Eat-Mango/PCT_Pytorch), and [PointMLP](https://github.com/ma-xu/pointMLP-pytorch)
 
