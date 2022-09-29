@@ -2,6 +2,8 @@
 
 This repo includes the code for 3d Shape Classification and Part Segmentation on 3DCoMPaT dataset using cutting-edge 3D models, including [PointNet](http://openaccess.thecvf.com/content_cvpr_2017/papers/Qi_PointNet_Deep_Learning_CVPR_2017_paper.pdf), [PointNet++](http://papers.nips.cc/paper/7095-pointnet-deep-hierarchical-feature-learning-on-point-sets-in-a-metric-space.pdf), [DGCNN](https://arxiv.org/abs/1801.07829), [PCT](https://arxiv.org/pdf/2012.09688.pdf), and [PointMLP](https://arxiv.org/abs/2202.07123) in pytorch.
 
+You can find the pretrained models and log files [Gdrive](in https://drive.google.com/drive/folders/1k1TDDzNvfnnxd_F8PxlsPBmnrr11-I-w?usp=sharing).
+
 
 ## 1. Install
 The latest codes are tested on Ubuntu 16.04, CUDA10.1, PyTorch 1.7 and Python 3.7:
