@@ -51,7 +51,7 @@ python test_partseg.py --log_dir pointnet2_part_seg_ssg
 | Model | Previous| New |
 |--|--|--|
 |PointNet2_SSG|24.18| 51.22|
-|PCT | 37.37 | 41.10| 
+|PCT | 37.37 | 48.43| 
 
 ## 5. Sim2Rel:Transferring to ScanObjectNN
 ```
