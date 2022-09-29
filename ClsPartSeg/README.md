@@ -71,3 +71,48 @@ If you find this repo useful in your research, please consider citing it and our
       Year = {2019}
 }
 ```
+
+```
+@article{qi2017pointnet++,
+  title={Pointnet++: Deep hierarchical feature learning on point sets in a metric space},
+  author={Qi, Charles Ruizhongtai and Yi, Li and Su, Hao and Guibas, Leonidas J},
+  journal={Advances in neural information processing systems},
+  volume={30},
+  year={2017}
+}
+```
+
+```
+@article{ma2022rethinking,
+  title={Rethinking network design and local geometry in point cloud: A simple residual mlp framework},
+  author={Ma, Xu and Qin, Can and You, Haoxuan and Ran, Haoxi and Fu, Yun},
+  journal={arXiv preprint arXiv:2202.07123},
+  year={2022}
+}
+```
+
+```
+@article{dgcnn,
+  title={Dynamic Graph CNN for Learning on Point Clouds},
+  author={Wang, Yue and Sun, Yongbin and Liu, Ziwei and Sarma, Sanjay E. and Bronstein, Michael M. and Solomon, Justin M.},
+  journal={ACM Transactions on Graphics (TOG)},
+  year={2019}
+}
+```
+```
+@article{Guo_2021,
+   title={PCT: Point cloud transformer},
+   volume={7},
+   ISSN={2096-0662},
+   url={http://dx.doi.org/10.1007/s41095-021-0229-5},
+   DOI={10.1007/s41095-021-0229-5},
+   number={2},
+   journal={Computational Visual Media},
+   publisher={Springer Science and Business Media LLC},
+   author={Guo, Meng-Hao and Cai, Jun-Xiong and Liu, Zheng-Ning and Mu, Tai-Jiang and Martin, Ralph R. and Hu, Shi-Min},
+   year={2021},
+   month={Apr},
+   pages={187–199}
+}
+```
+
