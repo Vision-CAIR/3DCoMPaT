@@ -27,7 +27,7 @@ Download our preprocessed data **3DCoMPaT**  and save in `data/compat/`.
 python train_classification.py --model pointnet2_cls_ssg --log_dir pointnet2_cls_ssg
 python test_classification.py --log_dir pointnet2_cls_ssg
 ```
-
+* Note that we use same data augmentations and training schedules for all comparing methods following [Pointnet_Pointnet2_pytorch](https://github.com/yanx27/Pointnet_Pointnet2_pytorch).
 ### Performance (Instance average Accuracy)
 | Model | Previous | New | 
 |--|--|--|
