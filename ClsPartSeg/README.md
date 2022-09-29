@@ -26,7 +26,7 @@ python train_classification.py --model pointnet2_cls_ssg --log_dir pointnet2_cls
 python test_classification.py --log_dir pointnet2_cls_ssg
 ```
 
-### Performance on Instance average Accuracy
+### Performance (Instance average Accuracy)
 | Model | Previous | New | 
 |--|--|--|
 | PointNet2_SSG  | - | 73.78 |
@@ -45,7 +45,7 @@ python train_partseg.py --model pointnet2_part_seg_ssg --log_dir pointnet2_part_
 python test_partseg.py --log_dir pointnet2_part_seg_ssg
 ```
 
-### Performance on  Inctance average IoU
+### Performance (Accuracy)
 | Model | Previous| New |
 |--|--|--|
 |PointNet2_SSG|24.18| 51.22|
