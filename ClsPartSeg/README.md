@@ -4,7 +4,6 @@ This repo includes the code for 3d Shape Classification and Part Segmentation on
 
 You can find the pretrained models and log files in [Gdrive](https://drive.google.com/drive/folders/1k1TDDzNvfnnxd_F8PxlsPBmnrr11-I-w?usp=sharing).
 
-
 ## 1. Install
 The latest codes are tested on Ubuntu 16.04, CUDA10.1, PyTorch 1.7 and Python 3.7:
 ```shell
@@ -60,6 +59,12 @@ python test_partseg.py --log_dir pointnet2_part_seg_ssg
 python train_classification_sim2rel.py --model pointmlp --log_dir pointmlp_cls
 python test_classification_sim2rel.py --log_dir pointmlp_cls
 ```
+
+### Performance (Accuracy)
+| Model | Previous| New |
+|--|--|--|
+|ModelNet40|24.33| 30、69|
+|3DCoMPaT | 29.21 | 28.49| 
 
 This code repository is heavily borrowed from [Pointnet_Pointnet2_pytorch](https://github.com/yanx27/Pointnet_Pointnet2_pytorch), [DGCNN](https://github.com/WangYueFt/dgcnn), [PCT](https://github.com/Strawberry-Eat-Mango/PCT_Pytorch), and [PointMLP](https://github.com/ma-xu/pointMLP-pytorch)
 
