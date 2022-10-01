@@ -63,7 +63,7 @@ python test_classification_sim2rel.py --log_dir pointmlp_cls
 ### Performance (Accuracy)
 | Model | Previous| Updated |
 |--|--|--|
-|ModelNet40|24.33| 30、69|
+|ModelNet40|24.33| 30.69|
 |3DCoMPaT | 29.21 | 28.49| 
 
 This code repository is heavily borrowed from [Pointnet_Pointnet2_pytorch](https://github.com/yanx27/Pointnet_Pointnet2_pytorch), [DGCNN](https://github.com/WangYueFt/dgcnn), [PCT](https://github.com/Strawberry-Eat-Mango/PCT_Pytorch), and [PointMLP](https://github.com/ma-xu/pointMLP-pytorch)
