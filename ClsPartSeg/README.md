@@ -16,8 +16,6 @@ Download our preprocessed data **3DCoMPaT**  and save in `data/compat/`.
 
 ## 3. Classification (3DCoMPaT/ModelNet10/40)
 
-
-* If you want to train on ModelNet40/10, you can use `--dataset ModelNet40`.
 ```shell
 # 3DCoMPaT
 ## Select different models in ./models 
@@ -26,15 +24,17 @@ Download our preprocessed data **3DCoMPaT**  and save in `data/compat/`.
 python train_classification.py --model pointnet2_cls_ssg --log_dir pointnet2_cls_ssg
 python test_classification.py --log_dir pointnet2_cls_ssg
 ```
+* If you want to train on ModelNet40/10, you can use `--dataset ModelNet40`.
+
 * Note that we use same data augmentations and training schedules for all comparing methods following [Pointnet_Pointnet2_pytorch](https://github.com/yanx27/Pointnet_Pointnet2_pytorch).
 ### Performance (Instance average Accuracy)
-| Model | Previous | Updated | 
+| Model | Previous | Val | Updated | 
 |--|--|--|
-| PointNet2_SSG  | - | 73.78 |
-| PointNet2_MSG  |  57.95| 74.70| 
-| DGCNN  |  68.32| 72.22 |
-| PCT  |  69.09 | 68.74|
-| PointMLP  |  - | 70.83|
+| PointNet2_SSG  | - | - |73.78 |
+| PointNet2_MSG  |  57.95|- | 74.70| 
+| DGCNN  |  68.32|- | 72.22 |
+| PCT  |  69.09 |- | 68.74|
+| PointMLP  |  - |- | 70.83|
 
 
 ## 4. Part Segmentation (3DCoMPaT)
@@ -47,10 +47,10 @@ python test_partseg.py --log_dir pointnet2_part_seg_ssg
 ```
 
 ### Performance (Accuracy)
-| Model | Previous| Updated |
+| Model | Previous| Val | Test |
 |--|--|--|
-|PointNet2_SSG|24.18| 51.22|
-|PCT | 37.37 | 48.43| 
+|PointNet2_SSG|24.18|- | 51.22|
+|PCT | 37.37 |- | 48.43| 
 
 ## 5. Sim2Rel:Transferring to ScanObjectNN
 ```
@@ -61,7 +61,7 @@ python test_classification_sim2rel.py --log_dir pointmlp_cls
 ```
 
 ### Performance (Accuracy)
-| Model | Previous| Updated |
+| Model | Previous | Test| 
 |--|--|--|
 |ModelNet40|24.33| 30.69|
 |3DCoMPaT | 29.21 | 28.49| 
