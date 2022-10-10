@@ -28,7 +28,7 @@ python test_classification.py --log_dir pointnet2_cls_ssg
 
 * Note that we use same data augmentations and training schedules for all comparing methods following [Pointnet_Pointnet2_pytorch](https://github.com/yanx27/Pointnet_Pointnet2_pytorch).
 ### Performance (Instance average Accuracy)
-| Model | Previous | Val | Updated | 
+| Model | Previous | Val | Test | 
 |--|--|--|--|
 | PointNet2_SSG  | - | - |73.78 |
 | PointNet2_MSG  |  57.95| - | 74.70| 
