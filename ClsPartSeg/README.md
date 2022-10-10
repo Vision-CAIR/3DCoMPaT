@@ -11,7 +11,7 @@ conda install pytorch==1.7.0 cudatoolkit=10.1 -c pytorch
 ```
 
 ## 2. Data Preparation
-Download our preprocessed data **3DCoMPaT**  and save in `data/compat/`.
+Download our preprocessed data [3DCoMPaT](https://drive.google.com/drive/folders/1ZeX7sXaaumjaeI9UWrFAoHz8DO_ZcN-J?usp=sharing) and save in `data/compat/`.
 
 ## 3. Classification (3DCoMPaT)
 
