@@ -28,7 +28,20 @@ You can browse the 3D models using the following link: [3D CoMPaT Browser](http:
 
 ## Benchmarks
 ### BPNET
-How to Use Train the BPNet 
+Existing segmentation methods are mostly unidirectional, i.e. utilizing 3D for 2D segmentation or vice versa. Obviously 2D and 3D information can nicely complement each other in both directions, during the segmentation. This is the goal of bidirectional projection network.
+ 
+#### Installation
+
+# Torch
+$ pip install torch==1.4.0+cu100 torchvision==0.5.0+cu100 -f https://download.pytorch.org/whl/torch_stable.html
+# MinkowskiEngine 0.4.1
+$ conda install numpy openblas
+$ git clone https://github.com/StanfordVL/MinkowskiEngine.git
+$ cd MinkowskiEngine
+$ git checkout f1a419cc5792562a06df9e1da686b7ce8f3bb5ad
+$ python setup.py install
+# Others
+$ pip install imageio==2.8.0 opencv-python==4.2.0.32 pillow==7.0.0 pyyaml==5.3 scipy==1.4.1 sharedarray==3.2.0 tensorboardx==2.0 tqdm==4.42.1
 
 
 #### Config
