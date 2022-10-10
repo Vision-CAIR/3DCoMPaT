@@ -68,9 +68,9 @@ For Example, we train 10 compositions with:
 
 For Example, we evaluate  10 compositions with:
 
-```sh tool/test.sh com10 /config/compat/bpnet_10.yaml 1```
+```sh tool/test.sh com10 /config/compat/bpnet_10.yaml /PATH/TO/PRETRAIN_MODEL 1```
 
-#### Pretrain Models
+#### Pretrain Model
 
 Our pretrained models is in:
 
