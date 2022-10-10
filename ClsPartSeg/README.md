@@ -13,8 +13,7 @@ conda install pytorch==1.7.0 cudatoolkit=10.1 -c pytorch
 ## 2. Data Preparation
 Download our preprocessed data **3DCoMPaT**  and save in `data/compat/`.
 
-
-## 3. Classification (3DCoMPaT/ModelNet10/40)
+## 3. Classification (3DCoMPaT)
 
 ```shell
 # 3DCoMPaT
@@ -24,9 +23,8 @@ Download our preprocessed data **3DCoMPaT**  and save in `data/compat/`.
 python train_classification.py --model pointnet2_cls_ssg --log_dir pointnet2_cls_ssg
 python test_classification.py --log_dir pointnet2_cls_ssg
 ```
-* If you want to train on ModelNet40/10, you can use `--dataset ModelNet40`.
 
-* Note that we use same data augmentations and training schedules for all comparing methods following [Pointnet_Pointnet2_pytorch](https://github.com/yanx27/Pointnet_Pointnet2_pytorch).
+* Note that we use same data augmentations and training schedules for all comparing methods following [Pointnet_Pointnet2_pytorch](https://github.com/yanx27/Pointnet_Pointnet2_pytorch). We report performance on both validation and test sets.
 ### Performance (Instance average Accuracy)
 | Model | Previous | Val | Test | 
 |--|--|--|--|
@@ -46,6 +44,8 @@ python train_partseg.py --model pointnet2_part_seg_ssg --log_dir pointnet2_part_
 python test_partseg.py --log_dir pointnet2_part_seg_ssg
 ```
 
+* Note that we use same data augmentations and training schedules for all comparing methods following [Pointnet_Pointnet2_pytorch](https://github.com/yanx27/Pointnet_Pointnet2_pytorch). We report performance on both validation and test sets.
+
 ### Performance (Accuracy)
 | Model | Previous| Val | Test |
 |--|--|--|--|
@@ -59,7 +59,7 @@ python test_partseg.py --log_dir pointnet2_part_seg_ssg
 python train_classification_sim2rel.py --model pointmlp --log_dir pointmlp_cls
 python test_classification_sim2rel.py --log_dir pointmlp_cls
 ```
-
+Note that we use same data augmentations and training schedules for all comparing methods following [Pointnet_Pointnet2_pytorch](https://github.com/yanx27/Pointnet_Pointnet2_pytorch). We report performance on the test set of ScanObjectNN.
 ### Performance (Accuracy)
 | Model | Previous | Test| 
 |--|--|--|
