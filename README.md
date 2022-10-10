@@ -31,11 +31,11 @@ You can browse the 3D models using the following link: [3D CoMPaT Browser](http:
 How to Use Train the BPNet 
 
 
-## Config
+#### Config
 - BPNet with 10 Compositions: ```config/compat/bpnet_10.yaml``` 
 - BPNet with 50 Compositions: ```config/compat/bpnet_50.yaml``` 
 
-## Training
+#### Training
 
 
 - Start training:
@@ -51,13 +51,13 @@ For Example, we train 10 compositions with:
 
 ```sh tool/train.sh com10 /config/compat/bpnet_10.yaml 1```
 
-## Test
+#### Test
 
 For Example, we evaluate  10 compositions with:
 
 ```sh tool/test.sh com10 /config/compat/bpnet_10.yaml 1```
 
-## Pretrain Models
+#### Pretrain Models
 
 Our pretrained models is in:
 
