@@ -29,12 +29,12 @@ python test_classification.py --log_dir pointnet2_cls_ssg
 * Note that we use same data augmentations and training schedules for all comparing methods following [Pointnet_Pointnet2_pytorch](https://github.com/yanx27/Pointnet_Pointnet2_pytorch).
 ### Performance (Instance average Accuracy)
 | Model | Previous | Val | Updated | 
-|--|--|--|
+|--|--|--|--|
 | PointNet2_SSG  | - | - |73.78 |
-| PointNet2_MSG  |  57.95|- | 74.70| 
-| DGCNN  |  68.32|- | 72.22 |
-| PCT  |  69.09 |- | 68.74|
-| PointMLP  |  - |- | 70.83|
+| PointNet2_MSG  |  57.95| - | 74.70| 
+| DGCNN  |  68.32| - | 72.22 |
+| PCT  |  69.09 | - | 68.74|
+| PointMLP  |  - | - | 70.83|
 
 
 ## 4. Part Segmentation (3DCoMPaT)
@@ -48,9 +48,9 @@ python test_partseg.py --log_dir pointnet2_part_seg_ssg
 
 ### Performance (Accuracy)
 | Model | Previous| Val | Test |
-|--|--|--|
-|PointNet2_SSG|24.18|- | 51.22|
-|PCT | 37.37 |- | 48.43| 
+|--|--|--|--|
+|PointNet2_SSG|24.18| - | 51.22|
+|PCT | 37.37 | - | 48.43| 
 
 ## 5. Sim2Rel:Transferring to ScanObjectNN
 ```
