@@ -28,11 +28,41 @@ You can browse the 3D models using the following link: [3D CoMPaT Browser](http:
 
 ## Benchmarks
 ### BPNET
-The code is in BPNeT Folders:
+How to Use Train the BPNet 
 
 
+## Config
+- BPNet with 10 Compositions: ```config/compat/bpnet_10.yaml``` 
+- BPNet with 50 Compositions: ```config/compat/bpnet_50.yaml``` 
 
-### PointGroup (TODO)
+## Training
+
+
+- Start training:
+```sh tool/train.sh EXP_NAME /PATH/TO/CONFIG NUMBER_OF_THREADS```
+
+- Resume: 
+```sh tool/resume.sh EXP_NAME /PATH/TO/CONFIG(copied one) NUMBER_OF_THREADS```
+
+NUMBER_OF_THREADS is the threads to use per process (gpu), so optimally, it should be **Total_threads / gpu_number_used**
+
+
+For Example, we train 10 compositions with:
+
+```sh tool/train.sh com10 /config/compat/bpnet_10.yaml 1```
+
+## Test
+
+For Example, we evaluate  10 compositions with:
+
+```sh tool/test.sh com10 /config/compat/bpnet_10.yaml 1```
+
+## Pretrain Models
+
+Our pretrained models is in:
+
+https://drive.google.com/drive/folders/1k1TDDzNvfnnxd_F8PxlsPBmnrr11-I-w?usp=sharing
+
 
 ## License
 This code is released under MIT License (see LICENSE file for details). In simple words, if you copy/use parts of this code please keep the copyright note in place.
