@@ -6,7 +6,7 @@ _ALL_CLASSES = []
 _ALL_PARTS = []
 
 
-class 3DCompat:
+class Compat3D:
     def __init__(self, meta_file=None, data_folder=None):
         """
         Constructor of 3DCompat helper class for reading and visualizing annotations.
