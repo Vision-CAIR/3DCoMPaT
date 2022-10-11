@@ -12,30 +12,80 @@ class 3DCompat:
         Constructor of 3DCompat helper class for reading and visualizing annotations.
         :param meta_file (str): location of meta file
         :param data_folder (str): location to the folder that hosts data.
-        :return:
         """
-        model.csv
-        label.json
-        part_material_map.json
 
-	def load_raw_models(self, shape_id):
+        df = pd.read_csv(osp.join(data_folder,"model.csv"))
+        all_cats = list(set(df['model'].tolist()))
+        all_classes = dict(zip(all_cats, range(len(all_cats))))
+        id_to_cat = dict(zip(df['id'].tolist(), df['model'].tolist()))
+        
+        labels = []
+        for key in range(len(df['id'])):
+            labels.append(all_classes[id_to_cat[key]])
+        labels = np.array(labels).astype('int64')
 
-	def show_raw_models(self, shape_id):
 
-	def load_stylized_3d(self, shape_id, style_id):
-		gltf_path = os.path.join(shape_id, '_', style_id)
+	def load_raw_models(self, shape_id, sample_point=False):
+		"""
+        Get raw 3d shape given shape_id
+        :param shape_id  (int)     : shape id
+               sample_point  (bool)     : whether to sample points from 3D shape
+        :return: a 3D unstylized models
+        """
+        gltf_path = os.path.join(shape_id, '_', style_id)
 		mesh = trimesh.load(gltf_path)
 
-	    return mesh
+		return mesh
 
-	def show_stylized_3d(self, stylized_3d):
+
+	def show_raw_models(self, shape_id, sample_point=False):
+
+	def load_stylized_3d(self, shape_id, style_id, sample_point=False):
+		"""
+        Get raw 3d shape given shape_id
+        :param shape_id  (int)     : shape id
+        	   style_id  (int)     : style id
+               sample_point  (bool)     : whether to sample points from 3D shape
+        :return: a 3D stylized models
+        """
+
+	def show_stylized_3d(self, stylized_3d, sample_point=False):
 
 
 	def load_stylized_2d(self, shape_id, style_id, view_id):
-
+		"""
+        Get raw 3d shape given shape_id
+        :param shape_id  (int)     : shape id
+        	   style_id  (int)     : style id
+        	   view_id  (int)     : camera view id
+        :return: a 2d rendered image
+        """
 
 	def show_stylized_2d(self, stylized_2d):
 
+	def load_3d_part_labels(self, shape_id, sample_point=False):
+		"""
+        Get raw 3d shape given shape_id
+        :param shape_id  (int)     : shape id
+               sample_point  (bool)     : whether to sample points from 3D shape
+        :return: a 3D unstylized models with part labels
+        """
 
+	def load_3d_material_labels(self, shape_id, style_id, sample_point=False):
+		"""
+        Get raw 3d shape given shape_id
+        :param shape_id  (int)     : shape id
+        	   style_id  (int)     : style id
+               sample_point  (bool)     : whether to sample points from 3D shape
+        :return: a 3D stylized model with colors
+        """
+	def load_2d_material_labels(self, shape_id, style_id, view_id):
+		"""
+        Get raw 3d shape given shape_id
+        :param shape_id  (int)     : shape id
+        	   style_id  (int)     : style id
+        	   view_id  (int)     : camera view id
+        :return: a 2d rendered image with colors
+        """
 
 
