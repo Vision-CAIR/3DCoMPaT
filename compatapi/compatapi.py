@@ -1,6 +1,11 @@
 # The following API functions are defined:
-#  3DCompat       - 3DCompat api class that loads 3DCompat annotation file and prepare data structures.
-#  load_stylized_3d - load stylized 3d shapes with the specified ids.
+#  Compat3D       - 3DCompat api class that loads 3DCompat annotation file and prepare data structures.
+# load_raw_models -  load raw shape without textures given the specified ids.
+# show_raw_models -  show raw shape without textures given the specified ids.
+# load_stylized_3d - load stylized 3d shapes given the specified ids.
+# show_stylized_3d - show stylized 3d shapes given the specified ids.
+# load_stylized_2d - load stylized 3d shapes given the specified ids.
+# show_stylized_2d - show stylized 3d shapes given the specified ids.
 
 _ALL_CLASSES = []
 _ALL_PARTS = []
@@ -102,30 +107,5 @@ class Compat3D:
         """
 
     def show_stylized_2d(self, stylized_2d):
-
-    def load_3d_part_labels(self, shape_id, sample_point=False):
-        """
-        Get raw 3d shape given shape_id
-        :param shape_id  (int)     : shape id
-               sample_point  (bool)     : whether to sample points from 3D shape
-        :return: a 3D unstylized models with part labels
-        """
-
-    def load_3d_material_labels(self, shape_id, style_id, sample_point=False):
-        """
-        Get raw 3d shape given shape_id
-        :param shape_id  (int)     : shape id
-               style_id  (int)     : style id
-               sample_point  (bool)     : whether to sample points from 3D shape
-        :return: a 3D stylized model with colors
-        """
-    def load_2d_material_labels(self, shape_id, style_id, view_id):
-        """
-        Get raw 3d shape given shape_id
-        :param shape_id  (int)     : shape id
-               style_id  (int)     : style id
-               view_id  (int)     : camera view id
-        :return: a 2d rendered image with colors
-        """
-
+    	
 
