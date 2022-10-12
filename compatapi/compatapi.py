@@ -14,7 +14,7 @@ class Compat3D:
         :param data_folder (str): location to the folder that hosts data.
         """
 
-        df = pd.read_csv(osp.join(data_folder,"model.csv"))
+        df = pd.read_csv(osp.join(data_folder, "model.csv"))
         all_cats = list(set(df['model'].tolist()))
         all_classes = dict(zip(all_cats, range(len(all_cats))))
         id_to_cat = dict(zip(df['id'].tolist(), df['model'].tolist()))
@@ -22,7 +22,9 @@ class Compat3D:
         labels = []
         for key in range(len(df['id'])):
             labels.append(all_classes[id_to_cat[key]])
-        labels = np.array(labels).astype('int64')
+
+        self.shape_ids = df['id'].tolist()
+        self.labels = np.array(labels).astype('int64')
 
 
     def load_raw_models(self, shape_id, sample_point=False):
@@ -35,7 +37,37 @@ class Compat3D:
         gltf_path = os.path.join(shape_id, '_', style_id)
         mesh = trimesh.load(gltf_path)
 
-        return mesh
+        if nont sample_point:
+        	return mesh
+        else:
+        	v = []
+	        segment = []
+	        for g_name, g_mesh in mesh.geometry.items():
+	            g_name = g_name.lower()
+	            if g_name in classes:
+	                # Glb name is same as defined
+	                part_name = g_name
+	            elif g_name in part_index:
+	                # Glb name is different from defined. We regulated the name.
+	                part_name = part_index[g_name]
+	            else:
+	                # If there are still some incorrect one.
+	                part_name = g_name.split('_')[0]
+	                if part_name not in classes:
+	                    part_name = difflib.get_close_matches(g_name, parts)[0]
+	            # Add the vertex
+	            v.append(g_mesh)
+	            # Add the segmentation Labels
+	            segment.append(np.full(g_mesh.faces.shape[0], classes[part_name]))
+	        combined = trimesh.util.concatenate(v)
+
+	        sample_xyz, sample_id = trimesh.sample.sample_surface(combined, count=5000)
+	        # sample_xyz = pc_normalize(sample_xyz)
+	        # If there are no style models, color info set as zero
+	        sample_colors = np.zeros_like(sample_xyz)
+	        sample_segment = np.concatenate(segment)[sample_id]
+
+        	return sample_xyz, sample_colors, sample_segment
 
 
     def show_raw_models(self, shape_id, sample_point=False):
@@ -58,7 +90,7 @@ class Compat3D:
         :param shape_id  (int)     : shape id
                style_id  (int)     : style id
                view_id  (int)     : camera view id
-        :return: a 2d rendered image
+        :return: a 2d rendered image, class label, segmentation label
         """
 
     def show_stylized_2d(self, stylized_2d):
