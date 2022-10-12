@@ -5,6 +5,14 @@
 _ALL_CLASSES = []
 _ALL_PARTS = []
 
+import os
+import os.path as osp
+import glob
+import pandas as pd
+import h5py
+import numpy as np
+from torch.utils.data import Dataset
+import torch
 
 class Compat3D:
     def __init__(self, meta_file=None, data_folder=None):
@@ -38,36 +46,36 @@ class Compat3D:
         mesh = trimesh.load(gltf_path)
 
         if nont sample_point:
-        	return mesh
+            return mesh
         else:
-        	v = []
-	        segment = []
-	        for g_name, g_mesh in mesh.geometry.items():
-	            g_name = g_name.lower()
-	            if g_name in classes:
-	                # Glb name is same as defined
-	                part_name = g_name
-	            elif g_name in part_index:
-	                # Glb name is different from defined. We regulated the name.
-	                part_name = part_index[g_name]
-	            else:
-	                # If there are still some incorrect one.
-	                part_name = g_name.split('_')[0]
-	                if part_name not in classes:
-	                    part_name = difflib.get_close_matches(g_name, parts)[0]
-	            # Add the vertex
-	            v.append(g_mesh)
-	            # Add the segmentation Labels
-	            segment.append(np.full(g_mesh.faces.shape[0], classes[part_name]))
-	        combined = trimesh.util.concatenate(v)
+            v = []
+            segment = []
+            for g_name, g_mesh in mesh.geometry.items():
+                g_name = g_name.lower()
+                if g_name in classes:
+                    # Glb name is same as defined
+                    part_name = g_name
+                elif g_name in part_index:
+                    # Glb name is different from defined. We regulated the name.
+                    part_name = part_index[g_name]
+                else:
+                    # If there are still some incorrect one.
+                    part_name = g_name.split('_')[0]
+                    if part_name not in classes:
+                        part_name = difflib.get_close_matches(g_name, parts)[0]
+                # Add the vertex
+                v.append(g_mesh)
+                # Add the segmentation Labels
+                segment.append(np.full(g_mesh.faces.shape[0], classes[part_name]))
+            combined = trimesh.util.concatenate(v)
 
-	        sample_xyz, sample_id = trimesh.sample.sample_surface(combined, count=5000)
-	        # sample_xyz = pc_normalize(sample_xyz)
-	        # If there are no style models, color info set as zero
-	        sample_colors = np.zeros_like(sample_xyz)
-	        sample_segment = np.concatenate(segment)[sample_id]
+            sample_xyz, sample_id = trimesh.sample.sample_surface(combined, count=5000)
+            # sample_xyz = pc_normalize(sample_xyz)
+            # If there are no style models, color info set as zero
+            sample_colors = np.zeros_like(sample_xyz)
+            sample_segment = np.concatenate(segment)[sample_id]
 
-        	return sample_xyz, sample_colors, sample_segment
+            return sample_xyz, sample_colors, sample_segment
 
 
     def show_raw_models(self, shape_id, sample_point=False):
