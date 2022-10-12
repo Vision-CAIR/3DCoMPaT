@@ -14,7 +14,7 @@ If you find this work useful in your research, please consider citing:
 ```
 @article{li20223dcompat,
     title={3D CoMPaT: Composition of Materials on Parts of 3D Things (ECCV 2022)},
-    author={Yuchen Li, Ujjwal Upadhyay, Ujjwal Upadhyay, Ujjwal Upadhyay, Ahmed Abdelreheem, Arpit Prajapati, Suhail Pothigara, Peter Wonka, Mohamed Elhoseiny},
+    author={Yuchen Li, Ujjwal Upadhyay, Ujjwal Upadhyay, Habib Slim, Ahmed Abdelreheem, Arpit Prajapati, Suhail Pothigara, Peter Wonka, Mohamed Elhoseiny},
     journal = {ECCV},
     volume = {XXXX},
     year={2022}
