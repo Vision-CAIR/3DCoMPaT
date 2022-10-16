@@ -87,44 +87,44 @@ conda install pytorch==1.7.0 cudatoolkit=10.1 -c pytorch
 ### 2. Data Preparation
 Download our preprocessed data [3DCoMPaT](https://drive.google.com/drive/folders/1ZeX7sXaaumjaeI9UWrFAoHz8DO_ZcN-J?usp=sharing) and save in `data/compat/`.
 
-### 3. Classification (3DCoMPaT)
+## 3. Classification (3DCoMPaT)
 
 ```shell
-## 3DCoMPaT
-### Select different models in ./models 
+# 3DCoMPaT
+## Select different models in ./models 
 
-### e.g., pointnet2_ssg 
+## e.g., pointnet2_ssg 
 python train_classification.py --model pointnet2_cls_ssg --log_dir pointnet2_cls_ssg
 python test_classification.py --log_dir pointnet2_cls_ssg
 ```
 
 * Note that we use same data augmentations and training schedules for all comparing methods following [Pointnet_Pointnet2_pytorch](https://github.com/yanx27/Pointnet_Pointnet2_pytorch). We report performance on both validation and test sets.
-#### Performance (Instance average Accuracy)
+### Performance (Instance average Accuracy)
 | Model | Previous | Val | Test | Pretrained| 
 |--|--|--|--|--|
-| PointNet2_SSG  | - | - |73.78 | [gdrive](https://drive.google.com/drive/folders/1S9sdkk3m2rGTcOE8Iv1NY2CMDKskwRUo?usp=sharing) | 
-| PointNet2_MSG  |  57.95| - | 74.70|  [gdrive](https://drive.google.com/drive/folders/1YkXI5ouvigcET-JycoUhprjSgaAyrTQE?usp=sharing) | 
-| DGCNN  |  68.32| - | 72.22 | [gdrive](https://drive.google.com/drive/folders/12FWcSsqiTtVKoL_twynhmCPApdYD-sAa?usp=sharing) | 
-| PCT  |  69.09 | - | 68.74| [gdrive](https://drive.google.com/drive/folders/1YAmNJrxiWRIyHpc2sSD828ELM-swyoFh?usp=sharing) | 
-| PointMLP  |  - | - | 70.83| [gdrive](https://drive.google.com/drive/folders/1B5CPHuPQRsn3SmW5ZNo88JuVBR8fqYg8?usp=sharing) | 
+| PointNet2_SSG  | - | 75.59 |73.78 | [gdrive](https://drive.google.com/drive/folders/1S9sdkk3m2rGTcOE8Iv1NY2CMDKskwRUo?usp=sharing) | 
+| PointNet2_MSG  |  57.95| 78.15 | 74.70|  [gdrive](https://drive.google.com/drive/folders/1YkXI5ouvigcET-JycoUhprjSgaAyrTQE?usp=sharing) | 
+| DGCNN  |  68.32| 71.36 | 74.64 | [gdrive](https://drive.google.com/drive/folders/12FWcSsqiTtVKoL_twynhmCPApdYD-sAa?usp=sharing) | 
+| PCT  |  69.09 | 68.33 | 70.07| [gdrive](https://drive.google.com/drive/folders/1YAmNJrxiWRIyHpc2sSD828ELM-swyoFh?usp=sharing) | 
+| PointMLP  |  - | 73.36 | 70.83| [gdrive](https://drive.google.com/drive/folders/1B5CPHuPQRsn3SmW5ZNo88JuVBR8fqYg8?usp=sharing) | 
 
 
-### 4. Part Segmentation (3DCoMPaT)
+## 4. Part Segmentation (3DCoMPaT)
 
 ```
-### Check model in ./models 
-### e.g., pointnet2_ssg
+## Check model in ./models 
+## e.g., pointnet2_ssg
 python train_partseg.py --model pointnet2_part_seg_ssg --log_dir pointnet2_part_seg_ssg
 python test_partseg.py --log_dir pointnet2_part_seg_ssg
 ```
 
 * Note that we use same data augmentations and training schedules for all comparing methods following [Pointnet_Pointnet2_pytorch](https://github.com/yanx27/Pointnet_Pointnet2_pytorch). We report performance on both validation and test sets.
 
-#### Performance (Accuracy)
+### Performance (Accuracy)
 | Model | Previous| Val | Test | Pretrained|
 |--|--|--|--|--|
-|PointNet2_SSG|24.18| - | 51.22| [gdrive](https://drive.google.com/drive/folders/1yoGpiwCxHM-cqE_T2s4RrH7XiMvbhjlu?usp=sharing) | 
-|PCT | 37.37 | - | 48.43| [gdrive](https://drive.google.com/drive/folders/1X8fN1PXFqnFmoMY1EUwjRzWBJEiBbdwB?usp=sharing) | 
+|PointNet2_SSG|24.18| 48.61 | 51.22| [gdrive](https://drive.google.com/drive/folders/1yoGpiwCxHM-cqE_T2s4RrH7XiMvbhjlu?usp=sharing) | 
+|PCT | 37.37 | 41.19 | 48.43| [gdrive](https://drive.google.com/drive/folders/1X8fN1PXFqnFmoMY1EUwjRzWBJEiBbdwB?usp=sharing) | 
 
 ### 5. Sim2Rel:Transferring to ScanObjectNN
 ```
