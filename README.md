@@ -28,9 +28,9 @@ You can browse the 3D models using the following link: [3D CoMPaT Browser](http:
 
 - [3D Shape and Part Classification](./3D_Cls_PartSeg)
 
-- [2D/3D Material Segmentation](./3D_Cls_PartSeg)
+- [2D/3D Material Segmentation](./2d_3D_Material_Seg)
 
-- [2D Material Tagging/ Shape Classification](./3D_Cls_PartSeg)
+- [2D Material Tagging/ Shape Classification](./2D_MaterialTag_ShapeCls)
 
 - [Sim2Real Transferring](./3D_Cls_PartSeg)
 
