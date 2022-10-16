@@ -23,6 +23,8 @@ To get the most out of the github repository, please download the data associate
 You can browse the 3D models using the following link: [3D CoMPaT Browser](http://54.235.12.220:50/index.html)
 
 ## Compositional Benchmarks
+- [BPNet](./BPNet)
+- [PointGroup](./PointGroup)
 
 ## Non-Compositional Benchmarks
 
