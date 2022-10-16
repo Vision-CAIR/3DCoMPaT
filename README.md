@@ -14,8 +14,7 @@ Created by: [Yuchen Li](http://liyc.tech/), [Ujjwal Upadhyay](https://ujjwal9.co
 - [x] Add codes and pretrained models for 3D Shape and Part Classification tasks
 
 ## Introduction
-
-This work is based on the arXiv tech report which is provisionally accepted in ECCV-2022, for an Oral presentation.
+This work is based on the arXiv tech report which is provisionally accepted in ECCV-2022, for an Oral presentation. 
 
 ## Dataset
 To get the most out of the github repository, please download the data associated with 3d compat by filling this [form](https://docs.google.com/forms/d/e/1FAIpQLSeOxWVkVNdXz-nCfFIWOeOARc_Atk9fi5PSIKw1Ib1cr3ENpA/viewform?fbzx=-7103523806700241333).
@@ -40,7 +39,7 @@ You can browse the 3D models using the following link: [3D CoMPaT Browser](http:
 ## License
 This code is released under MIT License (see LICENSE file for details). In simple words, if you copy/use parts of this code please keep the copyright note in place.
 
-Citation
+## Citation
 If you find this work useful in your research, please consider citing:
 
 ```
