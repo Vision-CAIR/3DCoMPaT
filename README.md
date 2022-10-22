@@ -6,8 +6,8 @@ Created by: [Yuchen Li](http://liyc.tech/), [Ujjwal Upadhyay](https://ujjwal9.co
 ![image](https://user-images.githubusercontent.com/38585175/182629905-812f1c6f-8906-4485-9710-760cff150df1.png)
 
 ## Code release progress
-- [x] Add codes and pretrained models for Sim2Real Transferring tasks
 - [x] Add codes and pretrained models for 3D Shape and Part Classification tasks
+- [x] Add codes and pretrained models for Sim2Real Transferring tasks
 - [ ] Add data-API and evaluation code
 - [ ] Add codes and pretrained models for 2D Material Tagging/Shape Classification
 - [ ] Add codes and pretrained models for 2D/3D Material Segmentation tasks
