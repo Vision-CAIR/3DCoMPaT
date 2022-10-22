@@ -9,9 +9,10 @@ Created by: [Yuchen Li](http://liyc.tech/), [Ujjwal Upadhyay](https://ujjwal9.co
 - [x] Add codes and pretrained models for Sim2Real Transferring tasks
 - [x] Add codes and pretrained models for 3D Shape and Part Classification tasks
 - [ ] Add data-API and evaluation code
-- [ ] Add codes and pretrained models for compositional tasks
 - [ ] Add codes and pretrained models for 2D Material Tagging/Shape Classification
 - [ ] Add codes and pretrained models for 2D/3D Material Segmentation tasks
+- [ ] Add codes and pretrained models for BPNet
+- [ ] Add codes and pretrained models for PointGroup
 
 ## Introduction
 This work is based on the arXiv tech report which is provisionally accepted in ECCV-2022, for an Oral presentation. 
