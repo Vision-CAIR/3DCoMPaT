@@ -40,12 +40,6 @@ For Example, we train 10 compositions with:
 
 ```sh tool/train.sh com10 /config/compat/bpnet_10.yaml 1```
 
-## Test
-
-For Example, we evaluate  10 compositions with:
-
-```sh tool/test.sh com10 /config/compat/bpnet_10.yaml 1```
-
 ## Pretrain Models
 
 Our pretrained Compositions of 10 models is in:
@@ -55,6 +49,15 @@ Our pretrained Compositions of 10 models is in:
 
 Our pretrained Compositions of 50 models is in:
 https://drive.google.com/file/d/1u7CkloqHEkezFuUBnZQRnbxdW420Xgug/view?usp=sharing
+
+## Test
+
+For Example, we evaluate  10 compositions with:
+
+```sh tool/test.sh com10 /config/compat/bpnet_10.yaml 1```
+
+## 2D/3D Material Segmentation
+To be updated.
 
 ## License
 This code is released under MIT License (see LICENSE file for details). In simple words, if you copy/use parts of this code please keep the copyright note in place.
