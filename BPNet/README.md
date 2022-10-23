@@ -1,21 +1,20 @@
-## This folder includes the code for the 2D/3D *Grounded CoMPaT Recognition (GCR)* Task.
+# This folder includes the code for the 2D/3D *Grounded CoMPaT Recognition (GCR)* Task.
 
 ![image](fig_GCR.png)
 
-## Datase
-To get the most out of the github repository, please download the data associated with 3d compat by filling this [form](https://docs.google.com/forms/d/e/1FAIpQLSeOxWVkVNdXz-nCfFIWOeOARc_Atk9fi5PSIKw1Ib1cr3ENpA/viewform?fbzx=-7103523806700241333).
+## Data Preparation
+To be updated
 
+## 2D/3D Material Segmentation using BPNet (non-compositional)
+To be updated.
 
-## Benchmarks
-### BPNeT
-How to Use Train the BPNet 
+## GCR using BPNet
 
-## Config
+### Config
 - BPNet with 10 Compositions: ```config/compat/bpnet_10.yaml``` 
 - BPNet with 50 Compositions: ```config/compat/bpnet_50.yaml``` 
 
-## Training
-
+### Training
 
 - Start training:
 ```sh tool/train.sh EXP_NAME /PATH/TO/CONFIG NUMBER_OF_THREADS```
@@ -30,7 +29,7 @@ For Example, we train 10 compositions with:
 
 ```sh tool/train.sh com10 /config/compat/bpnet_10.yaml 1```
 
-## Pretrain Models
+### Pretrain Models
 
 Our pretrained Compositions of 10 models is in:
 
@@ -40,7 +39,7 @@ Our pretrained Compositions of 10 models is in:
 Our pretrained Compositions of 50 models is in:
 https://drive.google.com/file/d/1u7CkloqHEkezFuUBnZQRnbxdW420Xgug/view?usp=sharing
 
-## Test
+### Test
 
 For Example, we evaluate  10 compositions with:
 
@@ -48,12 +47,11 @@ For Example, we evaluate  10 compositions with:
 
 <div id="Mark"></div>
 
-## 2D/3D Material Segmentation
+## GCR using PointGroup
 To be updated.
 
 ## License
 This code is released under MIT License (see LICENSE file for details). In simple words, if you copy/use parts of this code please keep the copyright note in place.
-
 
 
 ## Citation
