@@ -1,6 +1,6 @@
-# This folder includes the code for the 2D/3D *Grounded CoMPaT Recognition (GCR)* Task.
+## This folder includes the code for the 2D/3D *Grounded CoMPaT Recognition (GCR)* Task.
 
-## Dataset
+## Datase
 To get the most out of the github repository, please download the data associated with 3d compat by filling this [form](https://docs.google.com/forms/d/e/1FAIpQLSeOxWVkVNdXz-nCfFIWOeOARc_Atk9fi5PSIKw1Ib1cr3ENpA/viewform?fbzx=-7103523806700241333).
 
 
