@@ -31,11 +31,11 @@ You can browse the 3D models using the following link: [3D CoMPaT Browser](http:
 
 - [3D Shape and Part Classification](./3D_Cls_PartSeg)
 
-- [2D/3D Material Segmentation](./2D_3D_Material_Seg)
+- [Sim2Real Transferring](./3D_Cls_PartSeg)
+
+- [2D/3D Material Segmentation](./BPNet)
 
 - [2D Material Tagging/ Shape Classification](./2D_MaterialTag_ShapeCls)
-
-- [Sim2Real Transferring](./3D_Cls_PartSeg)
 
 ## License
 This code is released under MIT License (see LICENSE file for details). In simple words, if you copy/use parts of this code please keep the copyright note in place.
