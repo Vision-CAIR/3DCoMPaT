@@ -33,7 +33,7 @@ You can browse the 3D models using the following link: [3D CoMPaT Browser](http:
 
 - [Sim2Real Transferring](./3D_Cls_PartSeg)
 
-- [2D/3D Material Segmentation](./BPNet)
+- [2D/3D Material Segmentation](./BPNet/## 2D/3D Material Segmentation)
 
 - [2D Material Tagging/ Shape Classification](./2D_MaterialTag_ShapeCls)
 
