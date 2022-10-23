@@ -145,7 +145,7 @@ class Compat3D:
                sample_point  (bool)     : whether to sample points from 3D shape
         :return: a 3D stylized models
         """
-        gltf_path = os.path.join(self.data_folder, 'rendered_models/rendered_models/', shape_id,  shape_id + '_' + style_id + '.glb')
+        gltf_path = os.path.join(self.data_folder, 'rendered_models/', shape_id,  shape_id + '_' + style_id + '.glb')
         mesh = trimesh.load(gltf_path)
         
         
@@ -167,7 +167,7 @@ class Compat3D:
                view_id  (int)     : camera view id
         :return: a 2d rendered image, class label, segmentation label
         """
-        gltf_path = os.path.join(self.data_folder, 'canonical_views/canonical_views/', shape_id + '_' + style_id + '_' + view_id, 'Image0080.png')
+        gltf_path = os.path.join(self.data_folder, 'canonical_views/', shape_id + '_' + style_id + '_' + view_id, 'Image0080.png')
         image = plt.imread(gltf_path)
         
         # # TODO: 
