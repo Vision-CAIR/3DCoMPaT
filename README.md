@@ -7,12 +7,6 @@ Created by: [Yuchen Li](http://liyc.tech/), [Ujjwal Upadhyay](https://ujjwal9.co
 
 [![image](https://user-images.githubusercontent.com/38585175/182629905-812f1c6f-8906-4485-9710-760cff150df1.png)](https://www.youtube.com/watch?v=DT6I1EYqzis)
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=DT6I1EYqzis" target="_blank">
- <img src="[http://img.youtube.com/vi/nTQUwghvy5Q/mqdefault.jpg](https://user-images.githubusercontent.com/38585175/182629905-812f1c6f-8906-4485-9710-760cff150df1.png)" alt="Watch the video" width="240" height="180" border="10" />
-</a>
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/DT6I1EYqzis" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
 ## Code release progress
 - [x] Add codes and pretrained models for 3D Shape and Part Classification tasks
 - [x] Add codes and pretrained models for Sim2Real Transferring tasks
