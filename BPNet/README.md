@@ -2,19 +2,19 @@
 
 ![image](fig_GCR.png)
 
-## Data Preparation
+## 1. Data Preparation
 To be updated
 
-## 2D/3D Material Segmentation using BPNet (non-compositional)
+## 2. 2D/3D Material Segmentation using BPNet (non-compositional)
 To be updated.
 
-## GCR using BPNet
+## 3. GCR using BPNet
 
-### Config
+### 3.1 Config
 - BPNet with 10 Compositions: ```config/compat/bpnet_10.yaml``` 
 - BPNet with 50 Compositions: ```config/compat/bpnet_50.yaml``` 
 
-### Training
+### 3.2 Training
 
 - Start training:
 ```sh tool/train.sh EXP_NAME /PATH/TO/CONFIG NUMBER_OF_THREADS```
@@ -29,7 +29,7 @@ For Example, we train 10 compositions with:
 
 ```sh tool/train.sh com10 /config/compat/bpnet_10.yaml 1```
 
-### Pretrain Models
+### 3.3 Pretrain Models
 
 Our pretrained Compositions of 10 models is in:
 
@@ -39,7 +39,7 @@ Our pretrained Compositions of 10 models is in:
 Our pretrained Compositions of 50 models is in:
 https://drive.google.com/file/d/1u7CkloqHEkezFuUBnZQRnbxdW420Xgug/view?usp=sharing
 
-### Test
+### 3.4 Test
 
 For Example, we evaluate  10 compositions with:
 
@@ -47,7 +47,7 @@ For Example, we evaluate  10 compositions with:
 
 <div id="Mark"></div>
 
-## GCR using PointGroup
+## 4. GCR using PointGroup
 To be updated.
 
 ## License
