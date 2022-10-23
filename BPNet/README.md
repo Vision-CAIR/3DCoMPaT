@@ -59,10 +59,13 @@ For Example, we evaluate  10 compositions with:
 
 ## Pretrain Models
 
-Our pretrained models is in:
+Our pretrained Compositions of 10 models is in:
 
 [https://drive.google.com/drive/folders/1k1TDDzNvfnnxd_F8PxlsPBmnrr11-I-w?usp=sharing](https://drive.google.com/file/d/1u7CkloqHEkezFuUBnZQRnbxdW420Xgug/view?usp=sharing)
 
+
+Our pretrained Compositions of 50 models is in:
+https://drive.google.com/file/d/1u7CkloqHEkezFuUBnZQRnbxdW420Xgug/view?usp=sharing
 
 ## License
 This code is released under MIT License (see LICENSE file for details). In simple words, if you copy/use parts of this code please keep the copyright note in place.
