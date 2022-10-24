@@ -1,51 +1,20 @@
-[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/bidirectional-projection-network-for-cross/semantic-segmentation-on-scannet)](https://paperswithcode.com/sota/semantic-segmentation-on-scannet?p=bidirectional-projection-network-for-cross)
-# Bidirectional Projection Network for Cross Dimension Scene Understanding
+# This folder includes the code for the 2D/3D *Grounded CoMPaT Recognition (GCR)* Task.
 
-***CVPR 2021 (Oral)***
+![image](./imgs/fig_GCR.png)
 
-[ [Project Webpage](https://wbhu.github.io/projects/BPNet) ]    [ [arXiv](https://arxiv.org/abs/2103.14326) ]    [ [Video](https://youtu.be/Wt9J1l_UBaA) ]
+## 1. Data Preparation
+To be updated
 
-Existing segmentation methods are mostly unidirectional, i.e. utilizing 3D for 2D segmentation or vice versa. Obviously 2D and 3D information can nicely complement each other in both directions, during the segmentation. This is the goal of bidirectional projection network.
+## 2. 2D/3D Material Segmentation using BPNet (non-compositional)
+To be updated.
 
-![bpnet](imgs/bpnet.jpg)
+## 3. GCR using BPNet
 
-Our 3dcompat recognition task on is Modified from [BPNet Github Repo](https://github.com/wbhu/BPNet)
+### 3.1 Config
+- BPNet with 10 Compositions: ```config/compat/bpnet_10.yaml``` 
+- BPNet with 50 Compositions: ```config/compat/bpnet_50.yaml``` 
 
-## Environment
-
-- Main
-
-
-```bash
-# Torch
-$ pip install torch==1.4.0+cu100 torchvision==0.5.0+cu100 -f https://download.pytorch.org/whl/torch_stable.html
-# MinkowskiEngine 0.4.1
-$ conda install numpy openblas
-$ git clone https://github.com/StanfordVL/MinkowskiEngine.git
-$ cd MinkowskiEngine
-$ git checkout f1a419cc5792562a06df9e1da686b7ce8f3bb5ad
-$ python setup.py install
-# Others
-$ pip install imageio==2.8.0 opencv-python==4.2.0.32 pillow==7.0.0 pyyaml==5.3 scipy==1.4.1 sharedarray==3.2.0 tensorboardx==2.0 tqdm==4.42.1
-```
-
-- Others
-
-    Please refer to [env.yml](./env.yml) for details.
-
-## Prepare data
-
-- Download the dataset from official website.
-
-- 2D: The scripts is from 3DMV repo, it is based on python2, other code in this repo is based on python3
-	```python prepare_2d_data.py --scannet_path data/scannetv2 --output_path data/scannetv2_images --export_label_images```
-	
-- 3D: dataset/preprocess_3d_scannet.py
-
-## Config
-- BPNet_5cm: config/scannet/bpnet_5cm.yaml 
-
-## Training
+### 3.2 Training
 
 - Start training:
 ```sh tool/train.sh EXP_NAME /PATH/TO/CONFIG NUMBER_OF_THREADS```
@@ -55,32 +24,45 @@ $ pip install imageio==2.8.0 opencv-python==4.2.0.32 pillow==7.0.0 pyyaml==5.3 s
 
 NUMBER_OF_THREADS is the threads to use per process (gpu), so optimally, it should be **Total_threads / gpu_number_used**
 
-## Testing
 
-- Testing using your trained model or our [pre-trained model](https://drive.google.com/file/d/1AWUigQGDONoSpoPL5MCTE-tMFWhY2Y09/view?usp=sharing) (voxel_size: 5cm):
-```sh tool/test.sh EXP_NAME /PATH/TO/CONFIG(copied one) NUMBER_OF_THREADS)```
+For Example, we train 10 compositions with:
+
+```sh tool/train.sh com10 /config/compat/bpnet_10.yaml 1```
+
+### 3.3 Pretrain Models
+
+Our pretrained Compositions of 10 models is in:
+
+[https://drive.google.com/drive/folders/1k1TDDzNvfnnxd_F8PxlsPBmnrr11-I-w?usp=sharing](https://drive.google.com/file/d/1u7CkloqHEkezFuUBnZQRnbxdW420Xgug/view?usp=sharing)
 
 
-## Copyright and License
+Our pretrained Compositions of 50 models is in:
+https://drive.google.com/file/d/1u7CkloqHEkezFuUBnZQRnbxdW420Xgug/view?usp=sharing
 
-You are granted with the [LICENSE](./LICENSE) for both academic and commercial usages.
+### 3.4 Test
 
+For Example, we evaluate  10 compositions with:
 
+```sh tool/test.sh com10 /config/compat/bpnet_10.yaml 1```
 
-## Acknowledgment
+<div id="Mark"></div>
 
-Our code is based on [MinkowskiEngine](https://github.com/NVIDIA/MinkowskiEngine). We also referred to [SparseConvNet](https://github.com/facebookresearch/SparseConvNet) and [semseg](https://github.com/hszhao/semseg).
+## 4. GCR using PointGroup
+To be updated.
 
+## License
+This code is released under MIT License (see LICENSE file for details). In simple words, if you copy/use parts of this code please keep the copyright note in place.
 
 
 ## Citation
+If you find this work useful in your research, please consider citing:
 
-```tex
-@inproceedings{hu-2021-bidirectional,
-        author      = {Wenbo Hu, Hengshuang Zhao, Li Jiang, Jiaya Jia and Tien-Tsin Wong},
-        title       = {Bidirectional Projection Network for Cross Dimensional Scene Understanding},
-        booktitle   = {CVPR},
-        year        = {2021}
-    }
 ```
-
+@article{li20223dcompat,
+    title={3D CoMPaT: Composition of Materials on Parts of 3D Things (ECCV 2022)},
+    author={Yuchen Li, Ujjwal Upadhyay, Habib Slim, Ahmed Abdelreheem, Arpit Prajapati, Suhail Pothigara, Peter Wonka, Mohamed Elhoseiny},
+    journal = {ECCV},
+    volume = {XXXX},
+    year={2022}
+}
+```
