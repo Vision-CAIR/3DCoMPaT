@@ -10,6 +10,7 @@ DATA:
   mat: 15
   threshold: 10
   profile: False
+  com: 10
 
 TRAIN:
   viewNum: 4

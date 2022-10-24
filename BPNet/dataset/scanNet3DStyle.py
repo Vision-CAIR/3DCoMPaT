@@ -180,12 +180,6 @@ class ScanNet3D(data.Dataset):
         if memCacheInit and (not exists("/dev/shm/wbhu_scannet_3d_%s_%06d_locs_%08d" % (split, identifier, 0))):
             print('[*] Starting shared memory init ...')
 
-            # data, part_label_to_idx, count = self.read_data()
-            # # pickle_data(f"data/dataset_{exp_name}.pkl", data)
-            # print("Reading splits", list(data.keys()))
-            # print("Train split: {} models".format(len(data['train']['labels'])))
-            # print("Val split: {} models".format(len(data['val']['labels'])))
-            # print("Test split: {} models".format(len(data['test']['labels'])))
             splits=next(unpickle_data('/home/liy0r/3d-few-shot/download/BPNet/'+'dataset_nov.pkl'))
             model_ids=splits[split]
 
@@ -229,9 +223,7 @@ class ScanNet3D(data.Dataset):
                 except:
                     print("model can't found {}".format(model_id))
                     continue
-                # print('Model:{} is of size {}'.format(model_id, model_size))
-                    # return model_id, None
-                #
+
                 if model_size < 0.09:  # Ignore extremely small (corrupted) models
                     print("Error reading2")
                     print("Model:{}, Failed!".format(model_id))
@@ -244,8 +236,7 @@ class ScanNet3D(data.Dataset):
                     print("read successfully")
                 except:
                     print("Error in reading")
-                    # print("Model:{}, Failed!".format(model_id))
-                    # return model_id, None
+
                 colors = {}
                 v = {}
                 segment = {}

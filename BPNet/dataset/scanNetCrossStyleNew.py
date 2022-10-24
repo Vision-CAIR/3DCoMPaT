@@ -244,14 +244,14 @@ class ScanNetCross(ScanNet3D):
     VIEW_NUM = 4
     IMG_DIM = (400, 400)
 
-    def __init__(self, dataPathPrefix='glbfile',
-                 dataPathPrefix2D='img1', voxelSize=0.05,
+    def __init__(self, dataPathPrefix='data_root/pc',
+                 dataPathPrefix2D='data_root/image', voxelSize=0.05,
                  split='train', aug=False, memCacheInit=False,
                  identifier=10233, loop=1,
                  data_aug_color_trans_ratio=0.1,
                  data_aug_color_jitter_std=0.05, data_aug_hue_max=0.5,
                  data_aug_saturation_max=0.2, eval_all=False,
-                 val_benchmark=False, args=None
+                 val_benchmark=False, com=10, args=None
                  ):
         super(ScanNetCross, self).__init__(dataPathPrefix=dataPathPrefix,
                                            voxelSize=voxelSize,
@@ -271,14 +271,14 @@ class ScanNetCross(ScanNet3D):
         self.depth2D_paths = [[] for i in range(self.VIEW_NUM)]
         self.json_paths = []
         self.mat_map = []
-
+        root_2d=dataPathPrefix2D
         # Todo what is this: The number of models
         self.model_maps = {}
         # 2d image address
-        root_2d = '/ibex/scratch/projects/c2090/3dcompat/canonical_new'
+        # root_2d = '/ibex/scratch/projects/c2090/3dcompat/canonical_new'
         lines = []
-        stylev0 = (np.genfromtxt('data/style10v0.txt', dtype='str'))
-        stylev1 = (np.genfromtxt('data/style10v1.txt', dtype='str'))
+        stylev0 = (np.genfromtxt('data/style{}v0.txt'.format(com), dtype='str'))
+        stylev1 = (np.genfromtxt('data/style{}v1.txt'.format(com), dtype='str'))
         import pickle
         with open('data/resnet50_preds.pickle', 'rb') as handle:
             resnet_predictions = pickle.load(handle)
@@ -439,8 +439,6 @@ d        """
             seg1[255] = seg1[260]
         df = self.part_mat[name.split('/')[-2][:-2]]
         # Get the material names
-        # part_bb = {}
-        # part_bb[self.part_classes['none']] = material.index("none")
         part13 = {}
         part13[self.part_classes['none']] = mat_id['none']
         for i in df:
@@ -488,31 +486,17 @@ d        """
                 label = np.array([seg1[x] for x in u])[inv].reshape(label.shape).astype(np.int_)
             except:
                 pass
-                # print("===========label image fails=================")
-                # u, inv = np.unique(label, return_inverse=True)
-                # seg1 = defaultdict(int, seg1)
-                # label = np.array([seg1[x] for x in u])[inv].reshape(label.shape).astype(np.int_)
-                # label = np.ones((400, 400))
-                # print(label_ads)
+
             try:
                 style = label.copy()
                 u, inv = np.unique(style, return_inverse=True)
                 part13 = defaultdict(int, part13)
                 style = np.array([part13[x] for x in u])[inv].reshape(style.shape).astype(np.int_)
 
-                # style = np.vectorize(part_bb.get)(style).astype(np.int_)
-                # style = np.vectorize(part13.get)(style).astype(np.int_)
-                # # if there are some wrong labels put it into style none 0
-                # style = np.where((style is not None) | (style < 15), style, 0).astype(np.int_)
             except:
                 # pass
-                print("===========mat change fails=================")
+
                 style = np.zeros((400, 400)).astype(np.int_)
-                # print(label_ads)
-                # u, inv = np.unique(style, return_inverse=True)
-                # part13 = defaultdict(int, part13)
-                # style = np.array([part13[x] for x in u])[inv].reshape(style.shape).astype(np.int_)
-                # style = np.zeros((400, 400)).astype(np.int_)
             style = torch.from_numpy(style)
             depth_ads = self.depth2D_paths[v][
                 room_id]

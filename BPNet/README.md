@@ -4,7 +4,7 @@
 
 ## 1. Data Preparation
 - Please download the data associated with 3d compat by filling this form. 
-- We defaultly stored the dataset in `3dcompat/` (2D Images in `3dcompat/images/`, 3d Point Cloud in `3dcompat/models`)  
+- We defaultly stored the dataset in `3dcompat/` (2D Images in `3dcompat/image/`, 3d Point Cloud in `3dcompat/pc/`)  
 You can also modify the `data_root` and `data_root2d` in the config files (e.g. `config/compat/bpnet_10.yaml`)
 
 - For the efficiency of the datanet, we prvoide the point clouds generated from the 3dcompat models. The processing of how we generate the data is from this file `util/glb2pc.py`. You can also generate the point cloud from models in your sides
