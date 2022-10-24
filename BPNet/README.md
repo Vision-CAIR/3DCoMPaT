@@ -1,6 +1,6 @@
 # This folder includes the code for the 2D/3D *Grounded CoMPaT Recognition (GCR)* Task.
 
-![image](fig_GCR.png)
+![image](./imgs/fig_GCR.png)
 
 ## 1. Data Preparation
 To be updated
