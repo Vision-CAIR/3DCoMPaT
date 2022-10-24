@@ -54,9 +54,7 @@ For Example, we train 10 compositions with:
 
 ### 3.3 Pretrain Models
 
-Our pretrained Compositions of 10 models is in:
-
-[https://drive.google.com/drive/folders/1k1TDDzNvfnnxd_F8PxlsPBmnrr11-I-w?usp=sharing](https://drive.google.com/file/d/1u7CkloqHEkezFuUBnZQRnbxdW420Xgug/view?usp=sharing)
+Our pretrained Compositions of 10 models is in [comp10](https://drive.google.com/file/d/1u7CkloqHEkezFuUBnZQRnbxdW420Xgug/view?usp=sharing)
 
 
 [//]: # (Our pretrained Compositions of 50 models is in:)
