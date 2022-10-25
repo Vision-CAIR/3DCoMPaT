@@ -9,22 +9,21 @@ Download our rendered images and put them in ./shards/ folder.
 ## 3. Training
 Run the following script:
 
-'''
-python main.py --num-workers 4 \
-    --use-tmp \
-    --exp-name PRET_CAN_C1 \
-    --exp-tag PRET-CAN \
-    --root-url ./shards/ \
-    --models-dir ./PRET_CAN_C10/ \
-    --batch-size 64 \
-    --nbatches 10000 \
-    --num-classes 43 \
-    --resnet-type resnet50 \
-    --seed 222 \
-    --n-comp 10 \
-    --view-type canonical \
-    --use-pretrained \
-'''
+	python main.py --num-workers 4 \
+	    --use-tmp \
+	    --exp-name PRET_CAN_C1 \
+	    --exp-tag PRET-CAN \
+	    --root-url ./shards/ \
+	    --models-dir ./PRET_CAN_C10/ \
+	    --batch-size 64 \
+	    --nbatches 10000 \
+	    --num-classes 43 \
+	    --resnet-type resnet50 \
+	    --seed 222 \
+	    --n-comp 10 \
+	    --view-type canonical \
+	    --use-pretrained \
+
 
 Params:
 	- n-comp indicates the number of selected compositions for each shape.
