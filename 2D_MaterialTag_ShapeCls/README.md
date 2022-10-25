@@ -35,23 +35,23 @@ For example, "SCRT-CAN/SCRT_CAN_C16.sh" includes the script for training a ResNe
 
 ## 4. Evaluation and pretrained models
 
-'''
-python main.py --num-workers 4 \
-    --use-tmp \
-    --exp-name PRET_CAN_C1 \
-    --exp-tag PRET-CAN \
-    --root-url ./shards/ \
-    --models-dir ./PRET_CAN_C10/ \
-    --batch-size 64 \
-    --nbatches 10000 \
-    --num-classes 41 \
-    --resnet-type resnet50 \
-    --seed 222 \
-    --n-comp 10 \
-    --view-type canonical \
-    --use-pretrained \
-    --is-validation \
-'''
+
+	python main.py --num-workers 4 \
+	    --use-tmp \
+	    --exp-name PRET_CAN_C1 \
+	    --exp-tag PRET-CAN \
+	    --root-url ./shards/ \
+	    --models-dir ./PRET_CAN_C10/ \
+	    --batch-size 64 \
+	    --nbatches 10000 \
+	    --num-classes 41 \
+	    --resnet-type resnet50 \
+	    --seed 222 \
+	    --n-comp 10 \
+	    --view-type canonical \
+	    --use-pretrained \
+	    --is-validation \
+
 
 
 | Model | Previous | Test| Pretrained|
