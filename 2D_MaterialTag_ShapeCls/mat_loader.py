@@ -13,15 +13,15 @@ from torch.utils.data import Dataset
 from PIL import Image
 
 class MaterialDataset(Dataset):
-    def __init__(self, data_dir, split='train', view=None, transforms=None):
+    def __init__(self, data_dir="./data/", split='train', view=None, transforms=None):
         self.data_dir = data_dir
 
         assert view is not None
         # Read the splits
-        splits = next(unpickle_data('dataset_dataset_ahmed.pkl'))
-        train_model_ids = splits['train']['model_ids']
-        test_model_ids = splits['test']['model_ids']
-        val_model_ids = splits['val']['model_ids']
+        splits = next(unpickle_data(os.path.join(data_dir, 'dataset_v1.pkl')))
+        train_model_ids = splits['train']
+        test_model_ids = splits['test']
+        val_model_ids = splits['val']
 
         # Read the labels
         self.labels = next(unpickle_data('v_{}_labels.pkl'.format(view)))
