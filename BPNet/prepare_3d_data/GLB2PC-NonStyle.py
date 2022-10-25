@@ -5,20 +5,19 @@ from tqdm import tqdm
 import h5py
 import difflib
 import pandas as pd
-models=pd.read_csv('model.csv')
-
 from collections import defaultdict
-model_ids = defaultdict(list)
-all_ids=[]
-with open("split.txt", "r") as f:
-    for line in f:
-        ids, label = line.rstrip().split(',')
-        model_ids[label].append(ids)
-        all_ids.append(ids)
 
-data_paths_train = list(set(model_ids['train']))
-data_paths_vaild = list(set(model_ids['valid']))
-data_paths_test = list(set(model_ids['test']))
+#required files
+# put data in WORKING_DIR
+# model.csv, contains all model_ids 
+# split.txt, contains splits
+# part_index, contains (model_id, part) pairs
+
+# output dir
+meta_dir = "../data/metadata/"
+WORKING_DIR = "../data/processed_models_v5/" #TODO: Change to the glb folders
+# number of sampled points
+N_POINTS_PER_PART = 5000
 
 def pc_normalize(pc):
     # Center and rescale point for 1m radius
@@ -28,6 +27,25 @@ def pc_normalize(pc):
     scale = np.max(np.linalg.norm(pc, axis=1))
     pc *= 1.0 / scale
     return pc
+
+
+# read all model ids
+models=pd.read_csv(os.path.join(meta_dir, 'model.csv'))
+model_ids = defaultdict(list)
+all_ids=[]
+
+# read split file
+with open(os.path.join(meta_dir, "split.txt"), "r") as f:
+    for line in f:
+        ids, label = line.rstrip().split(',')
+        model_ids[label].append(ids)
+        all_ids.append(ids)
+
+data_paths_train = list(set(model_ids['train']))
+data_paths_vaild = list(set(model_ids['valid']))
+data_paths_test = list(set(model_ids['test']))
+
+# all data
 dd=data_paths_train+data_paths_vaild+data_paths_test
 
 parts=['access_panel', 'adjuster', 'aerator', 'arm', 'armrest', 'axle',
@@ -82,10 +100,8 @@ for k, v in classes.items():
     r_classes[v] = k
 len(parts)
 
-WORKING_DIR = "/ibex/scratch/liy0r/processed_models_v5" #TODO: Change to the glb folders
-N_POINTS_PER_PART = 5000
 
-df=pd.read_csv('part_index.csv')
+df=pd.read_csv(os.path.join(meta_dir, 'part_index.csv'))
 part_index=dict(zip(df['orgin'].tolist(),df['new'].tolist()))
 def save_points(split):
     sample_xyzs = []
