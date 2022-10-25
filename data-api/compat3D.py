@@ -183,4 +183,37 @@ class CompatLoader_stylized3D(CompatLoader3D):
         else:
             pass
 
+class GCRLoader3D(CompatLoader3D):
+    """
+    Dataloader for the full 3D compositional task.
+    Args:
+        root_dir:    Base dataset URL containing data split shards
+        split:       One of {train, valid}.
+        n_comp:      Number of compositions to use
+        cache_dir:   Cache directory to use
+        view_type:   Filter by view type [0: canonical views, 1: random views]
+    """
+    def __init__(self, root_dir="./data/", split="train", n_comp=1, cache_dir=None, view_type=-1):
+        super().__init__(root_dir, split, n_comp, cache_dir, view_type)
 
+    def __getitem__(self, index, style_id, sample_point=False):
+        """
+        Get raw 3d shape given shape_id
+        :param shape_id  (int)     : shape id
+               style_id  (int)     : style id
+               sample_point  (bool)     : whether to sample points from 3D shape
+        :return: a 3D stylized models
+        """
+        shape_id = self.shape_ids[index]
+        gltf_path = os.path.join(self.root_dir, 'rendered_models/', shape_id,  shape_id + '_' + style_id + '.glb')
+        mesh = trimesh.load(gltf_path)
+        
+        
+        # # TODO: 
+        # 1. unable to load mesh
+        # 2. load part labels, material colors and labels
+        
+        if not sample_point:
+            return mesh
+        else:
+            pass
