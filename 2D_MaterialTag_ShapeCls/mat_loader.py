@@ -13,7 +13,7 @@ from torch.utils.data import Dataset
 from PIL import Image
 
 class MaterialDataset(Dataset):
-    def __init__(self, data_dir="./data/", split='train', view=None, transforms=None):
+    def __init__(self, data_dir="./", split='train', view=None, transforms=None):
         self.data_dir = data_dir
 
         assert view is not None
