@@ -11,7 +11,12 @@ conda install pytorch==1.7.0 cudatoolkit=10.1 -c pytorch
 ```
 
 ## 2. Data Preparation
-Download our preprocessed data [3DCoMPaT](https://drive.google.com/drive/folders/1ZeX7sXaaumjaeI9UWrFAoHz8DO_ZcN-J?usp=sharing) and save in `data/compat/`.
+
+Run the following script to prepare point cloud data.
+
+  python prepare_data.py
+
+Or you can directly download our preprocessed data [3DCoMPaT](https://drive.google.com/drive/folders/1ZeX7sXaaumjaeI9UWrFAoHz8DO_ZcN-J?usp=sharing) and save in `data/`.
 
 ## 3. Classification (3DCoMPaT)
 
@@ -37,7 +42,7 @@ python test_classification.py --log_dir pointnet2_cls_ssg
 
 ## 4. Part Segmentation (3DCoMPaT)
 
-```
+```shell
 ## Check model in ./models 
 ## e.g., pointnet2_ssg
 python train_partseg.py --model pointnet2_part_seg_ssg --log_dir pointnet2_part_seg_ssg
@@ -53,7 +58,7 @@ python test_partseg.py --log_dir pointnet2_part_seg_ssg
 |PCT | 37.37 | 41.19 | 48.43| [gdrive](https://drive.google.com/drive/folders/1X8fN1PXFqnFmoMY1EUwjRzWBJEiBbdwB?usp=sharing) | 
 
 ## 5. Sim2Rel:Transferring to ScanObjectNN
-```
+```shell
 ## Check model in ./models 
 ## e.g., pointnet2_ssg
 python train_classification_sim2rel.py --model pointmlp --log_dir pointmlp_cls

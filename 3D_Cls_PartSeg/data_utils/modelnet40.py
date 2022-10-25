@@ -89,7 +89,17 @@ def farthest_point_sample(point, npoint):
     return point
 
 class ModelNet40(Dataset):
-    # def __init__(self, num_points, partition='train', gaussian_noise=False, unseen=False, factor=4):
+    """
+    Base class for 2D dataset loaders.
+
+    Args:
+        root_url:    Base dataset URL containing data split shards
+        split:       One of {train, valid}.
+        n_comp:      Number of compositions to use
+        cache_dir:   Cache directory to use
+        view_type:   Filter by view type [0: canonical views, 1: random views]
+        transform:   Transform to be applied on rendered views
+    """
     def __init__(self, args, split='train', class_choices=None, mapped_labels=None):
         self.data, self.label = load_data(split)
         self.num_points = args.num_point

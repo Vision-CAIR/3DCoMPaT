@@ -1,14 +1,21 @@
 # The following API functions are defined:
 #  Compat3D       - 3DCompat api class that loads 3DCompat annotation file and prepare data structures.
 # load_raw_models -  load raw shape without textures given the specified ids.
-# show_raw_models -  show raw shape without textures given the specified ids.
 # load_stylized_3d - load stylized 3d shapes given the specified ids.
-# show_stylized_3d - show stylized 3d shapes given the specified ids.
-# load_stylized_2d - load stylized 3d shapes given the specified ids.
-# show_stylized_2d - show stylized 3d shapes given the specified ids.
 
-_ALL_CLASSES = []
-_ALL_PARTS = []
+import os
+import os.path as osp
+import glob
+import pandas as pd
+import h5py
+import numpy as np
+import matplotlib.pyplot as plt
+import trimesh
+
+import torch
+from torch.utils.data import Dataset
+
+import pdb
 
 _ALL_PARTS = ['access_panel', 'adjuster', 'aerator', 'arm', 'armrest', 'axle',
        'back', 'back_flap', 'back_horizontal_bar', 'back_panel', 'back_stretcher', 'back_support',
@@ -55,32 +62,35 @@ _ALL_PARTS = ['access_panel', 'adjuster', 'aerator', 'arm', 'armrest', 'axle',
        'water', 'water_tank', 'wax_pan', 'wheel', 'windows', 'windshield',
        'wing', 'wiper', 'wire', 'zipper']
 
+
 # parts index and reversed index
 part_to_idx = dict(zip(_ALL_PARTS, range(len(_ALL_PARTS))))
 
 
-import os
-import os.path as osp
-import glob
-import pandas as pd
-import h5py
-import numpy as np
-import matplotlib.pyplot as plt
-import trimesh
+class CompatLoader3D(Dataset):
+    """
+    Base class for 3D dataset loaders.
 
-import torch
-from torch.utils.data import Dataset
-import pdb
+    Args:
+        root_dir:    Base dataset URL containing data split shards
+        split:       One of {train, valid}.
+        n_comp:      Number of compositions to use
+        cache_dir:   Cache directory to use
+        view_type:   Filter by view type [0: canonical views, 1: random views]
+    """
+    def __init__(self, root_dir="./data/", split="train", n_comp=1, cache_dir=None, view_type=-1):
+        if view_type not in [-1, 0, 1]:
+            raise RuntimeError("Invalid argument: view_type can only be [-1, 0, 1]")
+        if split not in ["train", "valid"]:
+            raise RuntimeError("Invalid split: [%s]." % split)
 
-class Compat3D:
-    def __init__(self, meta_file=None, data_folder=None):
-        """
-        Constructor of 3DCompat helper class for reading and visualizing annotations.
-        :param meta_file (str): location of meta file
-        :param data_folder (str): location to the folder that hosts data.
-        """
+        self.root_dir = os.path.normpath(root_dir)
 
-        df = pd.read_csv(osp.join(data_folder, "metadata/model.csv"))
+        self.cache_dir = cache_dir
+
+        self.view_type = view_type
+
+        df = pd.read_csv(osp.join(self.root_dir, "metadata/model.csv"))
         all_cats = list(set(df['model'].tolist()))
         all_classes = dict(zip(all_cats, range(len(all_cats))))
         id_to_cat = dict(zip(df['id'].tolist(), df['model'].tolist()))
@@ -89,19 +99,19 @@ class Compat3D:
         for key in df['id']:
             labels.append(all_classes[id_to_cat[key]])
     
-        self.data_folder = data_folder
         self.shape_ids = df['id'].tolist()
         self.labels = np.array(labels).astype('int64')
 
 
-    def load_raw_models(self, shape_id, sample_point=False):
+    def __getitem__(self, index, sample_point=False):
         """
         Get raw 3d shape given shape_id
         :param shape_id  (int)     : shape id
                sample_point  (bool)     : whether to sample points from 3D shape
         :return: a 3D unstylized models
         """
-        gltf_path = os.path.join(self.data_folder, 'raw_models', shape_id + '.glb')
+        shape_id = self.shape_ids[index]
+        gltf_path = os.path.join(self.root_dir, 'raw_models', shape_id + '.glb')
         mesh = trimesh.load(gltf_path)
 
         if not sample_point:
@@ -137,7 +147,21 @@ class Compat3D:
             return sample_xyz, sample_colors, sample_segment
 
 
-    def load_stylized_3d(self, shape_id, style_id, sample_point=False):
+class CompatLoader_stylized3D(CompatLoader3D):
+    """
+      Stylized 3D dataset loaders.
+
+      Args:
+          root_dir:    Base dataset URL containing data split shards
+          split:       One of {train, valid}.
+          n_comp:      Number of compositions to use
+          cache_dir:   Cache directory to use
+          view_type:   Filter by view type [0: canonical views, 1: random views]
+    """
+    def __init__(self, root_dir="./data/", split="train", n_comp=1, cache_dir=None, view_type=-1):
+        super().__init__(root_dir, split, n_comp, cache_dir, view_type)
+
+    def __getitem__(self, index, style_id, sample_point=False):
         """
         Get raw 3d shape given shape_id
         :param shape_id  (int)     : shape id
@@ -145,7 +169,8 @@ class Compat3D:
                sample_point  (bool)     : whether to sample points from 3D shape
         :return: a 3D stylized models
         """
-        gltf_path = os.path.join(self.data_folder, 'rendered_models/', shape_id,  shape_id + '_' + style_id + '.glb')
+        shape_id = self.shape_ids[index]
+        gltf_path = os.path.join(self.root_dir, 'rendered_models/', shape_id,  shape_id + '_' + style_id + '.glb')
         mesh = trimesh.load(gltf_path)
         
         
@@ -157,22 +182,5 @@ class Compat3D:
             return mesh
         else:
             pass
-
-
-    def load_stylized_2d(self, shape_id, style_id, view_id):
-        """
-        Get raw 3d shape given shape_id
-        :param shape_id  (int)     : shape id
-               style_id  (int)     : style id
-               view_id  (int)     : camera view id
-        :return: a 2d rendered image, class label, segmentation label
-        """
-        gltf_path = os.path.join(self.data_folder, 'canonical_views/', shape_id + '_' + style_id + '_' + view_id, 'Image0080.png')
-        image = plt.imread(gltf_path)
-        
-        # # TODO: 
-        # load part labels, material colors and labels
-        
-        return image
 
 
