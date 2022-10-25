@@ -8,6 +8,7 @@ Download our rendered images and put them in ./shards/ folder.
 
 ## 3. Training
 Run the following script:
+
 '''
 python main.py --num-workers 4 \
     --use-tmp \
@@ -24,6 +25,7 @@ python main.py --num-workers 4 \
     --view-type canonical \
     --use-pretrained \
 '''
+
 Params:
 	- n-comp indicates the number of selected compositions for each shape.
 	- view-type indicates the camera view type, choose from ['canonical', 'random', 'all'].
