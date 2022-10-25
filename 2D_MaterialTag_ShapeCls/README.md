@@ -26,7 +26,6 @@ Run the following script:
 	    --view-type canonical \
 	    --use-pretrained \
 
-
 Params:
 
 - n-comp indicates the number of selected compositions for each shape.
@@ -56,7 +55,6 @@ For example, "SCRT-CAN/SCRT_CAN_C16.sh" includes the script for training a ResNe
 	    --view-type canonical \
 	    --use-pretrained \
 	    --is-validation \
-
 
 
 | Model | Previous | Test| Pretrained|
@@ -94,7 +92,7 @@ Please check main_material.py for details about hyperparameters.
 
 
 ### 3.3 Evaluation and pretrained models
-
+Run the following script:
 
 	python main_material.py \
 		--data ./data \
@@ -111,8 +109,7 @@ Please check main_material.py for details about hyperparameters.
 
 | Model | Previous | Test| Pretrained|
 |--|--|--|--|
-|ResNet18|-| | [resnet18]() | 
-|ResNet50 | 76.82 | | [resnet50]() | 
+|ResNet50 | F1=0.53, AP=0.67 | | [resnet50]() | 
 
 
 ## License

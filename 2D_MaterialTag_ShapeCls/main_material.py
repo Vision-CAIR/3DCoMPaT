@@ -30,6 +30,7 @@ import os
 from glob import glob
 
 from mat_loader import MaterialDataset
+from compat2D import CompositionalLoader
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -203,21 +204,29 @@ def main_worker(gpu, ngpus_per_node, args):
     cudnn.benchmark = True
 
     # Data loading code
-    traindir = args.data
-    valdir = args.data
     # normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
     #                                  std=[0.229, 0.224, 0.225])
-
-    train_dataset = MaterialDataset(
-        traindir,
-        'train',
-        args.view,
-        transforms.Compose([
+    transforms = transforms.Compose([
             transforms.RandomResizedCrop(224),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             # normalize,
-        ]))
+        ])
+
+    # old dataloader
+    # train_dataset = MaterialDataset(
+    #     args.data, 'train', args.view, transforms=transforms
+    #     )
+    # val_dataset = MaterialDataset(
+    #     args.data, 'val', args.view, transforms=transforms
+    #     )
+
+    train_dataset = CompositionalLoader(
+        root_url=args.data, split="train", \
+        n_comp=args.n_comp, transform=transforms)
+    val_dataset = CompositionalLoader(
+        root_url=args.data, split="valid", \
+        n_comp=args.n_comp, transform=transforms)
 
     if args.distributed:
         train_sampler = torch.utils.data.distributed.DistributedSampler(train_dataset)
@@ -229,12 +238,7 @@ def main_worker(gpu, ngpus_per_node, args):
         num_workers=args.workers, pin_memory=True, sampler=train_sampler)
 
     val_loader = torch.utils.data.DataLoader(
-        MaterialDataset(valdir, 'val', args.view, transforms.Compose([
-            transforms.Resize(256),
-            transforms.CenterCrop(224),
-            transforms.ToTensor(),
-            # normalize,
-        ])),
+        val_dataset,
         batch_size=args.batch_size, shuffle=False,
         num_workers=args.workers, pin_memory=True)
 
@@ -405,6 +409,9 @@ def parse_args(argv):
     # dataset params
     parser.add_argument('data', metavar='DIR',
                         help='path to dataset')
+    parser.add_argument('--n-comp', type=int, required=True, default=1,
+                        help='Number of compositions per model to train with')
+
     parser.add_argument('--view', default=0, type=int,
                         help='Camera view renderings ')
 
