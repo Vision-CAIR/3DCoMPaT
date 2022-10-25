@@ -26,9 +26,11 @@ Run the following script:
 
 
 Params:
-	- n-comp indicates the number of selected compositions for each shape.
-	- view-type indicates the camera view type, choose from ['canonical', 'random', 'all'].
-	
+
+- n-comp indicates the number of selected compositions for each shape.
+
+- view-type indicates the camera view type, choose from ['canonical', 'random', 'all'].
+
 Please check main.py for details about hyperparameters.
 
 We also provide ready-to-use scripts for model training in ./scripts folder.
