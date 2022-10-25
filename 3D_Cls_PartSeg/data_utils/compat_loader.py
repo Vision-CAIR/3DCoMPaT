@@ -17,8 +17,6 @@ Reference: https://github.com/lightaime/deep_gcns_torch/tree/master/examples/mod
 class Compat(Dataset):
     """
     This is the data loader for ModelNet 40
-    ModelNet40 contains 12,311 meshed CAD models from 40 categories.
-
     num_points: 1024 by default
     data_dir
     paritition: train or test
@@ -84,19 +82,9 @@ def load_data(data_dir, partition):
     with h5py.File(h5_name, 'r') as f:
         data = f['pc'][:].astype('float32')
         seg = f['seg'][:].astype('int64')
-        id = f['id'][:].astype('str')
-        # seg = f['seg'][:].astype('int64')
-        # all_data.append(data)
-        # all_label.append(label)
-    # all_data = np.concatenate(all_data, axis=0)
-    # all_label = np.concatenate(all_label, axis=0).squeeze(-1)
-    # split = os.path.join(data_dir, 'compat', 'split.txt')
-    # number = 2011 + 82
-    return data, seg, id
-    # if partition=="train":
-    #     return data[:number], seg[:number], label[:number]
-    # else:
-    #     return data[number:], seg[number:], label[number:]
+        model_id = f['id'][:].astype('str')
+
+    return data, seg, model_id
 
 
 def translate_pointcloud(pointcloud):

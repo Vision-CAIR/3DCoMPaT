@@ -50,9 +50,7 @@ class CompatSeg(Dataset):
         label = self.label[item]
         feat = self.feat[item][idx]
         seg = self.seg[item][idx]
-        # if self.partition == 'train':
-        #     np.random.shuffle(pointcloud)
-        # out_dict = {'pts': pointcloud}
+
         pointcloud = torch.from_numpy(pointcloud)
         feat = torch.from_numpy(feat)
         seg = torch.from_numpy(seg)
@@ -84,18 +82,8 @@ def load_data(data_dir, partition):
         seg = np.array(f['seg'][:]).astype('int64')
         color = np.array(f['color']).astype('float32')
         model_id = f['id'][:].astype('str')
-        # seg = f['seg'][:].astype('int64')
-        # all_data.append(data)
-        # all_label.append(label)
-    # all_data = np.concatenate(all_data, axis=0)
-    # all_label = np.concatenate(all_label, axis=0).squeeze(-1)
-    # split = os.path.join(data_dir, 'compat', 'split.txt')
-    # number = 2011 + 82
+        
     return data, seg, color, model_id
-    # if partition=="train":
-    #     return data[:number], seg[:number], label[:number]
-    # else:
-    #     return data[number:], seg[number:], label[number:]
 
 
 # @DATASETS.register_module()
@@ -103,7 +91,6 @@ class CompatSegCls(Dataset):
 
     """
     This is the data loader for ModelNet 40
-    ModelNet40 contains 12,311 meshed CAD models from 40 categories.
 
     num_points: 1024 by default
     data_dir
@@ -132,25 +119,11 @@ class CompatSegCls(Dataset):
         idx = np.random.choice(5000, self.num_points, False)
         pointcloud = self.data[item][idx]
         label = self.label[item]
-        # feat = self.feat[item][idx]
         seg = self.seg[item][idx]
-
-        # if self.partition == 'train':
-        #     np.random.shuffle(pointcloud)
-        # out_dict = {'pts': pointcloud}
         pointcloud = torch.from_numpy(pointcloud)
-        # feat = torch.from_numpy(feat)
         feat = self.eye[label,].repeat(pointcloud.shape[0], 1)
         seg = torch.from_numpy(seg)
-        # label = torch.tensor(label)
         return pointcloud, feat, seg
-
-    # def to_categorical(y, num_classes):
-    #     """ 1-hot encodes a tensor """
-    #     new_y = torch.eye(num_classes)[y.cpu().data.numpy(),]
-    #     if (y.is_cuda):
-    #         return new_y.cuda()
-    #     return new_y
 
     def __len__(self):
         return self.data.shape[0]

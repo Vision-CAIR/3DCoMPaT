@@ -103,7 +103,7 @@ class CompatLoader3D(Dataset):
         self.labels = np.array(labels).astype('int64')
 
 
-    def __getitem__(self, index, sample_point=False):
+    def __getitem__(self, index, sample_point=True):
         """
         Get raw 3d shape given shape_id
         :param shape_id  (int)     : shape id
