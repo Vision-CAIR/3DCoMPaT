@@ -3,10 +3,12 @@
 ## 1. Introduction
 For both 2D shape classification and 2D material tagging, we train ResNet50 models on rendered images.
 
-## 2. Dataset Preparation
+## 2. 2D Shape Classification
+
+### 2.1 Dataset Preparation
 Download our rendered images and put them in ./shards/ folder.
 
-## 3. Training
+### 2.2 Training
 Run the following script:
 
 	python main.py --num-workers 4 \
@@ -36,7 +38,7 @@ Please check main.py for details about hyperparameters.
 We also provide ready-to-use scripts for model training in ./scripts folder.
 For example, "SCRT-CAN/SCRT_CAN_C16.sh" includes the script for training a ResNet50 model from scratch using 16 compositions of rendered images from canonical views.
 
-## 4. Evaluation and pretrained models
+### 2.3 Evaluation and pretrained models
 
 
 	python main.py --num-workers 4 \
@@ -55,6 +57,56 @@ For example, "SCRT-CAN/SCRT_CAN_C16.sh" includes the script for training a ResNe
 	    --use-pretrained \
 	    --is-validation \
 
+
+
+| Model | Previous | Test| Pretrained|
+|--|--|--|--|
+|ResNet18|-| | [resnet18]() | 
+|ResNet50 | 76.82 | | [resnet50]() | 
+
+
+## 3 Material Tagging
+
+### 3.1 Dataset Preparation
+To be updated.
+
+### 3.2 Training
+Run the following script:
+
+	python main_material.py \
+		--data ./data \
+		--view -1 \
+		--arch resnet50 \
+		--workers 4 \
+		--epochs 20 \
+		--batch-size 256 \
+		--learning-rate 0.1 \
+		--print-freq 10 \
+		--pretrained True \
+
+Params:
+
+- arch indicates the model used for material tagging provided in torchvision.
+
+- view indicates the camera view type, choose from ['canonical', 'random', 'all'].
+
+Please check main_material.py for details about hyperparameters.
+
+
+### 3.3 Evaluation and pretrained models
+
+
+	python main_material.py \
+		--data ./data \
+		--view -1 \
+		--arch resnet50 \
+		--workers 4 \
+		--epochs 20 \
+		--batch-size 256 \
+		--learning-rate 0.1 \
+		--print-freq 10 \
+		--pretrained True \
+		--evaluate
 
 
 | Model | Previous | Test| Pretrained|
