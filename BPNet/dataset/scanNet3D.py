@@ -121,10 +121,6 @@ class ObjectDataset(Dataset):
         idx = np.random.choice(np.arange(0, part_pc.shape[0]), self.n_points,
                                replace=self.n_points > part_pc.shape[0])
         model_ids = self.model_ids[index]
-        # return {
-        #     'pc': pc_normalize(part_pc[idx]),
-        #     'label': self.part_label_to_idx[part_pc_label], # TODO-5 uncomment this line
-        # }
         return pc_normalize(part_pc[idx]), self.part_label_to_idx[part_pc_label], segment[idx], model_ids
 
     def __len__(self):
