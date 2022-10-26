@@ -1,6 +1,20 @@
 # This folder includes the code for the 2D/3D *Grounded CoMPaT Recognition (GCR)* Task.
 
 ![image](./imgs/fig_GCR.png)
+## 0. Environment
+To run BPNet successfully, please follow the setting on this environment
+```
+# Torch
+$ pip install torch==1.4.0+cu100 torchvision==0.5.0+cu100 -f https://download.pytorch.org/whl/torch_stable.html
+# MinkowskiEngine 0.4.1
+$ conda install numpy openblas
+$ git clone https://github.com/StanfordVL/MinkowskiEngine.git
+$ cd MinkowskiEngine
+$ git checkout f1a419cc5792562a06df9e1da686b7ce8f3bb5ad
+$ python setup.py install
+# Others
+$ pip install imageio==2.8.0 opencv-python==4.2.0.32 pillow==7.0.0 pyyaml==5.3 scipy==1.4.1 sharedarray==3.2.0 tensorboardx==2.0 tqdm==4.42.1
+```
 
 ## 1. Data Preparation
 - Please download the data associated with 3d compat by filling this form. 
@@ -82,7 +96,16 @@ If you find this work useful in your research, please consider citing:
     title={3D CoMPaT: Composition of Materials on Parts of 3D Things (ECCV 2022)},
     author={Yuchen Li, Ujjwal Upadhyay, Habib Slim, Ahmed Abdelreheem, Arpit Prajapati, Suhail Pothigara, Peter Wonka, Mohamed Elhoseiny},
     journal = {ECCV},
-    volume = {XXXX},
     year={2022}
 }
+```
+for BPNet
+
+```
+@inproceedings{hu-2021-bidirectional,
+        author      = {Wenbo Hu, Hengshuang Zhao, Li Jiang, Jiaya Jia and Tien-Tsin Wong},
+        title       = {Bidirectional Projection Network for Cross Dimensional Scene Understanding},
+        booktitle   = {CVPR},
+        year        = {2021}
+    }
 ```

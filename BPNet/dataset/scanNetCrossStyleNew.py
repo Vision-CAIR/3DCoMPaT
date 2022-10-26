@@ -347,7 +347,6 @@ class ScanNetCross(ScanNet3D):
                 t_2d.Normalize(mean=mean, std=std)])
 
     def get_model_ids(self):
-        # test_dir = '/ibex/scratch/liy0r/cvpr/BPNet/'
         df = pd.read_csv("data/model.csv")
         part_index = dict(zip(df['id'].tolist(), df['model'].tolist()))
         cat = sorted(list(set(df['model'].tolist())))
@@ -372,18 +371,13 @@ class ScanNetCross(ScanNet3D):
             locs, feats, labels = self.input_transforms(locs, feats, labels)
         mat_3d = labels.copy()
         try:
-            # style = np.vectorize(part_bb.get)(style).astype(np.int_)
             mat_3d = np.vectorize(part13.get)(mat_3d).astype(np.int_)
-            # if there are some wrong labels put it into style none 0
             mat_3d = np.where((mat_3d is not None) | (mat_3d < 15), mat_3d, 0).astype(np.int_)
         except:
-            # print("===========mat change fails=================")
-            # print(label_ads)
             u, inv = np.unique(mat_3d, return_inverse=True)
             part13 = defaultdict(int, part13)
             mat_3d = np.array([part13[x] for x in u])[inv].reshape(mat_3d.shape).astype(np.int_)
             mat_3d = np.where((mat_3d is not None) | (mat_3d < 15), mat_3d, 0).astype(np.int_)
-        # print(mat_3d.shape)
         coords = torch.from_numpy(locs).int()
         coords = torch.cat((torch.ones(coords.shape[0], 1, dtype=torch.int), coords), dim=1)
         feats = torch.from_numpy(feats).float() / 127.5 - 1.
@@ -403,10 +397,7 @@ class ScanNetCross(ScanNet3D):
                     links: Nx4xV(1,H,W,mask) Tensor
 
 d        """
-        # frames_path = self.data2D_paths[room_id]
-        # partial = int(len(frames_path) / self.VIEW_NUM)
         imgs, labels, links, materials = [], [], [], []
-        # print(self.json_paths[room_id])
         seg = json.load(open(self.json_paths[room_id]))
         seg1 = {}
 
@@ -432,13 +423,10 @@ d        """
                         if part_name not in self.part_index:
                             part_name = "none"
                             print("doesn't find part names files of {}".format(g_name))
-                # part_name = 'none'
             seg1[seg[i]] = self.part_classes[part_name]
-        # df = pd.read_csv(self.mat_map[room_id])
-        if 260 in seg1:
+        if 260 in seg1: # This is because that the rgb channel only has 255
             seg1[255] = seg1[260]
         df = self.part_mat[name.split('/')[-2][:-2]]
-        # Get the material names
         part13 = {}
         part13[self.part_classes['none']] = mat_id['none']
         for i in df:
