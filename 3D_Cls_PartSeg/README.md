@@ -11,10 +11,10 @@ conda install pytorch==1.7.0 cudatoolkit=10.1 -c pytorch
 ```
 
 ## 2. Data Preparation
-
 Run the following script to prepare point cloud data.
-
+```shell
   python prepare_data.py
+```
 
 Or you can directly download our preprocessed data [3DCoMPaT](https://drive.google.com/drive/folders/1ZeX7sXaaumjaeI9UWrFAoHz8DO_ZcN-J?usp=sharing) and save in `data/`.
 
