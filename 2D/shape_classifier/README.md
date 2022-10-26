@@ -64,6 +64,5 @@ To be updated.
 
 | Model | Previous | Test| Pretrained|
 |--|--|--|--|
-|ResNet18|-| | [resnet18]() | 
-|ResNet50 | 76.82 | | [resnet50]() | 
+|ResNet50 | 76.82 | | [resnet50](https://drive.google.com/file/d/1o9cQieZByHb11Wo7lNyLWbwEuBNcrrfB/view?usp=sharing) | 
 
