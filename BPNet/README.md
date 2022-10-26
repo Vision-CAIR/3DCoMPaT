@@ -69,8 +69,6 @@ For Example, we evaluate  10 compositions with:
 
 <div id="Mark"></div>
 
-## 4. GCR using PointGroup
-To be updated.
 
 ## License
 This code is released under MIT License (see LICENSE file for details). In simple words, if you copy/use parts of this code please keep the copyright note in place.
