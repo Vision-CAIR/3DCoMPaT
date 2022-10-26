@@ -6,7 +6,8 @@ import numpy as np
 from sklearn import metrics
 from sklearn.metrics import confusion_matrix
 
-def_eval_3D_Shape_Cls(pred_file, gt_file):
+
+def eval_3D_Shape_Cls(pred_file, gt_file):
     """
     Evaluation function for 3D shape classification
 
@@ -30,7 +31,7 @@ def_eval_3D_Shape_Cls(pred_file, gt_file):
     return instance_acc, class_avg_acc
 
 
-def_eval_3D_Part_Seg(pred_file, gt_file):
+def eval_3D_Part_Seg(pred_file, gt_file):
     """
     Evaluation function for 3D shape classification
 
@@ -52,7 +53,7 @@ def_eval_3D_Part_Seg(pred_file, gt_file):
     class_acc = np.array([cf_mat[i,i]/cf_mat[i,:].sum() for i in range(len(label_values))])
     return instance_acc, class_acc
 
-def_eval_2D_Shape_Cls(pred_file, gt_file):
+def eval_2D_Shape_Cls(pred_file, gt_file):
     """
     Evaluation function for 2D shape classification
 
@@ -74,7 +75,7 @@ def_eval_2D_Shape_Cls(pred_file, gt_file):
     class_acc = np.array([cf_mat[i,i]/cf_mat[i,:].sum() for i in range(len(label_values))])
     return instance_acc, class_acc
 
-def_eval_2D_Material_Tagging(pred_file, gt_file):
+def eval_2D_Material_Tagging(pred_file, gt_file):
     """
     Evaluation function for 3D shape classification
 
@@ -93,7 +94,7 @@ def_eval_2D_Material_Tagging(pred_file, gt_file):
     prec = metrics.average_precision_score(y_true, y_pred)
     return f1, prec
 
-def_eval_2D_Material_Seg(pred_file, gt_file):
+def eval_2D_Material_Seg(pred_file, gt_file):
     """
     Evaluation function for 3D shape classification
 
@@ -115,7 +116,7 @@ def_eval_2D_Material_Seg(pred_file, gt_file):
 
     return f1, prec, mIoU
 
-def_eval_3D_Material_Seg(pred_file, gt_file):
+def eval_3D_Material_Seg(pred_file, gt_file):
     """
     Evaluation function for 3D shape classification
 
@@ -136,7 +137,7 @@ def_eval_3D_Material_Seg(pred_file, gt_file):
 
     return f1, prec, mIoU
 
-def_eval_GCR_3D(pred_file, gt_file):
+def eval_GCR_3D(pred_file, gt_file):
     """
     Evaluation function for 3D shape classification
 
