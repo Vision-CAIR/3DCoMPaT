@@ -115,7 +115,7 @@ class CompatLoader3D(Dataset):
         mesh = trimesh.load(gltf_path)
 
         if not sample_point:
-            return mesh
+            return shape_id, mesh
         else:
             v = []
             segment = []
@@ -144,7 +144,7 @@ class CompatLoader3D(Dataset):
             sample_colors = np.zeros_like(sample_xyz)
             sample_segment = np.concatenate(segment)[sample_id]
 
-            return sample_xyz, sample_colors, sample_segment
+            return shape_id, sample_xyz, sample_colors, sample_segment
 
 
 class CompatLoader_stylized3D(CompatLoader3D):
@@ -203,7 +203,7 @@ class CompatLoader_stylized3D(CompatLoader3D):
             sample_colors = np.zeros_like(sample_xyz)
             sample_segment = np.concatenate(segment)[sample_id]
 
-            return sample_xyz, sample_colors, sample_segment
+            return shape_id, sample_xyz, sample_colors, sample_segment
 
 class GCRLoader3D(CompatLoader3D):
     """
