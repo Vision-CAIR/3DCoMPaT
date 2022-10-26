@@ -26,7 +26,8 @@ def_eval_3D_Shape_Cls(pred_file, gt_file):
 
     instance_acc = sum([cf_mat[i,i] for i in range(len(label_values))])/len(y_true)
     class_acc = np.array([cf_mat[i,i]/cf_mat[i,:].sum() for i in range(len(label_values))])
-    return instance_acc, class_acc
+    class_avg_acc = np.mean(class_acc)
+    return instance_acc, class_avg_acc
 
 
 def_eval_3D_Part_Seg(pred_file, gt_file):
@@ -145,4 +146,4 @@ def_eval_GCR_3D(pred_file, gt_file):
     """
     # To be updated
 
-    return f1, prec, mIoU
+    return None
