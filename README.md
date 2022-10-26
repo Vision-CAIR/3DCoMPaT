@@ -1,34 +1,44 @@
 # 3D CoMPaT: Composition of Materials on Parts of 3D Things (ECCV 2022)
-[Website Badge](https://3dcompat-dataset.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+<div align="center">
+
+[![Project Page](https://img.shields.io/badge/Project%20Page-red)](https://3dcompat-dataset.org/)
+[![Python](https://img.shields.io/badge/Python-3.7.0-blue?logo=python&logoColor=white)](https://www.python.org/)
+
+<!-- [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT) -->
+
+
+\[[Paper](https://3dcompat-dataset.org/pdf/paper.pdf)\] \[[Supplementary](https://3dcompat-dataset.org/pdf/supplementary.pdf)\] \[[Poster](https://3dcompat-dataset.org/pdf/poster.pdf)\] \[[Video](https://www.youtube.com/watch?v=DT6I1EYqzis)\]
 
 <!--[![arXiv](https://img.shields.io/badge/arXiv-1234.56789-b31b1b.svg?style=plastic)]-->
 Created by: [Yuchen Li](http://liyc.tech/), [Ujjwal Upadhyay](https://ujjwal9.com/), [Habib Slim](https://habibslim.github.io/), [Ahmed Abdelreheem](https://samir55.github.io/), [Arpit Prajapati](https://www.polynine.com/), [Suhail Pothigara](https://www.polynine.com/), [Peter Wonka](https://peterwonka.net/), [Mohamed Elhoseiny](http://www.mohamed-elhoseiny.com/)
+</div>
 
 [![image](https://user-images.githubusercontent.com/38585175/182629905-812f1c6f-8906-4485-9710-760cff150df1.png)](https://www.youtube.com/watch?v=DT6I1EYqzis)
 
 ## Code release progress
-- [x] Add codes and pretrained models for 3D Shape and Part Classification tasks
-- [x] Add codes and pretrained models for Sim2Real Transferring tasks
+- [x] Add code and pretrained models for 3D Shape and Part Classification tasks
+- [x] Add code and pretrained models for Sim2Real Transfer tasks
 - [x] Add data-API and evaluation code
-- [x] Add codes for 2D Material Tagging/Shape Classification
+- [x] Add code for 2D Material Tagging/Shape Classification
 - [ ] Add pretrained models for 2D Material Tagging/Shape Classification
-- [x] Add codes for 2D/3D Material Segmentation tasks
+- [x] Add code for 2D/3D Material Segmentation tasks
 - [ ] Add pretrained models for 2D/3D Material Segmentation tasks
-- [x] Add codes and pretrained models for BPNet
-- [ ] Add codes and pretrained models for PointGroup
+- [x] Add code and pretrained models for BPNet
+- [ ] Add code and pretrained models for PointGroup
 
 ## Introduction
 This work is based on the arXiv tech report which is provisionally accepted in ECCV-2022, for an Oral presentation. 
 
 ## Dataset
-To get the most out of the github repository, please download the data associated with 3d compat by filling this [form](https://docs.google.com/forms/d/e/1FAIpQLSeOxWVkVNdXz-nCfFIWOeOARc_Atk9fi5PSIKw1Ib1cr3ENpA/viewform?fbzx=-7103523806700241333).
+To get the most out of this repository, please download the 3DCoMPaT dataset by filling this [form](https://docs.google.com/forms/d/e/1FAIpQLSeOxWVkVNdXz-nCfFIWOeOARc_Atk9fi5PSIKw1Ib1cr3ENpA/viewform?fbzx=-7103523806700241333).
 
 ## Browser
 You can browse the 3D models using the following link: [3D CoMPaT Browser](http://54.235.12.220:50/index.html)
 
 ## Compositional Benchmarks
+
 - [BPNet](./BPNet)
+
 - [PointGroup](./PointGroup)
 
 ## Non-Compositional Benchmarks
@@ -40,9 +50,6 @@ You can browse the 3D models using the following link: [3D CoMPaT Browser](http:
 - [2D/3D Material Segmentation](./BPNet/#Mark)
 
 - [2D Material Tagging/ Shape Classification](./2D_MaterialTag_ShapeCls)
-
-## License
-This code is released under MIT License (see LICENSE file for details). In simple words, if you copy/use parts of this code please keep the copyright note in place.
 
 ## Citation
 If you find this work useful in your research, please consider citing:
