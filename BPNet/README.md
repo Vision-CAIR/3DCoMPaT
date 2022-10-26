@@ -21,7 +21,7 @@ $ pip install imageio==2.8.0 opencv-python==4.2.0.32 pillow==7.0.0 pyyaml==5.3 s
 - We defaultly stored the dataset in `3dcompat/` (2D Images in `3dcompat/image/`, 3d Point Cloud in `3dcompat/pc/`)  
 You can also modify the `data_root` and `data_root2d` in the config files (e.g. `config/compat/bpnet_10.yaml`)
 
-- For the efficiency of the datanet, we prvoide the point clouds generated from the 3dcompat models. The processing of how we generate the data is from this file `util/glb2pc.py`. You can also generate the point cloud from models in your sides
+- For the efficiency of the datanet, we prvoide the point clouds generated from the 3dcompat models. The processing of how we generate the data is from this file `prepare_3d_data/GLB2PC-NonStyle.py`. You can also generate the point cloud from models in your sides
 ## 2. 2D/3D Material Segmentation using BPNet (non-compositional)
 
 For the non-compositional material segmentation results, we build from origin BPNet.
