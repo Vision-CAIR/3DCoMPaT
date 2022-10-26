@@ -46,11 +46,11 @@ You can browse the 3D models using the following link: [3D CoMPaT Browser](http:
 
 - [3D Shape and Part Classification](./3D_Cls_PartSeg)
 
-- [Sim2Real Transferring](./3D_Cls_PartSeg)
+- [Sim2Real Transfer](./3D_Cls_PartSeg)
 
 - [2D/3D Material Segmentation](./BPNet/#Mark)
 
-- [2D Material Tagging/ Shape Classification](./2D_MaterialTag_ShapeCls)
+- [2D Material Tagging/ Shape Classification](./2D/)
 
 ## Citation
 If you find this work useful in your research, please consider citing:

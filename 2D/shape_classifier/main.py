@@ -14,7 +14,6 @@ import torchvision.transforms as T
 import wandb
 
 from datetime import timedelta
-from torch.optim import lr_scheduler
 from torchvision import models
 from torch.nn.parallel import DataParallel
 
@@ -44,14 +43,13 @@ def parse_args(argv):
                         help='Use local temporary cache when loading the dataset (default=%(default)s)')
 
     # data args
-    parser.add_argument('--exp-name', type=str, required=True,
-                        help='Experiment name')
-    parser.add_argument('--exp-tag', type=str, required=True,
-                        help='Experiment tag')
     parser.add_argument('--root-url', type=str, required=True,
                         help='Root URL for WebDataset shards (default=%(default)s)')
-    parser.add_argument('--models-dir', type=str, required=True,
-                        help='Model directory to use to save models (default=%(default)s)')
+    parser.add_argument('--n-comp', type=int, required=True,
+                        help='Number of compositions per model to train with')
+    parser.add_argument('--view-type', type=str, default='all',
+                        choices=['canonical', 'random', 'all'],
+                        help='Train on a specific view type (default=%(default)s)')
 
     # training args
     parser.add_argument('--batch-size', default=32, type=int, required=False,
@@ -63,7 +61,7 @@ def parse_args(argv):
 
     parser.add_argument('--nbatches', default=4000, type=int, required=True,
                         help='Maximum number of batches to see per session (default=%(default)s)')
-    parser.add_argument('--num-classes', type=int, required=True,
+    parser.add_argument('--num-classes', default=43, type=int, required=False,
                         help='Number of classes to train with')
     parser.add_argument('--patience', type=int, default=3, required=False,
                         help='Use patience while training (default=%(default)s)')
@@ -73,14 +71,12 @@ def parse_args(argv):
     parser.add_argument('--resnet-type', default='resnet18', type=str, required=True,
                         choices=['resnet18', 'resnet50'],
                         help='ResNet variant to be used for training (default=%(default)s)')
-    
-    parser.add_argument('--n-comp', type=int, required=True,
-                        help='Number of compositions per model to train with')
     parser.add_argument('--use-pretrained', action='store_true',
                         help='Use a model pre-trained on ImageNet (default=%(default)s)')
-    parser.add_argument('--view-type', type=str, default='all',
-                        choices=['canonical', 'random', 'all'],
-                        help='Train on a specific view type (default=%(default)s)')
+
+
+    parser.add_argument('--models-dir', type=str, required=True,
+                        help='Model directory to use to save models (default=%(default)s)')
 
     args = parser.parse_args(argv)
     args.view_type = -1 if args.view_type == 'all' else ['canonical', 'random'].index(args.view_type)
@@ -123,12 +119,6 @@ def run_training(args):
     """
     Main training routine.
     """
-
-    wandb.init(project = "3DCompat",
-               entity  = "habibslim",
-               name    = args.exp_name,
-               tags    = [args.exp_tag])
-    wandb.config.update(args)
 
     # Fixing random seed
     utils.seed_everything(args.seed)
@@ -195,7 +185,7 @@ def run_training(args):
     test_loader = (
         ShapeLoader(root_url  = args.root_url,
                     split     = "test",
-                    n_comp    = 20,
+                    n_comp    = args.n_comp,
                     cache_dir = '/tmp/' if args.use_tmp else None,
                     view_type = args.view_type,
                     transform = test_transforms)
