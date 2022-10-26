@@ -65,11 +65,6 @@ def unpickle_data(file_name):
     return dic
 
 
-
-
-
-
-
 def get_bounding_box_part(file_name):
     """
     Get bounding box of corresponding image and part names

@@ -18,7 +18,7 @@ class MaterialDataset(Dataset):
 
         assert view is not None
         # Read the splits
-        splits = next(unpickle_data(os.path.join(data_dir, 'dataset_v1.pkl')))
+        splits = next(unpickle_data(os.path.join(data_dir, 'dataset_v1.pickle')))
         train_model_ids = splits['train']
         test_model_ids = splits['test']
         val_model_ids = splits['val']
