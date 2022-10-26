@@ -181,7 +181,34 @@ class CompatLoader_stylized3D(CompatLoader3D):
         if not sample_point:
             return mesh
         else:
-            pass
+            v = []
+            segment = []
+            for g_name, g_mesh in mesh.geometry.items():
+                g_name = g_name.lower()
+                if g_name in part_to_idx:
+                    # Glb name is same as defined
+                    part_name = g_name
+                elif g_name in part_index:
+                    # Glb name is different from defined. We regulated the name.
+                    part_name = part_index[g_name]
+                else:
+                    # If there are still some incorrect one.
+                    part_name = g_name.split('_')[0]
+                    if part_name not in classes:
+                        part_name = difflib.get_close_matches(g_name, parts)[0]
+                # Add the vertex
+                v.append(g_mesh)
+                # Add the segmentation Labels
+                segment.append(np.full(g_mesh.faces.shape[0], part_to_idx[part_name]))
+            combined = trimesh.util.concatenate(v)
+
+            sample_xyz, sample_id = trimesh.sample.sample_surface(combined, count=5000)
+            # sample_xyz = pc_normalize(sample_xyz)
+            # If there are no style models, color info set as zero
+            sample_colors = np.zeros_like(sample_xyz)
+            sample_segment = np.concatenate(segment)[sample_id]
+
+            return sample_xyz, sample_colors, sample_segment
 
 class GCRLoader3D(CompatLoader3D):
     """
