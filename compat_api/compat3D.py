@@ -173,11 +173,6 @@ class CompatLoader_stylized3D(CompatLoader3D):
         gltf_path = os.path.join(self.root_dir, 'rendered_models/', shape_id,  shape_id + '_' + style_id + '.glb')
         mesh = trimesh.load(gltf_path)
         
-        
-        # # TODO: 
-        # 1. unable to load mesh
-        # 2. load part labels, material colors and labels
-        
         if not sample_point:
             return mesh
         else:
@@ -235,11 +230,7 @@ class GCRLoader3D(CompatLoader3D):
         gltf_path = os.path.join(self.root_dir, 'rendered_models/', shape_id,  shape_id + '_' + style_id + '.glb')
         mesh = trimesh.load(gltf_path)
         
-        
-        # # TODO: 
-        # 1. unable to load mesh
-        # 2. load part labels, material colors and labels
-        
+
         if not sample_point:
             return mesh
         else:
