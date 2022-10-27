@@ -11,8 +11,6 @@ import torch.nn as nn
 import torch.optim as optim
 import torchvision.transforms as T
 
-import wandb
-
 from datetime import timedelta
 from torchvision import models
 from torch.nn.parallel import DataParallel
@@ -230,11 +228,6 @@ def run_training(args):
             top1_avg = 100 * (float(total_top1_hits) / N)
             top5_avg = 100 * (float(total_top5_hits) / N)
 
-            wandb.log({"batch": n_batch,
-                       "train_loss": float(loss.item()),
-                       "top1_train_acc": top1_avg,
-                       "top5_train_acc": top5_avg})
-
             ## Making a checkpoint
             if n_batch % 1000 == 0:
                 saved_model = os.path.join(args.models_dir, "%s_batch_%d.ckpt" % (args.resnet_type, n_batch))
@@ -251,10 +244,6 @@ def run_training(args):
                     "state_dict": model.state_dict()
                 }
                 torch.save(state, saved_model)
-
-                wandb.log({"batch": n_batch,
-                           "top1_test_acc": top1_test_acc,
-                           "top5_test_acc": top5_test_acc})
 
             n_batch += 1
             scheduler.step()
