@@ -69,12 +69,12 @@ class BboxEval:
         return acc, value, value_all, gnd_value, gnd_value_all
 
     # Evaluation on all predictions and GTs
-    def eval_GCR(pred_objs, pred_parts, pred_mats, gt_objs, gt_parts, gt_mats, part2mat, model_ids):
+    def eval_GCR(pred_objs, pred_parts, pred_mats, gt_objs, gt_parts, gt_mats, part2mats, model_ids):
         '''
         Provide a list of predictions and GTs
         '''
         print('########## Start GRC Evaluation ##########')
-        for pred_obj, pred_part, pred_mat, gt_obj, gt_part, gt_mat, model_id in zip(pred_objs.cpu().numpy(), pred_parts.cpu().numpy(), pred_mats.cpu().numpy(), gt_objs.cpu().numpy(), gt_parts.cpu().numpy(), gt_mats.cpu().numpy(), model_ids.cpu().numpy()):
+        for pred_obj, pred_part, pred_mat, gt_obj, gt_part, gt_mat, part2mat, model_id in zip(pred_objs.cpu().numpy(), pred_parts.cpu().numpy(), pred_mats.cpu().numpy(), gt_objs.cpu().numpy(), gt_parts.cpu().numpy(), gt_mats.cpu().numpy(), part2mats.cpu().numpy(), model_ids.cpu().numpy()):
 
             pred_part_list = np.unique(pred_part)
             pred_mat_list = np.unique(pred_mat)
@@ -82,13 +82,14 @@ class BboxEval:
             gt_part_list = np.unique(gt_mat)
 
             self.update(pred_obj, pred_mat_list, pred_part_list, pred_part,  pred_mat, gt_obj, gt_mat_list, gt_part_list, gt_part, gt_mat, part2mat, model_id)
-
-        self.eval_all()
         print('########## End GCR Evaluation ##########')
+        acc, value, value_all, gnd_value, gnd_value_all = self.eval_all()
+        return acc, value, value_all, gnd_value, gnd_value_all
+        
 
     # add data items
     def update(self, pred_obj, pred_mat, pred_part, pred_bboxes, pred_bboxesmat, \
-            gt_obj, gt_mat, gt_part, gt_bboxes, gt_bboxesmat, part13, model_id):
+            gt_obj, gt_mat, gt_part, gt_bboxes, gt_bboxesmat, part_2_mats, model_id):
         '''
         pred_obj: predicted objec category
         pred_mat: predicted list of material categories
@@ -100,7 +101,7 @@ class BboxEval:
         '''
 
         order = gt_part
-        part_mat=part13[0]
+        part_2_mat=part_2_mat2[0]
         self.all_objs += 1.0  # total number of obj
         self.per_obj_occ[gt_obj] += 1.0  # how is obj distributed in the dataset
         self.per_obj_occ_bboxes[gt_obj] += 1.0
@@ -139,7 +140,7 @@ class BboxEval:
         for i, part in enumerate(gt_part):
             #compute matrix of value and value all
             if part in pred_part:
-                correct_mat=part_mat[part]
+                correct_mat=part_2_mat[part]
                 if correct_mat in pred_mat:
                     self.per_obj_parts_correct[gt_obj] += 1.0
                     value.append(1)
@@ -149,7 +150,7 @@ class BboxEval:
             #compute matrix of gnd-value and gnd value all
             if part in pred_part:
                 vit = True
-                correct_mat = part_mat[part]
+                correct_mat = part_2_mat[part]
                 if correct_mat in pred_mat:
                     if part in part_id and correct_mat in mat_id:
                         self.per_obj_parts_correct_bboxes[gt_obj] += 1.0
