@@ -4,6 +4,7 @@ from collections import defaultdict
 import numpy as np
 import pdb
 
+
 class BboxEval:
     def __init__(self, shape='top1'):
         self.shape = shape
@@ -62,18 +63,42 @@ class BboxEval:
             total_value_all += 1.0
         return sum_value_all / total_value_all
 
+    # return all evaluation metrics
+    def eval_all(self):
+        acc, value, value_all, gnd_value, gnd_value_all = self.obj(), self.value(), self.value_all(), self.value_bbox(), self.value_all_bbox()
+        return acc, value, value_all, gnd_value, gnd_value_all
+
+    # Evaluation on all predictions and GTs
+    def eval_GCR(pred_objs, pred_parts, pred_mats, gt_objs, gt_parts, gt_mats, part2mat, model_ids):
+        '''
+        Provide a list of predictions and GTs
+        '''
+        print('########## Start GRC Evaluation ##########')
+        for pred_obj, pred_part, pred_mat, gt_obj, gt_part, gt_mat, model_id in zip(pred_objs.cpu().numpy(), pred_parts.cpu().numpy(), pred_mats.cpu().numpy(), gt_objs.cpu().numpy(), gt_parts.cpu().numpy(), gt_mats.cpu().numpy(), model_ids.cpu().numpy()):
+
+            pred_part_list = np.unique(pred_part)
+            pred_mat_list = np.unique(pred_mat)
+            gt_mat_list = np.unique(gt_part)
+            gt_part_list = np.unique(gt_mat)
+
+            self.update(pred_obj, pred_mat_list, pred_part_list, pred_part,  pred_mat, gt_obj, gt_mat_list, gt_part_list, gt_part, gt_mat, part2mat, model_id)
+
+        self.eval_all()
+        print('########## End GCR Evaluation ##########')
+
     # add data items
     def update(self, pred_obj, pred_mat, pred_part, pred_bboxes, pred_bboxesmat, \
             gt_obj, gt_mat, gt_part, gt_bboxes, gt_bboxesmat, part13, model_id):
         '''
         pred_obj: predicted objec category
-        pred_mat: predicted material category of all points
+        pred_mat: predicted list of material categories
         pred_part: predicted list of part categories
         pred_bboxes: predicted part segmetation labels for all points
         pred_bboxesmat: predicted material segmetation labels for all points
         part13: ground truth part to material mapping
         model_id: model id
         '''
+
         order = gt_part
         part_mat=part13[0]
         self.all_objs += 1.0  # total number of obj
