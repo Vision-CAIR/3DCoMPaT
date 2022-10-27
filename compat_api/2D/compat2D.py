@@ -9,6 +9,15 @@ import webdataset as wds
 COMPAT_ID = lambda x:x
 
 
+def mask_compose(custom_transform):
+    """
+    Base segmentation mask transformation.
+    """
+    def transform(mask):
+        return custom_transform(mask*255)
+    return transform
+
+
 class CompatLoader2D:
     """
     Base class for 2D dataset loaders.
@@ -129,11 +138,11 @@ class SegmentationLoader(CompatLoader2D):
     """
 
     def __init__(self, root_url, split, n_comp, cache_dir=None, view_type=-1,
-                    transform=COMPAT_ID, mask_transform = COMPAT_ID,
-                    code_transform = COMPAT_ID):
+                    transform=COMPAT_ID, mask_transform=COMPAT_ID,
+                    code_transform=COMPAT_ID):
         super().__init__(root_url, split, n_comp, cache_dir, view_type, transform)
 
-        self.mask_transform = mask_transform
+        self.mask_transform = mask_compose(mask_transform)
         self.code_transform = code_transform
 
 
@@ -178,11 +187,11 @@ class GCRLoader(CompatLoader2D):
     """
 
     def __init__(self, root_url, split, n_comp, cache_dir=None, view_type=-1,
-                    transform=COMPAT_ID, mask_transform = COMPAT_ID,
-                    code_transform = COMPAT_ID, part_mat_transform = COMPAT_ID):
+                    transform=COMPAT_ID, mask_transform=COMPAT_ID,
+                    code_transform=COMPAT_ID, part_mat_transform=COMPAT_ID):
         super().__init__(root_url, split, n_comp, cache_dir, view_type, transform)
 
-        self.mask_transform = mask_transform
+        self.mask_transform = mask_compose(mask_transform)
         self.code_transform = code_transform
         self.part_mat_transform = part_mat_transform
 
