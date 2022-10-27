@@ -35,7 +35,7 @@ You can browse the 3D models using the following link: [3D CoMPaT Browser](http:
 
 - [3D Shape and Part Classification](./3D_Cls_PartSeg)
 
-- [Sim2Real Transfer](./3D_Cls_PartSeg)
+- [3D Sim2Real Transfer](./3D_Cls_PartSeg)
 
 - [2D/3D Material Segmentation](./BPNet/#Mark)
 
