@@ -27,17 +27,17 @@ You can browse the 3D models using the following link: [3D CoMPaT Browser](http:
 
 ## Compositional Benchmarks
 
-- [BPNet](./BPNet)
+- [BPNet](./BPNet/)
 
-- [PointGroup](./PointGroup)
+- [PointGroup](./PointGroup/)
 
 ## Non-Compositional Benchmarks
 
-- [3D Shape and Part Classification](./3D_Cls_PartSeg)
+- [3D Shape and Part Classification](./3D/)
 
-- [3D Sim2Real Transfer](./3D_Cls_PartSeg)
+- [3D Sim2Real Transfer](./3D/)
 
-- [2D/3D Material Segmentation](./BPNet/#Mark)
+- [2D/3D Material Segmentation](./BPNet/)
 
 - [2D Material Tagging/ Shape Classification](./2D/)
 
