@@ -49,7 +49,7 @@ You can browse the 3D models using the following link: [3D CoMPaT Browser](http:
 - [x] Add code and pre-trained models for 2D Shape Classification
 - [x] Add code and pretrained models for BPNet
 - [x] Add code for 2D/3D Material Segmentation tasks
-- [ ] Add the 3D data-API
+- [x] Add the 3D data-API
 - [ ] Add the evaluation code
 - [ ] Add code and pre-trained models for 2D Material Tagging
 - [ ] Add pretrained models for 2D/3D Material Segmentation tasks
