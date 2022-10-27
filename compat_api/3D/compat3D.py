@@ -11,10 +11,9 @@ import h5py
 import numpy as np
 import numpy as np
 from sklearn import metrics
-from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 import trimesh
-
+import json
 import torch
 from torch.utils.data import Dataset
 
@@ -32,22 +31,21 @@ class CompatLoader3D(Dataset):
         cache_dir:   Cache directory to use
         view_type:   Filter by view type [0: canonical views, 1: random views]
     """
-    def __init__(self, root_dir="./data/", split="train", n_point=5000, cache_dir=None, n_comp=1, view_type=-1):
-        if view_type not in [-1, 0, 1]:
-            raise RuntimeError("Invalid argument: view_type can only be [-1, 0, 1]")
+    def __init__(self, root_dir="./data/", split="train", n_point=5000, n_comp=1):
         if split not in ["train", "valid"]:
             raise RuntimeError("Invalid split: [%s]." % split)
 
         self.root_dir = os.path.normpath(root_dir)
-        self.cache_dir = cache_dir
-        self.view_type = view_type
         self.n_comp = n_comp
         self.n_point = n_point
 
         # parts index and reversed index
         f = open('./metadata/parts.json')
         _ALL_PARTS = json.load(f)
-        part_to_idx = dict(zip(_ALL_PARTS, range(len(_ALL_PARTS))))
+        self.part_to_idx = dict(zip(_ALL_PARTS, range(len(_ALL_PARTS))))
+
+        df=pd.read_csv('./metadata/part_index.csv')
+        self.part_rename=dict(zip(df['orgin'].tolist(),df['new'].tolist()))
 
         # read all object categories
         f = open('./metadata/labels.json')
@@ -76,7 +74,8 @@ class CompatLoader3D(Dataset):
         shape_id = self.shape_ids[index]
         gltf_path = os.path.join(self.root_dir, 'raw_models', shape_id + '.glb')
         mesh = trimesh.load(gltf_path)
-
+        part_to_idx = self.part_to_idx
+        part_rename = self.part_rename
         if not sample_point:
             return shape_id, mesh
         else:
@@ -87,13 +86,13 @@ class CompatLoader3D(Dataset):
                 if g_name in part_to_idx:
                     # Glb name is same as defined
                     part_name = g_name
-                elif g_name in part_index:
+                elif g_name in part_rename:
                     # Glb name is different from defined. We regulated the name.
-                    part_name = part_index[g_name]
+                    part_name = part_rename[g_name]
                 else:
                     # If there are still some incorrect one.
                     part_name = g_name.split('_')[0]
-                    if part_name not in classes:
+                    if part_name not in part_to_idx:
                         part_name = difflib.get_close_matches(g_name, parts)[0]
                 # Add the vertex
                 v.append(g_mesh)
@@ -120,7 +119,7 @@ class CompatLoader3D(Dataset):
         assert len(y_pred) == len(y_true)
         
         label_values = np.unique(y_true)
-        cf_mat = confusion_matrix(y_true, y_pred)
+        cf_mat = metrics.confusion_matrix(y_true, y_pred)
 
         instance_acc = sum([cf_mat[i,i] for i in range(len(label_values))])/len(y_true)
         class_acc = np.array([cf_mat[i,i]/cf_mat[i,:].sum() for i in range(len(label_values))])
@@ -139,7 +138,7 @@ class CompatLoader3D(Dataset):
         assert len(y_pred) == len(y_true)
         
         label_values = np.unique(y_true)
-        cf_mat = confusion_matrix(y_true, y_pred)
+        cf_mat = metrics.confusion_matrix(y_true, y_pred)
 
         instance_acc = sum([cf_mat[i,i] for i in range(len(label_values))])/len(y_true)
         class_acc = np.array([cf_mat[i,i]/cf_mat[i,:].sum() for i in range(len(label_values))])
@@ -161,17 +160,6 @@ class CompatLoader3D(Dataset):
 
         return f1, prec, mIoU
 
-    def eval_GCR_3D(pred_file, gt_file):
-        """
-        Evaluation function for 3D shape classification
-
-        Args:
-          pred_file: a txt file, each line contains shape_id, pred_cls for all points.
-          gt_file: a txt file, each line contains shape_id, gt_cls for all points.
-        """
-        # To be updated
-
-        return None
 
 class CompatLoader_stylized3D(CompatLoader3D):
     """
@@ -184,8 +172,8 @@ class CompatLoader_stylized3D(CompatLoader3D):
           cache_dir:   Cache directory to use
           view_type:   Filter by view type [0: canonical views, 1: random views]
     """
-    def __init__(self, root_dir="./data/", split="train", n_comp=1, cache_dir=None, view_type=-1):
-        super().__init__(root_dir, split, n_comp, cache_dir, view_type)
+    def __init__(self, root_dir="./data/", split="train", n_point=5000, n_comp=1):
+        super().__init__(root_dir, split, n_point, n_comp)
 
     def __getitem__(self, index, style_id, sample_point=False):
         """
@@ -198,6 +186,8 @@ class CompatLoader_stylized3D(CompatLoader3D):
         shape_id = self.shape_ids[index]
         gltf_path = os.path.join(self.root_dir, 'rendered_models/', shape_id,  shape_id + '_' + style_id + '.glb')
         mesh = trimesh.load(gltf_path)
+        part_to_idx = self.part_to_idx
+        part_rename = self.part_rename
         
         if not sample_point:
             return mesh
@@ -209,13 +199,13 @@ class CompatLoader_stylized3D(CompatLoader3D):
                 if g_name in part_to_idx:
                     # Glb name is same as defined
                     part_name = g_name
-                elif g_name in part_index:
+                elif g_name in part_rename:
                     # Glb name is different from defined. We regulated the name.
-                    part_name = part_index[g_name]
+                    part_name = part_rename[g_name]
                 else:
                     # If there are still some incorrect one.
                     part_name = g_name.split('_')[0]
-                    if part_name not in classes:
+                    if part_name not in part_to_idx:
                         part_name = difflib.get_close_matches(g_name, parts)[0]
                 # Add the vertex
                 v.append(g_mesh)
