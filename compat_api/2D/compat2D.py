@@ -4,9 +4,18 @@ Dataloaders for the 2D 3DCoMPaT tasks.
 import json
 import os
 import webdataset as wds
+import re
 
 
 COMPAT_ID = lambda x:x
+
+URL_REGEX = re.compile(
+    r'^(?:http|ftp)s?://'
+    r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'
+    r'localhost|'
+    r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
+    r'(?::\d+)?'
+    r'(?:/?|[/?]\S+)$', re.IGNORECASE)
 
 
 def mask_compose(custom_transform):
@@ -16,6 +25,12 @@ def mask_compose(custom_transform):
     def transform(mask):
         return custom_transform(mask*255)
     return transform
+
+def is_url(root_url):
+    """
+    Test if the provided path is a valid URL.
+    """
+    return re.match(URL_REGEX, root_url) is not None
 
 
 class CompatLoader2D:
@@ -36,10 +51,17 @@ class CompatLoader2D:
         if split not in ["train", "val"]:
             raise RuntimeError("Invalid split: [%s]." % split)
 
-        root_url = os.path.normpath(root_url)
+        if root_url[-1] == '/':
+            root_url = root_url[:-1]
 
         # Reading sample count from metadata
-        datacount = json.load(open(root_url + "/datacount.json", "r"))
+        datacount_file = root_url + "/datacount.json"
+        if is_url(root_url):
+            # Optionally: downloading the datacount file over the Web
+            os.system("wget -O %s %s >/dev/null 2>&1" % ("./datacount.json", datacount_file))
+            datacount = json.load(open("./datacount.json", "r"))
+        else:
+            datacount = json.load(open(datacount_file, "r"))
         sample_count = datacount['sample_count']
         max_comp     = datacount['compositions']
 
@@ -77,10 +99,7 @@ class CompatLoader2D:
             num_workers: Number of process workers to use when loading data
         """
         # Instantiating dataset
-        if self.cache_dir:
-            dataset = wds.WebDataset(self.url)
-        else:
-            dataset = wds.WebDataset(self.url, cache_dir=self.cache_dir)
+        dataset = wds.WebDataset(self.url, cache_dir=self.cache_dir)
 
         if self.view_type != -1:
             view_val = bytes(str(self.view_type), 'utf-8')
