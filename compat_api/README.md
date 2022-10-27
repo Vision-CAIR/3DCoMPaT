@@ -1,4 +1,4 @@
-# 3DCoMPaT Data API
+# 3D CoMPaT: Data API
 
 In this folder, we provide a complete API for manipulating 2D and 3D data.
 For each modality, we provide a set of dataloader classes and a notebook demo.
