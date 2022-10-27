@@ -1,6 +1,6 @@
 # 2D Shape Classification
 
-We provide here details about the 
+We provide here details about the code for a simple 2D ResNet shape classifier trained on 3DCoMPaT.
 
 ### 0. Requirements
 To be updated.

@@ -1,11 +1,6 @@
 """"
 Dataloaders for the 2D 3DCoMPaT tasks.
 """
-
-import numpy as np
-from sklearn import metrics
-from sklearn.metrics import confusion_matrix
-
 import json
 import os
 import webdataset as wds
@@ -82,54 +77,6 @@ class CompatLoader2D:
         dataset = dataset.shuffle(self.shuffle)
 
         return dataset
-
-    def eval_2D_Shape_Cls(self, y_pred, y_true):
-        """
-        Evaluation function for 2D shape classification
-
-        Args:
-          y_pred: a numpy array, each line contains predicted classification label.
-          y_true: a numpy array, each line contains GT classification label.
-        """
-        assert len(y_pred) == len(y_true)
-
-        label_values = np.unique(y_true)
-        cf_mat = confusion_matrix(y_true, y_pred)
-
-        instance_acc = sum([cf_mat[i,i] for i in range(len(label_values))])/len(y_true)
-        class_acc = np.array([cf_mat[i,i]/cf_mat[i,:].sum() for i in range(len(label_values))])
-        return instance_acc, class_acc
-
-    def eval_2D_Material_Tagging(self, y_pred, y_true):
-        """
-        Evaluation function for 3D shape classification
-
-        Args:
-          pred_file: a numpy array, each line contains a one-hot vector of predicted material classes.
-          gt_file: a numpy array, each line contains a one-hot vector of GT material classes.
-        """
-        assert len(y_pred) == len(y_true)
-
-        f1 = metrics.f1_score(y_true, y_pred)
-        prec = metrics.average_precision_score(y_true, y_pred)
-        return f1, prec
-
-    def eval_2D_Material_Seg(self, pred_file, gt_file):
-        """
-        Evaluation function for 2D material segmentation
-
-        Args:
-          y_pred: a numpy array, each line contains predicted segmentation labels for all pixels.
-          y_true: a numpy array, each line contains GT segmentation labels for all pixels.
-        """
-        assert len(y_pred) == len(y_true)
-
-        f1 = metrics.f1_score(y_true, y_pred)
-        prec = metrics.average_precision_score(y_true, y_pred)
-
-        mIoU = metrics.jaccard_score(y_true, y_pred, average='macro')
-
-        return f1, prec, mIoU
 
 
 class ShapeLoader(CompatLoader2D):

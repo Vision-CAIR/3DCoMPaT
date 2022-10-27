@@ -7,10 +7,7 @@
 [![Poster](https://img.shields.io/badge/Poster-blue?style=for-the-badge&logo=adobe-acrobat-reader)](https://3dcompat-dataset.org/pdf/poster.pdf)
 [![Video](https://img.shields.io/badge/Video-purple?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=DT6I1EYqzis)
 
-<!-- [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT) -->
 
-
-<!--[![arXiv](https://img.shields.io/badge/arXiv-1234.56789-b31b1b.svg?style=plastic)]-->
 Created by: [Yuchen Li](http://liyc.tech/), [Ujjwal Upadhyay](https://ujjwal9.com/), [Habib Slim](https://habibslim.github.io/), [Ahmed Abdelreheem](https://samir55.github.io/), [Arpit Prajapati](https://www.polynine.com/), [Suhail Pothigara](https://www.polynine.com/), [Peter Wonka](https://peterwonka.net/), [Mohamed Elhoseiny](http://www.mohamed-elhoseiny.com/)
 </div>
 
