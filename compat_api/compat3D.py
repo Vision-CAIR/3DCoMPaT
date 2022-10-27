@@ -20,55 +20,6 @@ from torch.utils.data import Dataset
 
 import pdb
 
-_ALL_PARTS = ['access_panel', 'adjuster', 'aerator', 'arm', 'armrest', 'axle',
-       'back', 'back_flap', 'back_horizontal_bar', 'back_panel', 'back_stretcher', 'back_support',
-       'back_vertical_bar', 'backrest', 'bag_body',
-       'ball_retrieving_pocket', 'base', 'beam', 'bed_post',
-       'bed_surrounding_rail', 'bedsheet', 'bedskirt', 'bench', 'blade',
-       'blade_bracket', 'body', 'border', 'bottom', 'bottom_panel', 'bow',
-       'bowl', 'brace', 'bracket', 'brake', 'bulb', 'bush', 'button',
-       'cabinet', 'candle', 'canopy', 'cap', 'cap_retainer', 'case',
-       'caster', 'chain', 'chain_stay', 'channel', 'cleat', 'container',
-       'containing_things', 'control', 'cooking', 'corner_pockets',
-       'cue_stick', 'cushion', 'deck', 'decoration', 'design', 'dial',
-       'disposer', 'door', 'downrod', 'drain', 'drawer',
-       'duvet', 'enginestretcher', 'eyehook', 'fabric_design', 'fan',
-       'faucet', 'feeder', 'fin', 'finial', 'flange', 'flapper',
-       'flapper_support', 'floor', 'flush_handle', 'flush_push_button',
-       'foot', 'foot_base', 'footboard', 'footrest', 'fork', 'frame',
-       'front', 'front_flap', 'front_side_rail', 'gear_levers', 'glass',
-       'grill', 'grip_tape', 'handle', 'handlebars', 'hanger', 'hardware',
-       'harp', 'head', 'head_support', 'headboard', 'headlight',
-       'headrest', 'headset', 'helm', 'hinge', 'hood', 'hook', 'hose',
-       'hour_hand', 'hull', 'igniter', 'inner_surface', 'keel',
-       'keyboard_tray', 'knob', 'lamp_surrounding_frame', 'leg',
-       'leg_stretcher', 'level', 'leveller', 'lever', 'lid', 'light',
-       'locks', 'long_ribs', 'lug', 'mast', 'mattress', 'mechanism',
-       'minute_hand', 'mirror', 'motor_box', 'mouth', 'neck', 'net',
-       'net_support', 'nozzle', 'number', 'number_plate',
-       'open_close_button', 'outer_surface', 'paddle', 'pedal',
-       'pendulum', 'perch', 'pillars', 'pillow', 'pipe', 'play_field',
-       'plug', 'pocket', 'pole', 'propeller', 'propeller_blade', 'pulley',
-       'rails', 'rear_side_rail', 'rear_view_mirror', 'rear_window',
-       'rim', 'rocker', 'rod', 'rod_bracket', 'roof', 'rope', 'rudder',
-       'runner', 'saddle', 'screen', 'screw', 'seat', 'seat_cover',
-       'seat_cushion', 'seat_stay', 'second_hand', 'shade_cloth', 'shaft',
-       'shelf', 'short_ribs', 'shoulder', 'shoulder_strap', 'shower_head',
-       'shower_hose', 'side_panel', 'side_pockets', 'side_walls',
-       'side_windows', 'sink', 'slab', 'socket', 'spokes', 'spout',
-       'sprayer', 'spreader', 'stand', 'starboard', 'stem', 'step',
-       'stopper', 'strap', 'stretcher', 'strut', 'support', 'surface',
-       'switch', 'table', 'tabletop_frame', 'taillight', 'tank_cover',
-       'throw_pillow', 'tie_wrap', 'top', 'top_cap', 'top_panel', 'trap',
-       'tray_inner', 'truck', 'trunk', 'tube', 'tyre', 'unit', 'valve',
-       'vertical_divider_panel', 'vertical_side_panel', 'wall_mount',
-       'water', 'water_tank', 'wax_pan', 'wheel', 'windows', 'windshield',
-       'wing', 'wiper', 'wire', 'zipper']
-
-
-# parts index and reversed index
-part_to_idx = dict(zip(_ALL_PARTS, range(len(_ALL_PARTS))))
-
 
 class CompatLoader3D(Dataset):
     """
@@ -81,30 +32,39 @@ class CompatLoader3D(Dataset):
         cache_dir:   Cache directory to use
         view_type:   Filter by view type [0: canonical views, 1: random views]
     """
-    def __init__(self, root_dir="./data/", split="train", n_comp=1, cache_dir=None, view_type=-1):
+    def __init__(self, root_dir="./data/", split="train", n_point=5000, cache_dir=None, n_comp=1, view_type=-1):
         if view_type not in [-1, 0, 1]:
             raise RuntimeError("Invalid argument: view_type can only be [-1, 0, 1]")
         if split not in ["train", "valid"]:
             raise RuntimeError("Invalid split: [%s]." % split)
 
         self.root_dir = os.path.normpath(root_dir)
-
         self.cache_dir = cache_dir
-
         self.view_type = view_type
+        self.n_comp = n_comp
+        self.n_point = n_point
 
-        df = pd.read_csv(osp.join(self.root_dir, "metadata/model.csv"))
-        all_cats = list(set(df['model'].tolist()))
-        all_classes = dict(zip(all_cats, range(len(all_cats))))
-        id_to_cat = dict(zip(df['id'].tolist(), df['model'].tolist()))
-        
+        # parts index and reversed index
+        f = open('./metadata/parts.json')
+        _ALL_PARTS = json.load(f)
+        part_to_idx = dict(zip(_ALL_PARTS, range(len(_ALL_PARTS))))
+
+        # read all object categories
+        f = open('./metadata/labels.json')
+        all_labels = json.load(f)
+
+        # read splits
+        df = pd.read_csv('./metadata/split.csv')
+        df = df.loc[df['split'] == split]
+        shape_ids = df.model_id.values
+
         labels = []
-        for key in df['id']:
-            labels.append(all_classes[id_to_cat[key]])
-    
-        self.shape_ids = df['id'].tolist()
-        self.labels = np.array(labels).astype('int64')
+        for sid in shape_ids:
+            labels.append(all_labels[sid])
+        labels = np.array(labels)
 
+        self.shape_ids = shape_ids
+        self.labels = labels.astype('int64')
 
     def __getitem__(self, index, sample_point=True):
         """
@@ -141,7 +101,7 @@ class CompatLoader3D(Dataset):
                 segment.append(np.full(g_mesh.faces.shape[0], part_to_idx[part_name]))
             combined = trimesh.util.concatenate(v)
 
-            sample_xyz, sample_id = trimesh.sample.sample_surface(combined, count=5000)
+            sample_xyz, sample_id = trimesh.sample.sample_surface(combined, count=self.n_point)
             # sample_xyz = pc_normalize(sample_xyz)
             # If there are no style models, color info set as zero
             sample_colors = np.zeros_like(sample_xyz)
@@ -263,10 +223,8 @@ class CompatLoader_stylized3D(CompatLoader3D):
                 segment.append(np.full(g_mesh.faces.shape[0], part_to_idx[part_name]))
             combined = trimesh.util.concatenate(v)
 
-            sample_xyz, sample_id = trimesh.sample.sample_surface(combined, count=5000)
+            sample_xyz, sample_id, sample_colors = trimesh.sample.sample_surface(combined, count=5000, sample_color=True)
             # sample_xyz = pc_normalize(sample_xyz)
-            # If there are no style models, color info set as zero
-            sample_colors = np.zeros_like(sample_xyz)
             sample_segment = np.concatenate(segment)[sample_id]
 
             return shape_id, sample_xyz, sample_colors, sample_segment
