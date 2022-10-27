@@ -9,6 +9,9 @@ import glob
 import pandas as pd
 import h5py
 import numpy as np
+import numpy as np
+from sklearn import metrics
+from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 import trimesh
 
@@ -146,6 +149,69 @@ class CompatLoader3D(Dataset):
 
             return shape_id, sample_xyz, sample_colors, sample_segment
 
+    def eval_3D_Shape_Cls(self, y_pred, y_true):
+        """
+        Evaluation function for 2D shape classification
+
+        Args:
+          y_pred: a numpy array, each line contains predicted classification label.
+          y_true: a numpy array, each line contains GT classification label.
+        """
+        assert len(y_pred) == len(y_true)
+        
+        label_values = np.unique(y_true)
+        cf_mat = confusion_matrix(y_true, y_pred)
+
+        instance_acc = sum([cf_mat[i,i] for i in range(len(label_values))])/len(y_true)
+        class_acc = np.array([cf_mat[i,i]/cf_mat[i,:].sum() for i in range(len(label_values))])
+        class_avg_acc = np.mean(class_acc)
+        return instance_acc, class_avg_acc
+
+
+    def eval_3D_Part_Seg(self, y_pred, y_true):
+        """
+        Evaluation function for 3D shape classification
+
+        Args:
+          pred_file: a numpy array, each line contains predicted part labels for all points.
+          gt_file: a numpy array, each line contains GT part labels for all points.
+        """
+        assert len(y_pred) == len(y_true)
+        
+        label_values = np.unique(y_true)
+        cf_mat = confusion_matrix(y_true, y_pred)
+
+        instance_acc = sum([cf_mat[i,i] for i in range(len(label_values))])/len(y_true)
+        class_acc = np.array([cf_mat[i,i]/cf_mat[i,:].sum() for i in range(len(label_values))])
+        return instance_acc, class_acc
+        
+    def eval_3D_Material_Seg(self, y_pred, y_true):
+        """
+        Evaluation function for 2D material segmentation
+
+        Args:
+          y_pred: a numpy array, each line contains predicted segmentation labels for all points.
+          y_true: a numpy array, each line contains GT segmentation labels for all points.
+        """
+        assert len(y_pred) == len(y_true)
+
+        f1 = metrics.f1_score(y_true, y_pred)
+        prec = metrics.average_precision_score(y_true, y_pred)
+        mIoU = metrics.jaccard_score(y_true, y_pred, average='macro')
+
+        return f1, prec, mIoU
+
+    def eval_GCR_3D(pred_file, gt_file):
+        """
+        Evaluation function for 3D shape classification
+
+        Args:
+          pred_file: a txt file, each line contains shape_id, pred_cls for all points.
+          gt_file: a txt file, each line contains shape_id, gt_cls for all points.
+        """
+        # To be updated
+
+        return None
 
 class CompatLoader_stylized3D(CompatLoader3D):
     """

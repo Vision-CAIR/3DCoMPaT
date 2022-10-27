@@ -348,7 +348,7 @@ def validate(val_loader, model, criterion, args):
     model.eval()
 
     f1 = F1(num_classes=193).cuda()
-    # average_precision = AveragePrecision().cuda()
+    average_precision = AveragePrecision().cuda()
 
     with torch.no_grad():
         end = time.time()
