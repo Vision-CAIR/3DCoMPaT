@@ -29,7 +29,7 @@ class CompatLoader3D(Dataset):
         n_comp:      Number of compositions to use
         n_points:    Number of sampled points
     """
-    def __init__(self, root_dir="./data/", split="train", n_point=5000, n_comp=1):
+    def __init__(self, meta_dir ='./', root_dir="./data/", split="train", n_point=5000, n_comp=1):
         if split not in ["train", "valid"]:
             raise RuntimeError("Invalid split: [%s]." % split)
 
@@ -38,19 +38,19 @@ class CompatLoader3D(Dataset):
         self.n_point = n_point
 
         # parts index and reversed index
-        f = open('./metadata/parts.json')
+        f = open(meta_dir + 'parts.json')
         _ALL_PARTS = json.load(f)
         self.part_to_idx = dict(zip(_ALL_PARTS, range(len(_ALL_PARTS))))
 
-        df=pd.read_csv('./metadata/part_index.csv')
+        df=pd.read_csv(meta_dir + 'part_index.csv')
         self.part_rename=dict(zip(df['orgin'].tolist(),df['new'].tolist()))
 
         # read all object categories
-        f = open('./metadata/labels.json')
+        f = open(meta_dir + 'labels.json')
         all_labels = json.load(f)
 
         # read splits
-        df = pd.read_csv('./metadata/split.csv')
+        df = pd.read_csv(meta_dir + '/split.csv')
         df = df.loc[df['split'] == split]
         shape_ids = df.model_id.values
 
@@ -118,8 +118,8 @@ class CompatLoader_stylized3D(CompatLoader3D):
           cache_dir:   Cache directory to use
           view_type:   Filter by view type [0: canonical views, 1: random views]
     """
-    def __init__(self, root_dir="./data/", split="train", n_point=5000, n_comp=1):
-        super().__init__(root_dir, split, n_point, n_comp)
+    def __init__(self, meta_dir ='./', root_dir="./data/", split="train", n_point=5000, n_comp=1):
+        super().__init__(meta_dir, root_dir, split, n_point, n_comp)
 
     def __getitem__(self, index, style_id, sample_point=False):
         """
@@ -136,7 +136,7 @@ class CompatLoader_stylized3D(CompatLoader3D):
         part_rename = self.part_rename
         
         if not sample_point:
-            return mesh
+            return shape_id, mesh
         else:
             v = []
             segment = []
