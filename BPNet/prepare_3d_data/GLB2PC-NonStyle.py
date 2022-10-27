@@ -14,7 +14,7 @@ from collections import defaultdict
 # part_index, contains (model_id, part) pairs
 
 # output dir
-meta_dir = "../data/metadata/"
+meta_dir = "../data/"
 WORKING_DIR = "../data/processed_models_v5/" #TODO: Change to the glb folders
 # number of sampled points
 N_POINTS_PER_PART = 5000
