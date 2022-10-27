@@ -19,16 +19,18 @@ Created by: [Yuchen Li](http://liyc.tech/), [Ujjwal Upadhyay](https://ujjwal9.co
 ## Code release progress
 - [x] Add code and pretrained models for 3D Shape and Part Classification tasks
 - [x] Add code and pretrained models for Sim2Real Transfer tasks
-- [x] Add data-API and evaluation code
-- [x] Add code for 2D Material Tagging/Shape Classification
-- [ ] Add pretrained models for 2D Material Tagging/Shape Classification
-- [x] Add code for 2D/3D Material Segmentation tasks
-- [ ] Add pretrained models for 2D/3D Material Segmentation tasks
+- [x] Add the 2D data-API
+- [x] Add code and pre-trained models for 2D Shape Classification
 - [x] Add code and pretrained models for BPNet
+- [x] Add code for 2D/3D Material Segmentation tasks
+- [ ] Add the 3D data-API
+- [ ] Add the evaluation code
+- [ ] Add code and pre-trained models for 2D Material Tagging
+- [ ] Add pretrained models for 2D/3D Material Segmentation tasks
 - [ ] Add code and pretrained models for PointGroup
 
 ## Introduction
-This work is based on the arXiv tech report which is provisionally accepted in ECCV-2022, for an Oral presentation. 
+This work is based on the arXiv tech report which is accepted at ECCV-2022, for an Oral presentation. 
 
 ## Dataset
 To get the most out of this repository, please download the 3DCoMPaT dataset by filling this [form](https://docs.google.com/forms/d/e/1FAIpQLSeOxWVkVNdXz-nCfFIWOeOARc_Atk9fi5PSIKw1Ib1cr3ENpA/viewform?fbzx=-7103523806700241333).
