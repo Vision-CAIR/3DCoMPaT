@@ -16,19 +16,6 @@ Created by: [Yuchen Li](http://liyc.tech/), [Ujjwal Upadhyay](https://ujjwal9.co
 
 [![image](https://user-images.githubusercontent.com/38585175/182629905-812f1c6f-8906-4485-9710-760cff150df1.png)](https://www.youtube.com/watch?v=DT6I1EYqzis)
 
-## Code release progress
-- [x] Add code and pretrained models for 3D Shape and Part Classification tasks
-- [x] Add code and pretrained models for Sim2Real Transfer tasks
-- [x] Add the 2D data-API
-- [x] Add code and pre-trained models for 2D Shape Classification
-- [x] Add code and pretrained models for BPNet
-- [x] Add code for 2D/3D Material Segmentation tasks
-- [ ] Add the 3D data-API
-- [ ] Add the evaluation code
-- [ ] Add code and pre-trained models for 2D Material Tagging
-- [ ] Add pretrained models for 2D/3D Material Segmentation tasks
-- [ ] Add code and pretrained models for PointGroup
-
 ## Introduction
 This is the official repository for 3DCoMPaT, "Composition of Materials on Parts of 3D Things", accepted at ECCV-2022 for an Oral presentation. 
 
@@ -53,6 +40,20 @@ You can browse the 3D models using the following link: [3D CoMPaT Browser](http:
 - [2D/3D Material Segmentation](./BPNet/#Mark)
 
 - [2D Material Tagging/ Shape Classification](./2D/)
+
+
+## Code release progress
+- [x] Add code and pretrained models for 3D Shape and Part Classification tasks
+- [x] Add code and pretrained models for Sim2Real Transfer tasks
+- [x] Add the 2D data-API
+- [x] Add code and pre-trained models for 2D Shape Classification
+- [x] Add code and pretrained models for BPNet
+- [x] Add code for 2D/3D Material Segmentation tasks
+- [ ] Add the 3D data-API
+- [ ] Add the evaluation code
+- [ ] Add code and pre-trained models for 2D Material Tagging
+- [ ] Add pretrained models for 2D/3D Material Segmentation tasks
+- [ ] Add code and pretrained models for PointGroup
 
 ## Citation
 If you find this work useful in your research, please consider citing:
