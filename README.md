@@ -2,13 +2,13 @@
 
 # 3D CoMPaT: Composition of Materials on Parts of 3D Things (ECCV 2022)
 
-[![Project Page](https://img.shields.io/badge/Project%20Page-red)](https://3dcompat-dataset.org/)
-[![Python](https://img.shields.io/badge/Python-3.7.0-blue?logo=python&logoColor=white)](https://www.python.org/)
+[![Project Page](https://img.shields.io/badge/Project%20Page-red?style=for-the-badge)](https://3dcompat-dataset.org/)
+[![Paper](https://img.shields.io/badge/Paper-green?style=for-the-badge&logo=adobe-acrobat-reader)](https://3dcompat-dataset.org/pdf/paper.pdf)
+[![Poster](https://img.shields.io/badge/Poster-blue?style=for-the-badge&logo=adobe-acrobat-reader)](https://3dcompat-dataset.org/pdf/poster.pdf)
+[![Video](https://img.shields.io/badge/Video-purple?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=DT6I1EYqzis)
 
 <!-- [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT) -->
 
-
-\[[Paper](https://3dcompat-dataset.org/pdf/paper.pdf)\] \[[Supplementary](https://3dcompat-dataset.org/pdf/supplementary.pdf)\] \[[Poster](https://3dcompat-dataset.org/pdf/poster.pdf)\] \[[Video](https://www.youtube.com/watch?v=DT6I1EYqzis)\]
 
 <!--[![arXiv](https://img.shields.io/badge/arXiv-1234.56789-b31b1b.svg?style=plastic)]-->
 Created by: [Yuchen Li](http://liyc.tech/), [Ujjwal Upadhyay](https://ujjwal9.com/), [Habib Slim](https://habibslim.github.io/), [Ahmed Abdelreheem](https://samir55.github.io/), [Arpit Prajapati](https://www.polynine.com/), [Suhail Pothigara](https://www.polynine.com/), [Peter Wonka](https://peterwonka.net/), [Mohamed Elhoseiny](http://www.mohamed-elhoseiny.com/)
@@ -58,10 +58,12 @@ You can browse the 3D models using the following link: [3D CoMPaT Browser](http:
 ## Citation
 If you find this work useful in your research, please consider citing:
 
-```
+```bibtex
 @article{li20223dcompat,
     title={3D CoMPaT: Composition of Materials on Parts of 3D Things (ECCV 2022)},
-    author={Yuchen Li, Ujjwal Upadhyay, Habib Slim, Ahmed Abdelreheem, Arpit Prajapati, Suhail Pothigara, Peter Wonka, Mohamed Elhoseiny},
+    author={Yuchen Li, Ujjwal Upadhyay, Habib Slim,
+    Ahmed Abdelreheem, Arpit Prajapati,
+    Suhail Pothigara, Peter Wonka, Mohamed Elhoseiny},
     journal = {ECCV},
     year={2022}
 }
