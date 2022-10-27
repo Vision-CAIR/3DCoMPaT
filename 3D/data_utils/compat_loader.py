@@ -64,7 +64,6 @@ class Compat(Dataset):
         return np.max(self.label) + 1
 
     def get_model_ids(self, index, data_dir):
-        # test_dir = '/ibex/scratch/liy0r/cvpr/BPNet/'
         df = pd.read_csv(data_dir + "/model.csv")
         part_index = dict(zip(df['id'].tolist(), df['model'].tolist()))
         cat = sorted(list(set(df['model'].tolist())))
