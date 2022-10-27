@@ -24,7 +24,7 @@ class CompatLoader2D:
 
     Args:
         root_url:    Base dataset URL containing data split shards
-        split:       One of {train, valid}.
+        split:       One of {train, val}.
         n_comp:      Number of compositions to use
         cache_dir:   Cache directory to use
         view_type:   Filter by view type [0: canonical views, 1: random views]
@@ -33,7 +33,7 @@ class CompatLoader2D:
     def __init__(self, root_url, split, n_comp, cache_dir=None, view_type=-1, transform=COMPAT_ID):
         if view_type not in [-1, 0, 1]:
             raise RuntimeError("Invalid argument: view_type can only be [-1, 0, 1]")
-        if split not in ["train", "valid"]:
+        if split not in ["train", "val"]:
             raise RuntimeError("Invalid split: [%s]." % split)
 
         root_url = os.path.normpath(root_url)
@@ -48,12 +48,14 @@ class CompatLoader2D:
             raise RuntimeError(except_str)
 
         # Computing dataset size
-        self.dataset_size = sample_count[split]*n_comp
+        self.dataset_size = sample_count[split]
+        if view_type != -1:
+            self.dataset_size //= 2
 
         # Configuring size of shuffle buffer
         if split == "train":
             self.shuffle = 1000
-        elif split == "valid":
+        elif split == "val":
             self.shuffle = 0
 
         # Formatting WebDataset base URL
