@@ -9,7 +9,7 @@ We provide ready-to-use dataloaders for loading 2D dataset in `compat2D.py` and 
 ## 3D data
 Download 'raw_models' and 'rendered_models' using download tool and put the data in './data/' folder.
 
-We provide ready-to-use dataloaders for loading 3D dataset in 'compat3D.py' and a demo in `demo_3D.ipynb`.
+We provide ready-to-use dataloaders for loading 3D dataset in `compat3D.py` and a demo in `demo_3D.ipynb`.
 
 ## Evluation
 Please follow the instructions for each separte task to submit your test results.
