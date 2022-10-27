@@ -30,7 +30,7 @@ Created by: [Yuchen Li](http://liyc.tech/), [Ujjwal Upadhyay](https://ujjwal9.co
 - [ ] Add code and pretrained models for PointGroup
 
 ## Introduction
-This work is based on the arXiv tech report which is accepted at ECCV-2022, for an Oral presentation. 
+This is the official repository for 3DCoMPaT, "Composition of Materials on Parts of 3D Things", accepted at ECCV-2022 for an Oral presentation. 
 
 ## Dataset
 To get the most out of this repository, please download the 3DCoMPaT dataset by filling this [form](https://docs.google.com/forms/d/e/1FAIpQLSeOxWVkVNdXz-nCfFIWOeOARc_Atk9fi5PSIKw1Ib1cr3ENpA/viewform?fbzx=-7103523806700241333).
