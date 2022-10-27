@@ -11,5 +11,5 @@ Download 'raw_models' and 'rendered_models' using download tool and put the data
 
 We provide ready-to-use dataloaders for loading 3D dataset in `compat3D.py` and a demo in `demo_3D.ipynb`.
 
-## Evluation
-Please follow the instructions for each separte task to submit your test results.
+## Evaluation
+To be completed.
