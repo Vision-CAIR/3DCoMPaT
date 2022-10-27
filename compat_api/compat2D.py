@@ -2,6 +2,10 @@
 Dataloaders for the 2D 3DCoMPaT tasks.
 """
 
+import numpy as np
+from sklearn import metrics
+from sklearn.metrics import confusion_matrix
+
 import json
 import os
 import webdataset as wds
@@ -80,21 +84,21 @@ class CompatLoader2D:
         return dataset
 
     def eval_2D_Shape_Cls(self, y_pred, y_true):
-    """
-    Evaluation function for 2D shape classification
+        """
+        Evaluation function for 2D shape classification
 
-    Args:
-      y_pred: a numpy array, each line contains predicted classification label.
-      y_true: a numpy array, each line contains GT classification label.
-    """
-    assert len(y_pred) == len(y_true)
+        Args:
+          y_pred: a numpy array, each line contains predicted classification label.
+          y_true: a numpy array, each line contains GT classification label.
+        """
+        assert len(y_pred) == len(y_true)
 
-    label_values = np.unique(y_true)
-    cf_mat = confusion_matrix(y_true, y_pred)
+        label_values = np.unique(y_true)
+        cf_mat = confusion_matrix(y_true, y_pred)
 
-    instance_acc = sum([cf_mat[i,i] for i in range(len(label_values))])/len(y_true)
-    class_acc = np.array([cf_mat[i,i]/cf_mat[i,:].sum() for i in range(len(label_values))])
-    return instance_acc, class_acc
+        instance_acc = sum([cf_mat[i,i] for i in range(len(label_values))])/len(y_true)
+        class_acc = np.array([cf_mat[i,i]/cf_mat[i,:].sum() for i in range(len(label_values))])
+        return instance_acc, class_acc
 
     def eval_2D_Material_Tagging(self, y_pred, y_true):
         """
