@@ -67,7 +67,9 @@ class CompatLoader3D(Dataset):
         Get raw 3d shape given shape_id
         :param shape_id  (int)     : shape id
                sample_point  (bool)     : whether to sample points from 3D shape
-        :return: a 3D unstylized models
+        return: 
+            if sample_point=False: a 3D unstylized mesh
+            if sample_point=True, (shape_id, sample_xyz, object_cls, sample_colors, sample_segment) 
         """
         shape_id = self.shape_ids[index]
         gltf_path = os.path.join(self.root_dir, 'raw_models', shape_id + '.glb')
@@ -104,7 +106,7 @@ class CompatLoader3D(Dataset):
             sample_colors = np.zeros_like(sample_xyz)
             sample_segment = np.concatenate(segment)[sample_id]
 
-            return shape_id, sample_xyz, sample_colors, sample_segment
+            return shape_id, sample_xyz, self.labels[index], sample_colors, sample_segment
 
 
 class CompatLoader_stylized3D(CompatLoader3D):
@@ -127,7 +129,9 @@ class CompatLoader_stylized3D(CompatLoader3D):
         :param shape_id  (int)     : shape id
                style_id  (int)     : style id
                sample_point  (bool)     : whether to sample points from 3D shape
-        :return: a 3D stylized models
+        return: 
+            if sample_point=False: a 3D stylized mesh
+            if sample_point=True, (shape_id, sample_xyz, object_cls, sample_colors, sample_segment) 
         """
         shape_id = self.shape_ids[index]
         gltf_path = os.path.join(self.root_dir, 'rendered_models/', shape_id,  shape_id + '_' + style_id + '.glb')
@@ -163,5 +167,5 @@ class CompatLoader_stylized3D(CompatLoader3D):
             # sample_xyz = pc_normalize(sample_xyz)
             sample_segment = np.concatenate(segment)[sample_id]
 
-            return shape_id, sample_xyz, sample_colors, sample_segment
+            return shape_id, sample_xyz, self.labels[index], sample_colors, sample_segment
 
