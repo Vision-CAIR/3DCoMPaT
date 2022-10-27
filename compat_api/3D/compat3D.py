@@ -28,8 +28,7 @@ class CompatLoader3D(Dataset):
         root_dir:    Base dataset URL containing data split shards
         split:       One of {train, valid}.
         n_comp:      Number of compositions to use
-        cache_dir:   Cache directory to use
-        view_type:   Filter by view type [0: canonical views, 1: random views]
+        n_points:    Number of sampled points
     """
     def __init__(self, root_dir="./data/", split="train", n_point=5000, n_comp=1):
         if split not in ["train", "valid"]:
