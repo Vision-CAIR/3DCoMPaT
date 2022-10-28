@@ -13,7 +13,7 @@ import trimesh
 import json
 import torch
 from torch.utils.data import Dataset
-
+import difflib
 import pdb
 
 
@@ -22,12 +22,13 @@ class CompatLoader3D(Dataset):
     Base class for 3D dataset loaders.
 
     Args:
+        meta_dir:    Metadata directory
         root_dir:    Base dataset URL containing data split shards
         split:       One of {train, valid}.
         n_comp:      Number of compositions to use
-        n_points:    Number of sampled points
+        n_points:    Number of sampled points. When n_points=0, returned original mesh.
     """
-    def __init__(self, meta_dir ='./', root_dir="./data/", split="train", n_point=5000, n_comp=1):
+    def __init__(self, meta_dir ='./', root_dir="./data/", split="train", n_point=0, n_comp=1):
         if split not in ["train", "valid"]:
             raise RuntimeError("Invalid split: [%s]." % split)
 
@@ -60,7 +61,10 @@ class CompatLoader3D(Dataset):
         self.shape_ids = shape_ids
         self.labels = labels.astype('int64')
 
-    def __getitem__(self, index, sample_point=True):
+    def __len__(self):
+        return len(self.shape_ids)
+        
+    def __getitem__(self, index):
         """
         Get raw 3d shape given shape_id
         :param shape_id  (int)     : shape id
@@ -74,7 +78,7 @@ class CompatLoader3D(Dataset):
         mesh = trimesh.load(gltf_path)
         part_to_idx = self.part_to_idx
         part_rename = self.part_rename
-        if not sample_point:
+        if self.n_point==0:
             return shape_id, mesh
         else:
             v = []
@@ -91,7 +95,7 @@ class CompatLoader3D(Dataset):
                     # If there are still some incorrect one.
                     part_name = g_name.split('_')[0]
                     if part_name not in part_to_idx:
-                        part_name = difflib.get_close_matches(g_name, parts)[0]
+                        part_name = difflib.get_close_matches(g_name, list(part_to_idx.keys()))[0]
                 # Add the vertex
                 v.append(g_mesh)
                 # Add the segmentation Labels
@@ -104,24 +108,27 @@ class CompatLoader3D(Dataset):
             sample_colors = np.zeros_like(sample_xyz)
             sample_segment = np.concatenate(segment)[sample_id]
 
+            sample_xyz = np.array(sample_xyz).astype('float32')
+            sample_colors = np.array(sample_colors).astype('float32')
+            sample_segment = np.array(sample_segment).astype('int32')
             return shape_id, sample_xyz, self.labels[index], sample_colors, sample_segment
 
 
 class CompatLoader_stylized3D(CompatLoader3D):
     """
-      Stylized 3D dataset loaders.
+    Stylized 3D dataset loaders.
 
-      Args:
-          root_dir:    Base dataset URL containing data split shards
-          split:       One of {train, valid}.
-          n_comp:      Number of compositions to use
-          cache_dir:   Cache directory to use
-          view_type:   Filter by view type [0: canonical views, 1: random views]
+    Args:
+        meta_dir:    Metadata directory
+        root_dir:    Base dataset URL containing data split shards
+        split:       One of {train, valid}.
+        n_comp:      Number of compositions to use
+        n_points:    Number of sampled points. When n_points=0, returned original mesh.
     """
-    def __init__(self, meta_dir ='./', root_dir="./data/", split="train", n_point=5000, n_comp=1):
+    def __init__(self, meta_dir ='./', root_dir="./data/", split="train", n_point=0, n_comp=1):
         super().__init__(meta_dir, root_dir, split, n_point, n_comp)
 
-    def __getitem__(self, index, style_id, sample_point=True):
+    def __getitem__(self, index):
         """
         Get raw 3d shape given shape_id
         :param shape_id  (int)     : shape id
@@ -132,12 +139,17 @@ class CompatLoader_stylized3D(CompatLoader3D):
             if sample_point=True, (shape_id, sample_xyz, object_cls, sample_colors, sample_segment) 
         """
         shape_id = self.shape_ids[index]
+        shape_id = '060dcf1e-f580-4b51-9769-4fba44152fcb'
+        style_id = '1684500'
+        
+        # mesh = trimesh.load('rendered_models/060dcf1e-f580-4b51-9769-4fba44152fcb/060dcf1e-f580-4b51-9769-4fba44152fcb_1684500.glb')
+        
         gltf_path = os.path.join(self.root_dir, 'rendered_models/', shape_id,  shape_id + '_' + style_id + '.glb')
         mesh = trimesh.load(gltf_path)
         part_to_idx = self.part_to_idx
         part_rename = self.part_rename
         
-        if not sample_point:
+        if self.n_point==0:
             return shape_id, mesh
         else:
             v = []
@@ -154,16 +166,19 @@ class CompatLoader_stylized3D(CompatLoader3D):
                     # If there are still some incorrect one.
                     part_name = g_name.split('_')[0]
                     if part_name not in part_to_idx:
-                        part_name = difflib.get_close_matches(g_name, parts)[0]
+                        part_name = difflib.get_close_matches(g_name, list(part_to_idx.keys()))[0]
                 # Add the vertex
                 v.append(g_mesh)
                 # Add the segmentation Labels
                 segment.append(np.full(g_mesh.faces.shape[0], part_to_idx[part_name]))
             combined = trimesh.util.concatenate(v)
 
-            sample_xyz, sample_id, sample_colors = trimesh.sample.sample_surface(combined, count=5000, sample_color=True)
+            sample_xyz, sample_id, sample_colors = trimesh.sample.sample_surface(combined, count=self.n_point, sample_color=True)
             # sample_xyz = pc_normalize(sample_xyz)
             sample_segment = np.concatenate(segment)[sample_id]
-
+            
+            sample_xyz = np.array(sample_xyz).astype('float32')
+            sample_colors = np.array(sample_colors).astype('float32')
+            sample_segment = np.array(sample_segment).astype('int32')
             return shape_id, sample_xyz, self.labels[index], sample_colors, sample_segment
 

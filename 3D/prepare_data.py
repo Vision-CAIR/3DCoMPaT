@@ -35,7 +35,7 @@ model_ids = defaultdict(list)
 all_ids=[]
 
 # read split file
-with open(os.path.join(meta_dir, "split.txt"), "r") as f:
+with open(os.path.join('./', "split.txt"), "r") as f:
     for line in f:
         ids, label = line.rstrip().split(',')
         model_ids[label].append(ids)
@@ -56,6 +56,7 @@ classes = dict(zip(_ALL_PARTS, range(len(_ALL_PARTS))))
 
 df=pd.read_csv(os.path.join(meta_dir, 'part_index.csv'))
 part_index=dict(zip(df['orgin'].tolist(),df['new'].tolist()))
+
 def save_points(split):
     sample_xyzs = []
     sample_colorss = []
@@ -96,7 +97,7 @@ def save_points(split):
                 # If there are still some incorrect one.
                 part_name = g_name.split('_')[0]
                 if part_name not in classes:
-                    part_name = difflib.get_close_matches(g_name, parts)[0]
+                    part_name = difflib.get_close_matches(g_name, list(part_to_idx.keys()))[0]
             # Add the vertex
             v.append(g_mesh)
             # Add the segmentation Labels
