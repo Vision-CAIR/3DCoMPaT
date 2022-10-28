@@ -24,15 +24,15 @@ For example, if `root_url` resolves to `/root/my_path/../compat10/`, then `compa
 ```
 compat10/
 |______train/
-		|______train_0000.tar
-		|______train_0001.tar
-		...
-		|______train_00XX.tar
+        |______train_0000.tar
+        |______train_0001.tar
+        ...
+        |______train_00XX.tar
 |______val/
-		|______val_0000.tar
-		|______val_0001.tar
-		...
-		|______val_00XX.tar
+        |______val_0000.tar
+        |______val_0001.tar
+        ...
+        |______val_00XX.tar
 ```
 
 This is the default folder structure when downloading the dataset using our provided script.
@@ -74,18 +74,18 @@ Parameters are as follows:
 An example run is provided below, for a batch size of `64`, with `10` compositions while training on canonical views only from an ImageNet-pretrained ResNet50:
 
 ```
-	python main.py --num-workers 4 \
-	    --use-tmp \
-	    --root-url ./shards/ \
-	    --models-dir ./models_out/ \
-	    --batch-size 64 \
-	    --nbatches 10000 \
-	    --num-classes 43 \
-	    --resnet-type resnet50 \
-	    --seed 0 \
-	    --n-comp 10 \
-	    --view-type canonical \
-	    --use-pretrained \
+python main.py --num-workers 4 \
+	--use-tmp \
+	--root-url ./shards/ \
+	--models-dir ./models_out/ \
+	--batch-size 64 \
+	--nbatches 10000 \
+	--num-classes 43 \
+	--resnet-type resnet50 \
+	--seed 0 \
+	--n-comp 10 \
+	--view-type canonical \
+	--use-pretrained
 ```
 
 ### 3. Evaluation and pretrained models
