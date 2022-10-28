@@ -1,8 +1,6 @@
-# The following API functions are defined:
-#  Compat3D       - 3DCompat api class that loads 3DCompat annotation file and prepare data structures.
-# load_raw_models -  load raw shape without textures given the specified ids.
-# load_stylized_3d - load stylized 3d shapes given the specified ids.
-
+""""
+Dataloaders for the 3D 3DCoMPaT tasks.
+"""
 import os
 import os.path as osp
 import glob
@@ -123,7 +121,7 @@ class CompatLoader_stylized3D(CompatLoader3D):
     def __init__(self, meta_dir ='./', root_dir="./data/", split="train", n_point=5000, n_comp=1):
         super().__init__(meta_dir, root_dir, split, n_point, n_comp)
 
-    def __getitem__(self, index, style_id, sample_point=False):
+    def __getitem__(self, index, style_id, sample_point=True):
         """
         Get raw 3d shape given shape_id
         :param shape_id  (int)     : shape id

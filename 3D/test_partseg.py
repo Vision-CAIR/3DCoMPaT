@@ -5,7 +5,7 @@ Date: Nov 2019
 import argparse
 import os
 # from data_utils.ShapeNetDataLoader import PartNormalDataset
-from data_utils.compatseg_loader import CompatSeg
+from data_utils.compat_loader import CompatLoader3D as CompatSeg
 import torch
 import logging
 import sys

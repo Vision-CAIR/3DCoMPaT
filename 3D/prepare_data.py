@@ -14,7 +14,7 @@ from collections import defaultdict
 # part_index, contains (model_id, part) pairs
 
 # output dir
-meta_dir = "../BPNet/data/"
+meta_dir = "../../metadata/"
 WORKING_DIR = "../BPNet/dataset/processed_models_v5/" #TODO: Change to the glb folders
 # number of sampled points
 N_POINTS_PER_PART = 5000
@@ -48,58 +48,11 @@ data_paths_test = list(set(model_ids['test']))
 # all data
 dd=data_paths_train+data_paths_vaild+data_paths_test
 
-parts=['access_panel', 'adjuster', 'aerator', 'arm', 'armrest', 'axle',
-       'back', 'back_flap', 'back_horizontal_bar', 'back_panel', 'back_stretcher', 'back_support',
-       'back_vertical_bar', 'backrest', 'bag_body',
-       'ball_retrieving_pocket', 'base', 'beam', 'bed_post',
-       'bed_surrounding_rail', 'bedsheet', 'bedskirt', 'bench', 'blade',
-       'blade_bracket', 'body', 'border', 'bottom', 'bottom_panel', 'bow',
-       'bowl', 'brace', 'bracket', 'brake', 'bulb', 'bush', 'button',
-       'cabinet', 'candle', 'canopy', 'cap', 'cap_retainer', 'case',
-       'caster', 'chain', 'chain_stay', 'channel', 'cleat', 'container',
-       'containing_things', 'control', 'cooking', 'corner_pockets',
-       'cue_stick', 'cushion', 'deck', 'decoration', 'design', 'dial',
-       'disposer', 'door', 'downrod', 'drain', 'drawer',
-       'duvet', 'enginestretcher', 'eyehook', 'fabric_design', 'fan',
-       'faucet', 'feeder', 'fin', 'finial', 'flange', 'flapper',
-       'flapper_support', 'floor', 'flush_handle', 'flush_push_button',
-       'foot', 'foot_base', 'footboard', 'footrest', 'fork', 'frame',
-       'front', 'front_flap', 'front_side_rail', 'gear_levers', 'glass',
-       'grill', 'grip_tape', 'handle', 'handlebars', 'hanger', 'hardware',
-       'harp', 'head', 'head_support', 'headboard', 'headlight',
-       'headrest', 'headset', 'helm', 'hinge', 'hood', 'hook', 'hose',
-       'hour_hand', 'hull', 'igniter', 'inner_surface', 'keel',
-       'keyboard_tray', 'knob', 'lamp_surrounding_frame', 'leg',
-       'leg_stretcher', 'level', 'leveller', 'lever', 'lid', 'light',
-       'locks', 'long_ribs', 'lug', 'mast', 'mattress', 'mechanism',
-       'minute_hand', 'mirror', 'motor_box', 'mouth', 'neck', 'net',
-       'net_support', 'nozzle', 'number', 'number_plate',
-       'open_close_button', 'outer_surface', 'paddle', 'pedal',
-       'pendulum', 'perch', 'pillars', 'pillow', 'pipe', 'play_field',
-       'plug', 'pocket', 'pole', 'propeller', 'propeller_blade', 'pulley',
-       'rails', 'rear_side_rail', 'rear_view_mirror', 'rear_window',
-       'rim', 'rocker', 'rod', 'rod_bracket', 'roof', 'rope', 'rudder',
-       'runner', 'saddle', 'screen', 'screw', 'seat', 'seat_cover',
-       'seat_cushion', 'seat_stay', 'second_hand', 'shade_cloth', 'shaft',
-       'shelf', 'short_ribs', 'shoulder', 'shoulder_strap', 'shower_head',
-       'shower_hose', 'side_panel', 'side_pockets', 'side_walls',
-       'side_windows', 'sink', 'slab', 'socket', 'spokes', 'spout',
-       'sprayer', 'spreader', 'stand', 'starboard', 'stem', 'step',
-       'stopper', 'strap', 'stretcher', 'strut', 'support', 'surface',
-       'switch', 'table', 'tabletop_frame', 'taillight', 'tank_cover',
-       'throw_pillow', 'tie_wrap', 'top', 'top_cap', 'top_panel', 'trap',
-       'tray_inner', 'truck', 'trunk', 'tube', 'tyre', 'unit', 'valve',
-       'vertical_divider_panel', 'vertical_side_panel', 'wall_mount',
-       'water', 'water_tank', 'wax_pan', 'wheel', 'windows', 'windshield',
-       'wing', 'wiper', 'wire', 'zipper']
-cat = parts
-# parts index and reversed index
-classes = dict(zip(cat, range(len(cat))))
-r_classes = {}
-for k, v in classes.items():
-    r_classes[v] = k
-len(parts)
+f = open(meta_dir + 'parts.json')
+_ALL_PARTS = json.load(f)
 
+# parts index and reversed index
+classes = dict(zip(_ALL_PARTS, range(len(_ALL_PARTS))))
 
 df=pd.read_csv(os.path.join(meta_dir, 'part_index.csv'))
 part_index=dict(zip(df['orgin'].tolist(),df['new'].tolist()))
@@ -174,5 +127,6 @@ def save_points(split):
         hf.create_dataset('id', data=asciiList, shape=(num_data, 1), compression='gzip', chunks=True)
 
 save_points('train')
-save_points('test')
 save_points('valid')
+# save_points('test')
+

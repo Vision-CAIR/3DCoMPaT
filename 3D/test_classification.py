@@ -3,7 +3,7 @@ Author: Benny
 Date: Nov 2019
 """
 # from data_utils.ModelNetDataLoader import ModelNetDataLoader
-from data_utils.compat_loader import Compat
+from data_utils.compat_loader import CompatLoader3DCls as Compat
 import argparse
 import numpy as np
 import os

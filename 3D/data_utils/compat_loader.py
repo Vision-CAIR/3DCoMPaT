@@ -1,108 +1,121 @@
+""""
+Dataloaders for the preprocessed point clouds from 3D 3DCoMPaT dataset.
+"""
+
 import os
 import glob
 import pandas as pd
 import h5py
 import numpy as np
 from torch.utils.data import Dataset
-# from ..build import DATASETS
 import logging
+import torch
+import json
 import pdb
-
-"""Modified from DeepGCN and DGCNN
-Reference: https://github.com/lightaime/deep_gcns_torch/tree/master/examples/modelnet_cls
-"""
-
-
-# @DATASETS.register_module()
-class Compat(Dataset):
-    """
-    This is the data loader for ModelNet 40
-    num_points: 1024 by default
-    data_dir
-    paritition: train or test
-    """
-
-    def __init__(self,
-                 num_points=1024,
-                 data_dir="./data/compat",
-                 split='train',
-                 transform=None,
-                 class_choices=None, mapped_labels=None
-                 ):
-        self.partition = 'train' if split.lower() == 'train' else 'test'  # val = test
-        self.data, self.seg, label = load_data(data_dir, self.partition)
-        self.label = self.get_model_ids(label, data_dir)
-        print('number of shapes and classes', len(self.data), self.get_num_classes())
-        if class_choices is not None:
-            cls_idx = []
-            label_new = []
-            for i, c in enumerate(class_choices):
-                c_idx = np.where(self.label==c)[0]
-                cls_idx.extend(c_idx)
-                label_new.extend(len(c_idx)*[mapped_labels[i]])
-            cls_idx = np.array(cls_idx)
-            self.data = self.data[cls_idx]
-            self.label = np.array(label_new)
-            print('selected number of shapes', len(self.data), np.unique(self.label))
-            
-        self.num_points = num_points
-        logging.info(f'==> sucessfully loaded {self.partition} data')
-        self.transform = transform
-
-    def __getitem__(self, item):
-        pointcloud = self.data[item][np.random.choice(5000, self.num_points, False)]
-        label = self.label[item]
-        if self.partition == 'train':
-            np.random.shuffle(pointcloud)
-        out_dict = {'x': pointcloud, 'y': label}
-        return pointcloud, label
-
-    def __len__(self):
-        return self.data.shape[0]
-
-    def get_num_classes(self):
-        return np.max(self.label) + 1
-
-    def get_model_ids(self, index, data_dir):
-        df = pd.read_csv(data_dir + "/model.csv")
-        part_index = dict(zip(df['id'].tolist(), df['model'].tolist()))
-        cat = sorted(list(set(df['model'].tolist())))
-        classes = dict(zip(cat, range(len(cat))))
-        label = []
-        print(classes)
-        for key in range(len(index)):
-            label.append(classes[part_index[index[key].item()]])
-        return np.array(label).astype('int64')  # , classes
-
 
 def load_data(data_dir, partition):
     print(os.getcwd())
     h5_name = os.path.join(data_dir, 'new{}.hdf5'.format(partition))
     with h5py.File(h5_name, 'r') as f:
-        data = f['pc'][:].astype('float32')
-        seg = f['seg'][:].astype('int64')
+        data = np.array(f['pc'][:]).astype('float32')
+        seg = np.array(f['seg'][:]).astype('int64')
+        color = np.array(f['color']).astype('float32')
         model_id = f['id'][:].astype('str')
+        
+    return data, seg, color, model_id
 
-    return data, seg, model_id
+class CompatLoader3D(Dataset):
 
-
-def translate_pointcloud(pointcloud):
     """
-    for scaling and shifting the point cloud
-    :param pointcloud:
-    :return:
-    """
-    scale = np.random.uniform(low=2. / 3., high=3. / 2., size=[3])
-    shift = np.random.uniform(low=-0.2, high=0.2, size=[3])
-    translated_pointcloud = np.add(np.multiply(pointcloud, scale), shift).astype('float32')
-    return translated_pointcloud
+    Base class for loading preprocessed 3D point clouds.
 
+    Args:
+        data_root:   Base dataset URL containing data split shards
+        split:       One of {train, valid}.
+        num_points:  Number of sampled points
+        transform:   data transformations
+    """
+
+    def __init__(self,
+                meta_dir = '../../metadata/',
+                data_root='data/compat',
+                split='train',
+                num_points=4096,
+                transform=None,
+                ):
+        self.partition = 'train' if split.lower() == 'train' else 'test'  # val = test
+        self.data, self.seg, self.feat, model_ids = load_data(data_root, self.partition)
+        
+        f = open(meta_dir + 'labels.json')
+        all_labels = json.load(f)
+        labels = []
+        for sid in model_ids:
+            labels.append(all_labels[sid[0]])
+
+        self.label = np.array(labels)
+
+        logging.info(f'==> sucessfully loaded {self.partition} data')
+
+        self.num_points = num_points
+        self.transform = transform
+        print('num_classes', self.num_classes())
+        # pdb.set_trace()
+
+    def __getitem__(self, item):
+        idx = np.random.choice(5000, self.num_points, False)
+        pointcloud = self.data[item][idx]
+        label = self.label[item]
+        feat = self.feat[item][idx]
+        seg = self.seg[item][idx]
+
+        pointcloud = torch.from_numpy(pointcloud)
+        feat = torch.from_numpy(feat)
+        seg = torch.from_numpy(seg)
+        return pointcloud, label, seg
+
+    def __len__(self):
+        return self.data.shape[0]
+
+    def num_classes(self):
+        return np.max(self.label) + 1
+
+
+class CompatLoader3DCls(Dataset):
+
+    """
+    Classification data loader using preprocessed 3D point clouds.
+
+    Args:
+        data_root:   Base dataset URL containing data split shards
+        split:       One of {train, valid}.
+        num_points:  Number of sampled points
+        transform:   data transformations
+    """
+
+    def __init__(self,
+                meta_dir = '../../metadata/',
+                data_root='data/compat',
+                split='train',
+                num_points=4096,
+                transform=None,
+                ):
+        super().__init__(data_root, split, num_points, transform)
+
+    def __getitem__(self, item):
+        idx = np.random.choice(5000, self.num_points, False)
+        pointcloud = self.data[item][idx]
+        label = self.label[item]
+        feat = self.feat[item][idx]
+        seg = self.seg[item][idx]
+
+        pointcloud = torch.from_numpy(pointcloud)
+        feat = torch.from_numpy(feat)
+        seg = torch.from_numpy(seg)
+        return pointcloud, label
 
 if __name__ == '__main__':
-    train = Compat(1024)
-    test = Compat(1024, split='test')
-    for data, label in train:
-        print(data['pts'].shape)
-        print(label)
-
-
+    train = CompatLoader3D(meta_dir = '../../metadata/', data_root = '../data/', num_points=4096)
+    for data, label, color in train:
+        print(data.shape)
+        print(color.shape)
+        print(label.shape)

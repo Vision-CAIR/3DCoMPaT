@@ -18,7 +18,7 @@ import argparse
 from pathlib import Path
 from tqdm import tqdm
 from data_utils.modelnet40 import ModelNet40
-from data_utils.compat_loader import Compat
+from data_utils.compat_loader import CompatLoader3DCls as Compat
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = BASE_DIR

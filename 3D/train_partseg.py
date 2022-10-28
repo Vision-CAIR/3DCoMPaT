@@ -17,7 +17,7 @@ import pdb
 from pathlib import Path
 from tqdm import tqdm
 # from data_utils.ShapeNetDataLoader import PartNormalDataset
-from data_utils.compatseg_loader import CompatSeg
+from data_utils.compat_loader import CompatLoader3D as CompatSeg
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = BASE_DIR
