@@ -140,11 +140,10 @@ class CompatLoader_stylized3D(CompatLoader3D):
         """
         shape_id = self.shape_ids[index]
         shape_id = '060dcf1e-f580-4b51-9769-4fba44152fcb'
-        style_id = '1684500'
-        
-        # mesh = trimesh.load('rendered_models/060dcf1e-f580-4b51-9769-4fba44152fcb/060dcf1e-f580-4b51-9769-4fba44152fcb_1684500.glb')
-        
-        gltf_path = os.path.join(self.root_dir, 'rendered_models/', shape_id,  shape_id + '_' + style_id + '.glb')
+        # style_id = '1684500'
+        gltf_folder = os.path.join(self.root_dir, 'rendered_models/', shape_id) 
+        all_files = os.listdir(gltf_folder)
+        gltf_path = os.path.join(gltf_folder, np.random.choice(all_files, 1)[0])
         mesh = trimesh.load(gltf_path)
         part_to_idx = self.part_to_idx
         part_rename = self.part_rename
