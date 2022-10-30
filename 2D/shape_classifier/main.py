@@ -265,3 +265,7 @@ def run_training(args):
 def main(argv=None):
     args = parse_args(argv)
     run_training(args)
+
+
+if __name__ == "__main__":
+    main()
