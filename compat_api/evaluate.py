@@ -1,7 +1,9 @@
+
 # Evaluation code for GCR task
 
 from collections import defaultdict
 import numpy as np
+from sklearn import metrics
 import pdb
 
 
@@ -290,3 +292,111 @@ class BboxEvalGTMat(BboxEval):
         self.per_obj_all_correct[gt_obj] += value_all
 
         return value
+
+
+class Eval_NonGCR:
+	def __init__(self):
+		pass
+
+	def eval_2D_Shape_Cls(self, y_pred, y_true):
+        """
+        Evaluation function for 2D shape classification
+
+        Args:
+          y_pred: a numpy array, each line contains predicted classification label.
+          y_true: a numpy array, each line contains GT classification label.
+        """
+        assert len(y_pred) == len(y_true)
+
+        label_values = np.unique(y_true)
+        cf_mat = confusion_matrix(y_true, y_pred)
+
+        instance_acc = sum([cf_mat[i,i] for i in range(len(label_values))])/len(y_true)
+        class_acc = np.array([cf_mat[i,i]/cf_mat[i,:].sum() for i in range(len(label_values))])
+        return instance_acc, class_acc
+
+    def eval_2D_Material_Tagging(self, y_pred, y_true):
+        """
+        Evaluation function for 3D shape classification
+
+        Args:
+          pred_file: a numpy array, each line contains a one-hot vector of predicted material classes.
+          gt_file: a numpy array, each line contains a one-hot vector of GT material classes.
+        """
+        assert len(y_pred) == len(y_true)
+
+        f1 = metrics.f1_score(y_true, y_pred)
+        prec = metrics.average_precision_score(y_true, y_pred)
+        return f1, prec
+
+    def eval_2D_Material_Seg(self, pred_file, gt_file):
+        """
+        Evaluation function for 2D material segmentation
+
+        Args:
+          y_pred: a numpy array, each line contains predicted segmentation labels for all pixels.
+          y_true: a numpy array, each line contains GT segmentation labels for all pixels.
+        """
+        assert len(y_pred) == len(y_true)
+
+        f1 = metrics.f1_score(y_true, y_pred)
+        prec = metrics.average_precision_score(y_true, y_pred)
+
+        mIoU = metrics.jaccard_score(y_true, y_pred, average='macro')
+
+        return f1, prec, mIoU
+
+
+    def eval_3D_Shape_Cls(self, y_pred, y_true):
+        """
+        Evaluation function for 2D shape classification
+
+        Args:
+          y_pred: a numpy array, each line contains predicted classification label.
+          y_true: a numpy array, each line contains GT classification label.
+        """
+        assert len(y_pred) == len(y_true)
+        
+        label_values = np.unique(y_true)
+        cf_mat = metrics.confusion_matrix(y_true, y_pred)
+
+        instance_acc = sum([cf_mat[i,i] for i in range(len(label_values))])/len(y_true)
+        class_acc = np.array([cf_mat[i,i]/cf_mat[i,:].sum() for i in range(len(label_values))])
+        class_avg_acc = np.mean(class_acc)
+        return instance_acc, class_avg_acc
+
+
+    def eval_3D_Part_Seg(self, y_pred, y_true):
+        """
+        Evaluation function for 3D shape classification
+
+        Args:
+          pred_file: a numpy array, each line contains predicted part labels for all points.
+          gt_file: a numpy array, each line contains GT part labels for all points.
+        """
+        assert len(y_pred) == len(y_true)
+        
+        label_values = np.unique(y_true)
+        cf_mat = metrics.confusion_matrix(y_true, y_pred)
+
+        instance_acc = sum([cf_mat[i,i] for i in range(len(label_values))])/len(y_true)
+        class_acc = np.array([cf_mat[i,i]/cf_mat[i,:].sum() for i in range(len(label_values))])
+        return instance_acc, class_acc
+        
+    def eval_3D_Material_Seg(self, y_pred, y_true):
+        """
+        Evaluation function for 2D material segmentation
+
+        Args:
+          y_pred: a numpy array, each line contains predicted segmentation labels for all points.
+          y_true: a numpy array, each line contains GT segmentation labels for all points.
+        """
+        assert len(y_pred) == len(y_true)
+
+        f1 = metrics.f1_score(y_true, y_pred)
+        prec = metrics.average_precision_score(y_true, y_pred)
+        mIoU = metrics.jaccard_score(y_true, y_pred, average='macro')
+
+        return f1, prec, mIoU
+
+
