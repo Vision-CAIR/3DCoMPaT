@@ -57,8 +57,8 @@ def parse_args(argv):
     parser.add_argument('--momentum', default=0.9, type=float, required=False,
                         help='Momentum (default=%(default)s)')
 
-    parser.add_argument('--nbatches', default=4000, type=int, required=True,
-                        help='Maximum number of batches to see per session (default=%(default)s)')
+    parser.add_argument('--nepochs', default=1, type=int, required=True,
+                        help='Number of epochs to train with (default=%(default)s)')
     parser.add_argument('--num-classes', default=43, type=int, required=False,
                         help='Number of classes to train with')
     parser.add_argument('--patience', type=int, default=3, required=False,
@@ -182,7 +182,7 @@ def run_training(args):
 
     test_loader = (
         ShapeLoader(root_url  = args.root_url,
-                    split     = "test",
+                    split     = "val",
                     n_comp    = args.n_comp,
                     cache_dir = '/tmp/' if args.use_tmp else None,
                     view_type = args.view_type,
@@ -196,12 +196,12 @@ def run_training(args):
     tstart = time.time()
 
     print("Starting training...")
-    print("Number of batches: [%d]" % train_loader.length)
+    print("Number of training batches: [%d]" % train_loader.length)
 
     n_batch = 0
     loss = None
 
-    while n_batch < args.nbatches:
+    for n_epoch in range(args.nepochs):
         # Training the model
         optimizer_ft.zero_grad()
         model.train()
@@ -244,16 +244,15 @@ def run_training(args):
                     "state_dict": model.state_dict()
                 }
                 torch.save(state, saved_model)
+                break
 
             n_batch += 1
             scheduler.step()
 
-            if (n_batch >= args.nbatches): break
-
         # Logging results
         current_elapsed_time = time.time() - starting_time
         print('{:03}/{:03} | {} | Train : loss = {:.4f} | top-1 acc = {:.3f} | top-5 acc = {:.3f}'.
-                format(n_batch, args.nbatches,
+                format(n_epoch+1, args.nepochs,
                         timedelta(seconds=round(current_elapsed_time)),
                         loss, top1_avg, top5_avg))
 
@@ -267,7 +266,3 @@ def run_training(args):
 def main(argv=None):
     args = parse_args(argv)
     run_training(args)
-
-
-if __name__ == "__main__":
-    main()

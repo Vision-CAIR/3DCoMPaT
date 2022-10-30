@@ -70,7 +70,7 @@ class CompatLoader2D:
             raise RuntimeError(except_str)
 
         # Computing dataset size
-        self.dataset_size = sample_count[split]
+        self.dataset_size = sample_count[split]*n_comp
         if view_type != -1:
             self.dataset_size //= 2
 
