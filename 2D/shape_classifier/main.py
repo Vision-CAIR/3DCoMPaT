@@ -244,7 +244,6 @@ def run_training(args):
                     "state_dict": model.state_dict()
                 }
                 torch.save(state, saved_model)
-                break
 
             n_batch += 1
             scheduler.step()
