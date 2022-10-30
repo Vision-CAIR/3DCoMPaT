@@ -275,11 +275,6 @@ class ScanNet3D(data.Dataset):
                     a.append(np.hstack((v[key], colors[key], np.expand_dims(segment[key],axis=1))))
                 b = np.vstack(a)
 
-                #     SA.delete("shm://wbhu_scannet_3d_%s_%06d_locs_%08d" % (split, identifier, i))
-                #     SA.delete("shm://wbhu_scannet_3d_%s_%06d_feats_%08d" % (split, identifier, i))
-                #     SA.delete("shm://wbhu_scannet_3d_%s_%06d_labels_%08d" % (split, identifier, i))
-                #     print(model_ids)
-
                 sa_create("shm://wbhu_scannet_3d_%s_%06d_locs_%s" % (split, identifier, model_id), b[:, :3])
                 sa_create("shm://wbhu_scannet_3d_%s_%06d_feats_%s" % (split, identifier, model_id), b[:, 3:6])
                 sa_create("shm://wbhu_scannet_3d_%s_%06d_labels_%s" % (split, identifier, model_id), b[:, 6])
