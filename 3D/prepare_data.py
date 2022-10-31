@@ -54,9 +54,6 @@ _ALL_PARTS = json.load(f)
 # parts index and reversed index
 classes = dict(zip(_ALL_PARTS, range(len(_ALL_PARTS))))
 
-df=pd.read_csv(os.path.join(meta_dir, 'part_index.csv'))
-part_index=dict(zip(df['orgin'].tolist(),df['new'].tolist()))
-
 def save_points(split):
     sample_xyzs = []
     sample_colorss = []
@@ -90,9 +87,6 @@ def save_points(split):
             if g_name in classes:
                 # Glb name is same as defined
                 part_name = g_name
-            elif g_name in part_index:
-                # Glb name is different from defined. We regulated the name.
-                part_name = part_index[g_name]
             else:
                 # If there are still some incorrect one.
                 part_name = g_name.split('_')[0]

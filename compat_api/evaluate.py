@@ -1,13 +1,19 @@
 
-# Evaluation code for GCR task
+# Evaluation code for GCR and non-GCR tasks.
 
 from collections import defaultdict
 import numpy as np
 from sklearn import metrics
 import pdb
 
-
 class BboxEval:
+    """
+    Base class for evaluating GRC task.
+
+    Args:
+        shape:    choosen from 'top1', 'top5'
+    """
+
     def __init__(self, shape='top1'):
         self.shape = shape
         self.per_obj_occ_bboxes = defaultdict(float)  # Number of object occured for each object, used for calculate gnd-value-all
@@ -184,8 +190,14 @@ class BboxEval:
         area_union = area_output + area_target - area_intersection
         return area_intersection, area_union, area_target
 
-# Eval when part predictions are assumed to be ground truth
+
 class BboxEvalGTPart:
+    """
+    Evaluting GRC task when part predictions are assumed to be ground truth.
+
+    Args:
+        shape:    choosen from 'top1', 'top5'
+    """
     def __init__(self, shape='top1'):
         super().__init__(shape)
 
@@ -237,9 +249,13 @@ class BboxEvalGTPart:
 
         return value
 
-
-# Eval when material predictions are assumed to be ground truth
 class BboxEvalGTMat(BboxEval):
+    """
+    Evaluting GRC task when material predictions are assumed to be ground truth.
+
+    Args:
+        shape:    choosen from 'top1', 'top5'
+    """
     def __init__(self, shape='top1'):
         super().__init__(shape)
 
@@ -295,6 +311,12 @@ class BboxEvalGTMat(BboxEval):
 
 
 class Eval_NonGCR:
+    """
+    Evaluting non-GRC tasks.
+
+    Args:
+        shape:    choosen from 'top1', 'top5'
+    """
 	def __init__(self):
 		pass
 

@@ -36,9 +36,6 @@ class CompatLoader3D(Dataset):
         _ALL_PARTS = json.load(f)
         self.part_to_idx = dict(zip(_ALL_PARTS, range(len(_ALL_PARTS))))
 
-        df=pd.read_csv(meta_dir + 'part_index.csv')
-        self.part_rename=dict(zip(df['orgin'].tolist(),df['new'].tolist()))
-
         # read all object categories
         f = open(meta_dir + 'labels.json')
         all_labels = json.load(f)
@@ -72,7 +69,6 @@ class CompatLoader3D(Dataset):
         gltf_path = os.path.join(self.root_dir, 'raw_models', shape_id + '.glb')
         mesh = trimesh.load(gltf_path)
         part_to_idx = self.part_to_idx
-        part_rename = self.part_rename
         if self.n_point==0:
             return shape_id, mesh
         else:
@@ -83,9 +79,6 @@ class CompatLoader3D(Dataset):
                 if g_name in part_to_idx:
                     # Glb name is same as defined
                     part_name = g_name
-                elif g_name in part_rename:
-                    # Glb name is different from defined. We regulated the name.
-                    part_name = part_rename[g_name]
                 else:
                     # If there are still some incorrect one.
                     part_name = g_name.split('_')[0]
