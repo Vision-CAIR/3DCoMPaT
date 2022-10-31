@@ -214,10 +214,6 @@ def run_training(args):
         optimizer_ft.zero_grad()
         model.train()
 
-        # Initializing metrics
-        f1_meter = utils.AverageMeter('F1', ':6.4f')
-        metrics  = [f1_meter]
-
         for images, targets in train_loader:
             images, targets = images.to(device), targets.to(device)
             targets = targets.squeeze()
@@ -228,12 +224,6 @@ def run_training(args):
             loss.backward()
             optimizer_ft.step()
             optimizer_ft.zero_grad()
-
-            ## Udpating metrics
-            N = images.shape[0]
-
-            f1_score = f1(torch.sigmoid(outputs).float(), targets.int())
-            f1_meter.update(f1_score, N)
 
             ## Making a checkpoint
             if n_batch % 1000:
@@ -246,21 +236,22 @@ def run_training(args):
 
                 print("Saved model at: [" + saved_model + "]")
                 state = {
-                    "f1_train": f1_meter.avg,
                     "f1_test": f1_test_meter.avg,
                     "ap_test": ap_test_meter.avg,
                     "state_dict": model.state_dict()
                 }
                 torch.save(state, saved_model)
-                utils.print_progress(n_epoch+1, args.nepochs, 0., loss,
-                                     [f1_test_meter, ap_test_meter])
+                metrics = [f1_test_meter, ap_test_meter]
+                elapsed_time = timedelta(seconds=round(time.time() - start_time))
+                utils.print_progress(n_epoch, args.nepochs, elapsed_time,
+                                    loss, metrics)
 
             n_batch += 1
             scheduler.step()
 
         # Logging results
         elapsed_time = timedelta(seconds=round(time.time() - start_time))
-        utils.print_progress(n_epoch+1, args.nepochs, elapsed_time, loss, metrics)
+        utils.print_progress(n_epoch, args.nepochs, elapsed_time, loss, metrics)
 
     # Final output
     print('[Elapsed time = {} mn]'.format(elapsed_time))

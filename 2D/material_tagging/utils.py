@@ -24,7 +24,7 @@ def seed_everything(seed=0):
 
 def print_progress(n_epoch, total_epochs, time, loss, metrics):
     print('{:03}/{:03} | {} | Train : loss = {:.4f} | {} '.
-            format(n_epoch+1, total_epochs,
+            format(n_epoch, total_epochs,
                    time, loss,
                    " | ".join([str(m) for m in metrics])))
 
