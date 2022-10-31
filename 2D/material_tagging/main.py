@@ -1,8 +1,9 @@
 """
-Training a basic ResNet-18 on the 3DCompat dataset for shape classification.
+Training a basic ResNet-18 on the 3DCompat dataset for material tagging.
 """
 
 import argparse
+import json
 import os
 import time
 
@@ -14,11 +15,12 @@ import torchvision.transforms as T
 from datetime import timedelta
 from torchvision import models
 from torch.nn.parallel import DataParallel
+from torchmetrics import F1Score, AveragePrecision
 
 
 import utils
 
-from compat2D import ShapeLoader
+from material_loader import MaterialTagLoader
 
 
 
@@ -58,9 +60,7 @@ def parse_args(argv):
                         help='Momentum (default=%(default)s)')
 
     parser.add_argument('--nepochs', default=1, type=int, required=True,
-                        help='Number of epochs to train for (default=%(default)s)')
-    parser.add_argument('--num-classes', default=43, type=int, required=False,
-                        help='Number of classes to train with')
+                        help='Number of epochs to train with (default=%(default)s)')
     parser.add_argument('--patience', type=int, default=3, required=False,
                         help='Use patience while training (default=%(default)s)')
     parser.add_argument('--resume', action='store_true',
@@ -86,12 +86,13 @@ def parse_args(argv):
     return args
 
 
-def evaluate(net, test_loader, device):
+def evaluate(net, test_loader, device, f1, ap):
     """
     Evaluating the resulting classifier using a given test set loader.
     """
-    total_top1_hits, total_top5_hits, N = 0, 0, 0
-    top1_avg, top5_avg = 0, 0
+    # Initializing metrics
+    f1_meter = utils.AverageMeter('F1', ':6.4f')
+    ap_meter = utils.AverageMeter('AP', ':6.4f')
 
     # net.eval()
     with torch.no_grad():
@@ -102,15 +103,16 @@ def evaluate(net, test_loader, device):
 
             outputs = net(images)
 
-            top5_hits, top1_hits = utils.calculate_metrics(outputs, labels)
-            total_top1_hits += top1_hits
-            total_top5_hits += top5_hits
-            N += labels.shape[0]
+            # Updating metrics
+            N = images.shape[0]
 
-    top1_avg = 100 * (float(total_top1_hits) / N)
-    top5_avg = 100 * (float(total_top5_hits) / N)
+            f1_score = f1(torch.sigmoid(outputs).float(), labels.int())
+            f1_meter.update(f1_score, N)
 
-    return top1_avg, top5_avg
+            ap_score = ap(outputs.float(), labels.int())
+            ap_meter.update(ap_score, N)
+
+    return f1_meter, ap_meter
 
 
 def run_training(args):
@@ -128,8 +130,12 @@ def run_training(args):
     if not os.path.exists(args.models_dir):
         print("Output model directory [%s] not found. Creating..." % args.models_dir)
         os.makedirs(args.models_dir)
+    
+    # Initializing materials list
+    mat_list = json.load(open("materials.json", "r"))
+    num_classes = len(mat_list)
 
-    num_classes = args.num_classes
+    # Model initialization
     res_model = {'resnet18': models.resnet18, 'resnet50': models.resnet50}
     fv_size   = {'resnet18': 512,             'resnet50': 2048}
     model = res_model[args.resnet_type](pretrained=args.use_pretrained)
@@ -154,13 +160,13 @@ def run_training(args):
     model = DataParallel(model)
 
     # Defining Loss and Optimizer
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.BCEWithLogitsLoss()
     optimizer_ft = optim.SGD(model.parameters(),
                              lr=0.1,
                              momentum=args.momentum,
                              weight_decay=args.weight_decay)
-    scheduler = torch.optim.lr_scheduler.CyclicLR(optimizer_ft, base_lr=0.01, max_lr=0.1)
-
+    scheduler = torch.optim.lr_scheduler.CyclicLR(optimizer_ft,
+                                                  base_lr=0.01, max_lr=0.1)
 
     # Instantiating data loaders
     test_transforms = T.Compose([
@@ -172,42 +178,45 @@ def run_training(args):
     ])
 
     train_loader = (
-        ShapeLoader(root_url  = args.root_url,
-                    split     = "train",
-                    n_comp    = args.n_comp,
-                    cache_dir = '/tmp/' if args.use_tmp else None,
-                    view_type = args.view_type,
-                    transform = train_transforms)
+        MaterialTagLoader(root_url  = args.root_url,
+                          split     = "train",
+                          n_comp    = args.n_comp,
+                          mat_list  = mat_list,
+                          cache_dir = '/tmp/' if args.use_tmp else None,
+                          view_type = args.view_type,
+                          transform = train_transforms)
     ).make_loader(args.batch_size, args.num_workers)
 
     test_loader = (
-        ShapeLoader(root_url  = args.root_url,
-                    split     = "val",
-                    n_comp    = args.n_comp,
-                    cache_dir = '/tmp/' if args.use_tmp else None,
-                    view_type = args.view_type,
-                    transform = test_transforms)
+        MaterialTagLoader(root_url  = args.root_url,
+                          split     = "val",
+                          n_comp    = args.n_comp,
+                          mat_list  = mat_list,
+                          cache_dir = '/tmp/' if args.use_tmp else None,
+                          view_type = args.view_type,
+                          transform = test_transforms)
     ).make_loader(args.batch_size, args.num_workers)
 
     # Training
-    starting_time = time.time()
-
-    # Main loop
-    tstart = time.time()
-
+    start_time = time.time()
     print("Starting training...")
     print("Number of training batches: [%d]" % train_loader.length)
 
     n_batch = 0
-    loss = None
+    loss = NotImplementedError
+
+    # Defining metric functions
+    f1 = F1Score(num_classes=num_classes).cuda()
+    ap = AveragePrecision().cuda()
 
     for n_epoch in range(args.nepochs):
         # Training the model
         optimizer_ft.zero_grad()
         model.train()
 
-        total_top1_hits, total_top5_hits, N = 0, 0, 0
-        top1_avg, top5_avg = 0, 0
+        # Initializing metrics
+        f1_meter = utils.AverageMeter('F1', ':6.4f')
+        metrics  = [f1_meter]
 
         for images, targets in train_loader:
             images, targets = images.to(device), targets.to(device)
@@ -220,43 +229,41 @@ def run_training(args):
             optimizer_ft.step()
             optimizer_ft.zero_grad()
 
-            ## Logging results
-            top5_hits, top1_hits = utils.calculate_metrics(outputs, targets)
-            total_top1_hits += top1_hits
-            total_top5_hits += top5_hits
-            N += images.shape[0]
-            top1_avg = 100 * (float(total_top1_hits) / N)
-            top5_avg = 100 * (float(total_top5_hits) / N)
+            ## Udpating metrics
+            N = images.shape[0]
+
+            f1_score = f1(torch.sigmoid(outputs).float(), targets.int())
+            f1_meter.update(f1_score, N)
 
             ## Making a checkpoint
-            if n_batch % 1000 == 0:
-                saved_model = os.path.join(args.models_dir, "%s_batch_%d.ckpt" % (args.resnet_type, n_batch))
+            if n_batch % 1000:
+                saved_model = os.path.join(args.models_dir,
+                "%s_batch_%d.ckpt" % (args.resnet_type, n_batch))
 
                 # Measuring model test-accuracy
-                top1_test_acc, top5_test_acc = evaluate(model, test_loader, device)
+                val_metrics = evaluate(model, test_loader, device, f1, ap)
+                f1_test_meter, ap_test_meter = val_metrics
 
                 print("Saved model at: [" + saved_model + "]")
                 state = {
-                    "top1_train_acc": top1_avg,
-                    "top5_train_acc": top5_avg,
-                    "top1_test_acc": top1_test_acc,
-                    "top5_test_acc": top5_test_acc,
+                    "f1_train": f1_meter.avg,
+                    "f1_test": f1_test_meter.avg,
+                    "ap_test": ap_test_meter.avg,
                     "state_dict": model.state_dict()
                 }
                 torch.save(state, saved_model)
+                utils.print_progress(n_epoch+1, args.nepochs, 0., loss,
+                                     [f1_test_meter, ap_test_meter])
 
             n_batch += 1
             scheduler.step()
 
         # Logging results
-        current_elapsed_time = time.time() - starting_time
-        print('{:03}/{:03} | {} | Train : loss = {:.4f} | top-1 acc = {:.3f} | top-5 acc = {:.3f}'.
-                format(n_epoch+1, args.nepochs,
-                        timedelta(seconds=round(current_elapsed_time)),
-                        loss, top1_avg, top5_avg))
+        elapsed_time = timedelta(seconds=round(time.time() - start_time))
+        utils.print_progress(n_epoch+1, args.nepochs, elapsed_time, loss, metrics)
 
     # Final output
-    print('[Elapsed time = {:.1f} mn]'.format((time.time() - tstart) / 60))
+    print('[Elapsed time = {} mn]'.format(elapsed_time))
     print('Done!')
 
     print('-' * 108)
@@ -269,3 +276,4 @@ def main(argv=None):
 
 if __name__ == "__main__":
     main()
+

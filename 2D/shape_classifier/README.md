@@ -60,7 +60,7 @@ Parameters are as follows:
 - `weight-decay`: SGD Weight decay.
 - `momentum`: SGD Momentum.
 
-- `nbatches`: Maximum number of batches to use while training.
+- `nepochs`: Number of epochs to train for.
 - `resnet-type`: ResNet variant to be used for training, (one of `resnet10` or `resnet50`).
 - `use-pretrained`: Use a model pre-trained on ImageNet.
 
@@ -81,16 +81,16 @@ python main.py --num-workers 2 \
     --resnet-type resnet50 \
     --nepochs 1 \
     --seed 0 \
-    --n-comp 1 \
+    --n-comp 10 \
+	--use-pretrained \
     --view-type all
 ```
 
 Note that `root_url` should be changed to the local path of 3DCoMPaT to avoid redownloading the dataset at training time.
 
 ### 3. Evaluation and pretrained models
-To be updated.
+We provide below pretrained models on various number of compositions, with their classiciation accuracies evaluated on the 3DCoMPaT **validation** set.
 
-| Model | Previous | Validation| Pretrained|
-|--|--|--|--|
-|ResNet50 | 76.82 | | [resnet50](https://drive.google.com/file/d/1o9cQieZByHb11Wo7lNyLWbwEuBNcrrfB/view?usp=sharing) | 
-
+| Model | #Compositions | View type | Accuracy | Download |
+|--|--|--|--|--|
+|ResNet50 | 10 | Mixed | 00.00 | [resnet50](https://drive.google.com/file/d/1o9cQieZByHb11Wo7lNyLWbwEuBNcrrfB/view?usp=sharing) | 

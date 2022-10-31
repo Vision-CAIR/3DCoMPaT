@@ -1,5 +1,5 @@
 """
-Utility functions.
+Utility functions for shape classification.
 """
 import os
 import random
