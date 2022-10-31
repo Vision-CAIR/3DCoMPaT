@@ -1,20 +1,15 @@
 """"
 Dataloaders for the 3D 3DCoMPaT tasks.
 """
-import os
-import os.path as osp
-import glob
-import pandas as pd
-import h5py
-import numpy as np
-import numpy as np
-import matplotlib.pyplot as plt
-import trimesh
-import json
-import torch
-from torch.utils.data import Dataset
 import difflib
-import pdb
+import json
+import os
+import numpy as np
+import pandas as pd
+import trimesh
+
+from torch.utils.data import Dataset
+
 
 
 class CompatLoader3D(Dataset):

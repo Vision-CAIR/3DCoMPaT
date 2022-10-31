@@ -24,10 +24,12 @@ This ID is used in the GLB files provided, in the WebDatase tar entries and in t
 
 - `part_material_map.json`: Maps each model ID to a dictionary of the form:
 
-```
-    model_id -> {part_name_0: material_category_0,
-                 part_name_1: material_category_1,
-                 ...}
+```json
+{"model_id_0" : {"part_name_0": "material_category_0",
+                 "part_name_1": "material_category_1",
+                 ... },
+  ...
+}
 ```
 
 These material categories are valid for all stylized models and rendered views provided in the dataset.
