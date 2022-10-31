@@ -7,14 +7,15 @@ List of requirements:
 
 - `numpy==1.22.3`
 - `torch==1.10.2`
+- `torchmetrics==0.10.1`
 - `torchvision==0.12.0`
 - `webdataset==0.2.5`
-- `torchmetrics==0.10.1`
 
-Additionally, the `compat2D.py` file in the [compat_api](../../compat_api/) directory must be added or linked to this folder:
+Additionally, the `compat2D.py` file in the [compat_api](../../compat_api/) directory, and the `materials.json` file must be added or linked to this folder:
 
 ```bash
 ln -s ../../compat_api/compat2D.py .
+ln -s ../../metadata/materials.json .
 ```
 
 ### 1. Dataset
