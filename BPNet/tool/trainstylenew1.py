@@ -557,41 +557,13 @@ def train_cross(train_loader, model, criterion, optimizer, epoch):
 
             label_3d, label_2d = label_3d.cuda(non_blocking=True), label_2d.cuda(non_blocking=True)
             cls, mat, mat_3d = cls.cuda(non_blocking=True), mat.cuda(non_blocking=True), mat_3d.cuda(non_blocking=True)
-            # print(label_2d.type())
-            # print(mat.type())
-            # for i in range(len(label_2d)):
-            #     print(label_2d[i, 200:300, 200:300, 0])
-            #
-            # for i in range(len(mat)):
-            #     print(mat[i, 200:250, 200:250, 0])
-            # print("start to check the ranges")
-            # print(torch.unique(label_3d))
-            # print(torch.unique(label_2d))
-            # print(torch.unique(cls))
-            # print(torch.unique(mat))
-            # print(torch.unique(mat_3d))
-            # print("check the shapes of them")
-            # print(label_3d.shape)
-            # print(label_2d.shape)
-            # print(cls.shape)
-            # print(mat.shape)
-            # print(mat_3d.shape)
 
-            # print(label_2d.shape)
+
             output_3d, output_2d, output_cls, output_mat, output_3dmat = model(sinput, color, link)
-            # print("Lets check the output shapes")
-            # print(output_3d.shape)
-            # print(output_2d.shape)
-            # print(output_cls.shape)
-            # print(output_mat.shape)
-            # print(output_3dmat.shape)
+
             loss_2d = F.nll_loss(F.log_softmax(output_2d, dim=1), label_2d)
             loss_mat = F.nll_loss(F.log_softmax(output_mat, dim=1), mat)
 
-            # print("output 2d max :{}".format(output_2d.max()))
-            # print(output_2d.shape)
-            # print("2d mat", output_mat.shape)
-            # pdb.set_trace()
             loss_cls = criterion(output_cls, cls)
             loss_3d = criterion(output_3d, label_3d)
             loss_3dmat = criterion(output_3dmat, mat_3d)

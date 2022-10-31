@@ -394,7 +394,7 @@ def get_model(cfg):
         from models.unet_3d import MinkUNet34C as Model
         model = Model(in_channels=3, out_channels=cfg.classes, D=3)
     elif cfg.arch == 'bpnet':
-        from models.bpnetNew import BPNet as Model
+        from models.bpnet import BPNet as Model
         model = Model(cfg=cfg)
     else:
         raise Exception('architecture not supported yet'.format(cfg.arch))
@@ -542,15 +542,10 @@ def train_cross(train_loader, model, criterion, optimizer, epoch):
     batch_time = AverageMeter()
     data_time = AverageMeter()
 
-    loss_meter, loss_meter_3d, loss_meter_2d, loss_meter_cls = AverageMeter(), AverageMeter(), AverageMeter(), AverageMeter()
+    loss_meter, loss_meter_3d, loss_meter_2d = AverageMeter(), AverageMeter(), AverageMeter(), AverageMeter()
     intersection_meter_3d, intersection_meter_2d = AverageMeter(), AverageMeter()
     union_meter_3d, union_meter_2d = AverageMeter(), AverageMeter()
     target_meter_3d, target_meter_2d = AverageMeter(), AverageMeter()
-    target_meter_mat, union_meter_mat, intersection_meter_mat = AverageMeter(), AverageMeter(), AverageMeter()
-    target_meter_3dmat, union_meter_3dmat, intersection_meter_3dmat = AverageMeter(), AverageMeter(), AverageMeter()
-    loss_meter_mat, loss_meter_3dmat = AverageMeter(), AverageMeter()
-    acc = 0
-    total = 0
     model.train()
     end = time.time()
     max_iter = args.epochs * len(train_loader)
@@ -602,20 +597,15 @@ def train_cross(train_loader, model, criterion, optimizer, epoch):
         loss_meter_3d.update(loss_3d.item(), args.batch_size)
         batch_time.update(time.time() - end)
         end = time.time()
-        # 2d compat result:
-        accuracy_mat = 0
-        # 3d compat resutl: Todo
+
         # Adjust lr
         current_iter = epoch * len(train_loader) + i + 1
         current_lr = poly_learning_rate(args.base_lr, current_iter, max_iter, power=args.power)
-        # if args.arch == 'cross_p5' or args.arch == 'cross_p2':
+
         for index in range(0, args.index_split):
             optimizer.param_groups[index]['lr'] = current_lr
         for index in range(args.index_split, len(optimizer.param_groups)):
             optimizer.param_groups[index]['lr'] = current_lr * 10
-        # else:
-        #     for param_group in optimizer.param_groups:
-        #         param_group['lr'] = current_lr
 
         # calculate remain time
         remain_iter = max_iter - current_iter
@@ -797,10 +787,6 @@ def validate_cross(val_loader, model, criterion):
     intersection_meter_3d, intersection_meter_2d = AverageMeter(), AverageMeter()
     union_meter_3d, union_meter_2d = AverageMeter(), AverageMeter()
     target_meter_3d, target_meter_2d = AverageMeter(), AverageMeter()
-    loss_meter_mat = AverageMeter()
-    target_meter_3dmat, union_meter_3dmat, intersection_meter_3dmat = AverageMeter(), AverageMeter(), AverageMeter()
-    loss_meter_3dmat = AverageMeter()
-    target_meter_mat, union_meter_mat, intersection_meter_mat = AverageMeter(), AverageMeter(), AverageMeter()
     acc = 0
     total = 0
     model.eval()
@@ -808,91 +794,70 @@ def validate_cross(val_loader, model, criterion):
         # outseg, outcls, outmat, gtcls, gtseg, gtmat, gtseg3d, outseg3d = [], [], [], [], [], [], [], []
         for i, batch_data in enumerate(val_loader):
             if args.data_name == 'scannet_cross':
-                (coords, feat, label_3d, color, label_2d, link, inds_reverse, cls, mat, mat3d) = batch_data
+                (coords, feat, label_3d, color, label_2d, link, inds_reverse, cls, mat, mat_3d) = batch_data
                 sinput = SparseTensor(feat.cuda(non_blocking=True), coords)
                 color, link = color.cuda(non_blocking=True), link.cuda(non_blocking=True)
                 label_3d, label_2d, = label_3d.cuda(non_blocking=True), label_2d.cuda(non_blocking=True)
                 cls, mat = cls.cuda(non_blocking=True), mat.cuda(non_blocking=True)
-                mat3d = mat3d.cuda(non_blocking=True)
-                output_3dmat, output_mat = model(sinput, color, link)
+                mat_3d = mat_3d.cuda(non_blocking=True)
+                output_3d, output_2d = model(sinput, color, link)
                 # output_3d = output_3d[inds_reverse, :]
             else:
                 raise NotImplemented
 
-            loss_mat = criterion(output_mat, mat)
-            loss_3dmat = criterion(output_3dmat, mat3d)
+            loss_2d = criterion(output_2d, mat)
+            loss_3d = criterion(output_3d, mat_3d)
 
-            loss = loss_mat + loss_3dmat
+            loss = loss_2d + loss_3d
 
             # ############ 3D ############ #
-            # ############ mat_3d ############ #
-            output_3dmat = output_3dmat.detach().max(1)[1]
-            intersection, union, target = intersectionAndUnionGPU(output_3dmat, mat3d.detach(), args.mat,
+            output_3d = output_3d.detach().max(1)[1]
+            intersection, union, target = intersectionAndUnionGPU(output_3d, mat_3d.detach(), args.classes,
                                                                   args.ignore_label)
             intersection, union, target = intersection.cpu().numpy(), union.cpu().numpy(), target.cpu().numpy()
-            intersection_meter_3dmat.update(intersection)
-            union_meter_3dmat.update(union)
-            target_meter_3dmat.update(target)
-            accuracy_3dmat = sum(intersection_meter_3dmat.val) / (sum(target_meter_3dmat.val) + 1e-10)
+            intersection_meter_3d.update(intersection)
+            union_meter_3d.update(union)
+            target_meter_3d.update(target)
+            accuracy_3d = sum(intersection_meter_3d.val) / (sum(target_meter_3d.val) + 1e-10)
 
-            # ############ mat ############ #
-            output_mat = output_mat.detach().max(1)[1]
-            intersection, union, target = intersectionAndUnionGPU(output_mat, mat.detach(), args.mat,
+            # ############ 2D ############ #
+            output_2d = output_2d.detach().max(1)[1]
+            intersection, union, target = intersectionAndUnionGPU(output_2d, mat.detach(), args.classes,
                                                                   args.ignore_label)
+            intersection, union, target = intersection.cpu().numpy(), union.cpu().numpy(), target.cpu().numpy()
             if args.multiprocessing_distributed:
                 dist.all_reduce(intersection), dist.all_reduce(union), dist.all_reduce(target)
-            intersection, union, target = intersection.cpu().numpy(), union.cpu().numpy(), target.cpu().numpy()
-            intersection_meter_mat.update(intersection)
-            union_meter_mat.update(union)
-            target_meter_mat.update(target)
-            accuracy_mat = sum(intersection_meter_mat.val) / (sum(target_meter_mat.val) + 1e-10)
+            intersection_meter_2d.update(intersection)
+            union_meter_2d.update(union)
+            target_meter_2d.update(target)
+            accuracy_2d = sum(intersection_meter_2d.val) / (sum(target_meter_2d.val) + 1e-10)
 
             loss_meter.update(loss.item(), args.batch_size)
-            loss_meter_mat.update(loss_mat.item(), args.batch_size)
-            loss_meter_3dmat.update(loss_3dmat.item(), args.batch_size)
-            # ############ cls ############ #
+            loss_meter_2d.update(loss_2d.item(), args.batch_size)
+            loss_meter_3d.update(loss_3d.item(), args.batch_size)
 
-    # outcls1 = torch.cat(outcls)
-    # outseg1 = torch.cat(outseg)
-    # outseg3d1 = torch.cat(outseg3d)
-    # outmat1 = torch.cat(outmat)
-    # gtcls1 = torch.cat(gtcls)
-    # gtmat1 = torch.cat(gtmat)
-    # gtseg1 = torch.cat(gtseg)
-    # gtseg3d1 = torch.cat(gtseg3d)
-    #
-    # np.save(join(args.save_folder, 'outcls.npy'), outcls1.numpy()
-    #         )
-    # np.save(join(args.save_folder, 'outseg.npy'), outseg1.numpy()
-    #         )
-    # np.save(join(args.save_folder, 'outseg3d.npy'), outseg3d1.numpy()
-    #         )
-    # np.save(join(args.save_folder, 'outmat.npy'), outmat1.numpy()
-    #         )
-    # # mIou_2d = iou.evaluate(store.max(1)[1].numpy(), gt.numpy())
-    # np.save(join(args.save_folder, 'gtcls.npy'), gtcls1.numpy())
-    # np.save(join(args.save_folder, 'gtseg.npy'), gtseg1.numpy())
-    # np.save(join(args.save_folder, 'gtseg3d.npy'), gtseg3d1.numpy())
-    # np.save(join(args.save_folder, 'gtmat.npy'), gtmat1.numpy())
 
-    iou_class_3dmat = intersection_meter_3dmat.sum / (union_meter_3dmat.sum + 1e-10)
-    accuracy_class_3dmat = intersection_meter_3dmat.sum / (target_meter_3dmat.sum + 1e-10)
+
+
+
+
+    iou_class_3dmat = intersection_meter_3d.sum / (union_meter_3d.sum + 1e-10)
+    accuracy_class_3dmat = intersection_meter_3d.sum / (target_meter_3d.sum + 1e-10)
     mIoU_3dmat = np.mean(iou_class_3dmat)
     mAcc_3dmat = np.mean(accuracy_class_3dmat)
-    allAcc_3dmat = sum(intersection_meter_3dmat.sum) / (sum(target_meter_3dmat.sum) + 1e-10)
+    allAcc_3dmat = sum(intersection_meter_3d.sum) / (sum(target_meter_3d.sum) + 1e-10)
 
 
-    iou_class_mat = intersection_meter_mat.sum / (union_meter_mat.sum + 1e-10)
-    accuracy_class_mat = intersection_meter_mat.sum / (target_meter_mat.sum + 1e-10)
+    iou_class_mat = intersection_meter_2d.sum / (union_meter_2d.sum + 1e-10)
+    accuracy_class_mat = intersection_meter_2d.sum / (target_meter_2d.sum + 1e-10)
     mIoU_mat = np.mean(iou_class_mat)
     mAcc_mat = np.mean(accuracy_class_mat)
-    allAcc_mat = sum(intersection_meter_mat.sum) / (sum(target_meter_mat.sum) + 1e-10)
+    allAcc_mat = sum(intersection_meter_2d.sum) / (sum(target_meter_2d.sum) + 1e-10)
 
     if main_process():
         logger.info(
-            'Val result 2dmat: mIoU/mAcc/allAcc {:.4f}/{:.4f}/{:.4f}.'.format(mIoU_mat, mAcc_mat, allAcc_mat))
-        logger.info('Val result: mIoU/mAcc/allAcc {:.4f}/{:.4f}/{:.4f}.'.format(mIoU_3dmat, mAcc_3dmat, allAcc_3dmat))
-        # logger.info('Class ACC{:.4f}'.format(acc_cls))
+            'Val result 2d of mat: mIoU/mAcc/allAcc {:.4f}/{:.4f}/{:.4f}.'.format(mIoU_mat, mAcc_mat, allAcc_mat))
+        logger.info('Val result 3d mat: mIoU/mAcc/allAcc {:.4f}/{:.4f}/{:.4f}.'.format(mIoU_3dmat, mAcc_3dmat, allAcc_3dmat))
 
     return loss_meter_3d.avg, mIoU_3dmat, mAcc_3dmat, allAcc_3dmat, \
            loss_meter_2d.avg, mIoU_mat, mAcc_mat, allAcc_mat

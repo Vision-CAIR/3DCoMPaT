@@ -189,19 +189,9 @@ class ScanNet3D(data.Dataset):
         print(len(self.data_paths), "here is the size of dataset {}".format(split))
         if memCacheInit and (not exists("/dev/shm/wbhu_scannet_3d_%s_%06d_locs_%08d" % (split, identifier, 0))):
             print('[*] Starting shared memory init ...')
-
-            # data, part_label_to_idx, count = self.read_data()
-            # # pickle_data(f"data/dataset_{exp_name}.pkl", data)
-            # print("Reading splits", list(data.keys()))
-            # print("Train split: {} models".format(len(data['train']['labels'])))
-            # print("Val split: {} models".format(len(data['val']['labels'])))
-            # print("Test split: {} models".format(len(data['test']['labels'])))
             splits = next(unpickle_data('dataset_nov.pkl'))
             model_ids = splits[split]
-            # dataset = ObjectDataset(data, split, part_label_to_idx)
-            # weights = make_weights_for_balanced_classes(dataset, len(part_label_to_idx.keys()))
-            # weights = torch.DoubleTensor(weights)
-            # sampler = torch.utils.data.sampler.WeightedRandomSampler(weights, len(weights))
+
 
             # The data loaders
             # dloader = torch.utils.data.DataLoader(dataset, batch_size=1,
@@ -240,7 +230,7 @@ class ScanNet3D(data.Dataset):
                     continue
                 # print('Model:{} is of size {}'.format(model_id, model_size))
                 # return model_id, None
-                #
+
                 if model_size < 0.09:  # Ignore extremely small (corrupted) models
                     print("Error reading2")
                     print("Model:{}, Failed!".format(model_id))
@@ -318,13 +308,7 @@ class ScanNet3D(data.Dataset):
             #     # Scale color to 0-255
             #     feats = (feats + 1.) * 127.5
             #
-            #     SA.delete("shm://wbhu_scannet_3d_%s_%06d_locs_%08d" % (split, identifier, i))
-            #     SA.delete("shm://wbhu_scannet_3d_%s_%06d_feats_%08d" % (split, identifier, i))
-            #     SA.delete("shm://wbhu_scannet_3d_%s_%06d_labels_%08d" % (split, identifier, i))
-            # print(model_ids)
-            # sa_create("shm://wbhu_scannet_3d_%s_%06d_locs_%08d" % (split, identifier, i), locs)
-            # sa_create("shm://wbhu_scannet_3d_%s_%06d_feats_%08d" % (split, identifier, i), feats)
-            # sa_create("shm://wbhu_scannet_3d_%s_%06d_labels_%08d" % (split, identifier, i), labels)
+
         else:
             with open("indexs_{}.txt".format(split), "r") as f:
                 model_ids = f.readlines()
