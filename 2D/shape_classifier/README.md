@@ -91,6 +91,6 @@ Note that `root_url` should be changed to the local path of 3DCoMPaT to avoid re
 ### 3. Evaluation and pretrained models
 We provide below pretrained models on various number of compositions, with their classiciation accuracies evaluated on the 3DCoMPaT **validation** set.
 
-| Model | #Compositions | View type | Accuracy | Download |
-|--|--|--|--|--|
-|ResNet50 | 10 | Mixed | 00.00 | [resnet50](https://drive.google.com/file/d/1o9cQieZByHb11Wo7lNyLWbwEuBNcrrfB/view?usp=sharing) | 
+| Model | #Compositions | View type | Top-1 Acc. | Top-5 Acc. | Download |
+|--|--|--|--|--|--|
+|ResNet50 | 10 | Mixed | 80.0 | 95.6 | [resnet50](https://drive.google.com/file/d/1bmN_nE2tttTkcjG0U7RvFpX9Ol7DEnnP/view?usp=share_link) | 

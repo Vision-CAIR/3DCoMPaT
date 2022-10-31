@@ -95,5 +95,5 @@ We provide below pretrained models on various number of compositions, with their
 
 | Model | #Compositions | View type | F1 Score | Average Precision | Download |
 |--|--|--|--|--|--|
-|ResNet50 | 10 | Mixed | 00.00 | 00.00 | [resnet50](http://TODO/) | 
+|ResNet50 | 10 | Mixed | 0.80 | 0.88 | [resnet50](https://drive.google.com/file/d/1tKhCTiOO4XbC3iqhpagUrKRZeIs8KRGK/view?usp=sharing) | 
 
