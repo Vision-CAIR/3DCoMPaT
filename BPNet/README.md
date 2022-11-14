@@ -36,13 +36,13 @@ For the non-compositional material segmentation results, we build from origin BP
 
 For Example, we train 10 compositions with:
 
-```sh tool/train.sh com10 /config/mat_seg/bpnet_10.yaml 1```
+```sh tool/train.sh com10 config/mat_seg/bpnet_10.yaml 1```
 
 - Test
 
 For Example, we evaluate 10 compositions with:
 
-```sh tool/test.sh com10 /config/mat_seg/bpnet_10.yaml 1```
+```sh tool/test.sh com10 config/mat_seg/bpnet_10.yaml 1```
 
 ## 3. GCR using BPNet
 
@@ -66,7 +66,7 @@ NUMBER_OF_THREADS is the threads to use per process (gpu), so optimally, it shou
 
 For Example, we train 10 compositions with:
 
-```sh tool/train.sh com10 /config/compat/bpnet_10.yaml 1```
+```sh tool/train.sh com10 config/compat/bpnet_10.yaml 1```
 
 ### 3.3 Pretrain Models
 
@@ -81,7 +81,7 @@ Our pretrained Compositions of 10 models is in [comp10](https://drive.google.com
 
 For Example, we evaluate  10 compositions with:
 
-```sh tool/test.sh com10 /config/compat/bpnet_10.yaml 1```
+```sh tool/test.sh com10 config/compat/bpnet_10.yaml 1```
 
 ## License
 This code is released under MIT License (see LICENSE file for details). In simple words, if you copy/use parts of this code please keep the copyright note in place.
