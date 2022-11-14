@@ -24,6 +24,17 @@ You can also modify the `data_root` and `data_root2d` in the config files (e.g. 
 
 - For the efficiency of the datanet, we prvoide the point clouds generated from the 3dcompat models. The processing of how we generate the data is from this file `prepare_3d_data/GLB2PC-NonStyle.py`. You can also generate the point clouds from models in your sides. Note that the preprocessed point clouds do not include material information. Material information are stored in 2D images only.
 
+- Download pretrained 2D ResNets on ImageNet from PyTorch website, and put them into the initmodel folder.
+```
+model_urls = {
+    'resnet18': 'https://download.pytorch.org/models/resnet18-5c106cde.pth',
+    'resnet34': 'https://download.pytorch.org/models/resnet34-333f7ec4.pth',
+    'resnet50': 'https://download.pytorch.org/models/resnet50-19c8e357.pth',
+    'resnet101': 'https://download.pytorch.org/models/resnet101-5d3b4d8f.pth',
+    'resnet152': 'https://download.pytorch.org/models/resnet152-b121ed2d.pth',
+}
+```
+
 ## 2. 2D/3D Material Segmentation using BPNet (non-compositional)
 
 For the non-compositional material segmentation results, we build from origin BPNet.
