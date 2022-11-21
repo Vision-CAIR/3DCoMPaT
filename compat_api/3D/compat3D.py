@@ -85,7 +85,8 @@ def to_numpy(mat, type_n, conv_z_up=False):
     return ret_mat
 
 
-def sample_pointcloud_multiparts(n_points, mapped_meshes, sample_color):
+def sample_pointcloud_multiparts(n_points, mapped_meshes,
+                                 sample_color, get_normals):
     """
     Sample a pointcloud across multiple parts, without mesh fusing.
       (solves a bug in trimesh.concatenate creating visual artifacts)
@@ -97,7 +98,7 @@ def sample_pointcloud_multiparts(n_points, mapped_meshes, sample_color):
     mesh_points[-1] = n_points - np.sum(mesh_points[:-1])
 
     # Sampling points on each mesh
-    p_xyz, p_seg, p_col = [], [], []
+    p_xyz, p_seg, p_col, p_norm = [], [], [], []
     for mesh_points, (part_id, part_mesh) in zip(mesh_points, mapped_meshes.items()):
         sampled = \
             trimesh.sample.sample_surface(part_mesh,
@@ -108,34 +109,54 @@ def sample_pointcloud_multiparts(n_points, mapped_meshes, sample_color):
         p_seg += [np.full(mesh_points, part_id)]
         if sample_color:
             p_col += [sampled[2]]
+        if get_normals:
+            face_ids = sampled[1]
+            p_norm += [part_mesh.face_normals[face_ids]]
 
     p_xyz = to_numpy(np.concatenate(p_xyz), 'float32', conv_z_up=True)
     p_seg = np.concatenate(p_seg)
 
+    # Setting up return tuple
+    ret = [p_xyz, p_seg]
     if sample_color:
         p_col = to_numpy(np.concatenate(p_col), 'float32')
-        return p_xyz, p_seg, p_col
-    else:
-        return p_xyz, p_seg
+        ret += [p_col]
+
+    if get_normals:
+        p_norm = to_numpy(np.concatenate(p_norm), 'float32')
+        ret += [p_norm]
+
+    return ret
 
 
-def sample_pointcloud(in_mesh, n_points, sample_color=False, shape_only=False):
+def sample_pointcloud(in_mesh, n_points, sample_color=False,
+                      shape_only=False, get_normals=False):
     """
     Sampling a pointcloud form a mesh map.
     """
     # Sampling shape-only point cloud
     if shape_only:
         if sample_color:
-            return sample_pointcloud_multiparts(n_points,
-                                                in_mesh,
-                                                sample_color)[::2]
+            ret = sample_pointcloud_multiparts(n_points,
+                                               in_mesh,
+                                               sample_color,
+                                               get_normals)
+            return [ret[0]] + ret[2:]
 
-        p_xyz, _ = trimesh.sample.sample_surface(in_mesh, count=n_points)
+        p_xyz, face_ids = trimesh.sample.sample_surface(in_mesh, count=n_points)
         p_xyz = to_numpy(p_xyz, 'float32', conv_z_up=True)
+
+        if get_normals:
+            p_norm = in_mesh.face_normals[face_ids]
+            return p_xyz, p_norm
         return p_xyz
 
     # Sampling colored pointcloud
-    return sample_pointcloud_multiparts(n_points, in_mesh, sample_color)
+    return sample_pointcloud_multiparts(n_points,
+                                        in_mesh,
+                                        sample_color,
+                                        get_normals)
+
 
 
 
@@ -143,23 +164,25 @@ class CompatLoader3D():
     """
     Base class for 3D dataset loaders.
 
-    Args:
-        meta_dir:    Metadata directory
-        root_dir:    Base dataset URL containing data split shards
-        split:       One of {train, valid}
-        n_comp:      Number of compositions to use
-        n_points:    Number of sampled points
-        load_mesh:   Only load meshes
-        shape_only:  Ignore part segments while sampling pointclouds
-        seed:        Initial random seed
+        Args:
+            meta_dir:    Metadata directory
+            root_dir:    Base dataset URL containing data split shards
+            split:       One of {train, valid}
+            n_comp:      Number of compositions to use
+            n_points:    Number of sampled points
+            load_mesh:   Only load meshes
+            shape_only:  Ignore part segments while sampling pointclouds
+            get_normals: Also return normal vectors for each sampled point
+            seed:        Initial random seed
     """
-    def __init__(self, meta_dir, root_dir, split="train", n_points=1024, load_mesh=False, shape_only=False, seed=None):
+    def __init__(self, meta_dir, root_dir, split="train", n_points=1024, load_mesh=False, shape_only=False, get_normals=False, seed=None):
         if split not in ["train", "valid"]:
             raise RuntimeError("Invalid split: [%s]." % split)
 
         self.n_points = n_points
         self.load_mesh = load_mesh
         self.shape_only = shape_only
+        self.get_normals = get_normals
 
         # Setting random seed
         if seed:
@@ -222,9 +245,11 @@ class ShapeLoader(CompatLoader3D):
             n_points:    Number of sampled points
             load_mesh:   Only load meshes
             shape_only:  Ignore part segments while sampling pointclouds
+            get_normals: Also return normal vectors for each sampled point
+            seed:        Initial random seed
     """
-    def __init__(self, meta_dir, root_dir, split="train", n_points=1024, load_mesh=False, shape_only=False):
-        super().__init__(meta_dir, root_dir, split, n_points, load_mesh, shape_only)
+    def __init__(self, meta_dir, root_dir, split="train", n_points=1024, load_mesh=False, shape_only=False, get_normals=False, seed=None):
+        super().__init__(meta_dir, root_dir, split, n_points, load_mesh, shape_only, get_normals, seed)
 
     def __getitem__(self, index):
         """
@@ -245,8 +270,10 @@ class ShapeLoader(CompatLoader3D):
             sample = sample_pointcloud(in_mesh=obj,
                                        n_points=self.n_points,
                                        sample_color=False,
-                                       shape_only=self.shape_only)
-            if self.shape_only:
+                                       shape_only=self.shape_only,
+                                       get_normals=self.get_normals)
+
+            if self.shape_only and not self.get_normals:
                 return shape_id, self.shape_labels[index], sample
             else:
                 return shape_id, self.shape_labels[index], *sample
@@ -285,9 +312,11 @@ class StylizedShapeLoader(CompatLoader3D):
             n_points:    Number of sampled points
             load_mesh:   Only load meshes
             shape_only:  Ignore part segments while sampling pointclouds
+            get_normals: Also return normal vectors for each sampled point
+            seed:        Initial random seed
     """
-    def __init__(self, meta_dir, root_dir, split="train", n_points=1024, load_mesh=False, shape_only=False):
-        super().__init__(meta_dir, root_dir, split, n_points, load_mesh, shape_only)
+    def __init__(self, meta_dir, root_dir, split="train", n_points=1024, load_mesh=False, shape_only=False, get_normals=False, seed=None):
+        super().__init__(meta_dir, root_dir, split, n_points, load_mesh, shape_only, get_normals, seed)
 
     def __getitem__(self, index):
         """
@@ -307,7 +336,8 @@ class StylizedShapeLoader(CompatLoader3D):
             sample = sample_pointcloud(in_mesh=obj,
                                        n_points=self.n_points,
                                        sample_color=True,
-                                       shape_only=self.shape_only)
+                                       shape_only=self.shape_only,
+                                       get_normals=self.get_normals)
             return shape_id, self.shape_labels[index], *sample
 
     def _list_models(self, root_dir, split_models, labels):
