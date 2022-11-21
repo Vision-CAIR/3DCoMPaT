@@ -39,7 +39,7 @@ class CompatLoader2D:
 
     Args:
         root_url:    Base dataset URL containing data split shards
-        split:       One of {train, val}.
+        split:       One of {train, val}
         n_comp:      Number of compositions to use
         cache_dir:   Cache directory to use
         view_type:   Filter by view type [0: canonical views, 1: random views]
