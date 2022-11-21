@@ -24,6 +24,17 @@ You can also modify the `data_root` and `data_root2d` in the config files (e.g. 
 
 - For the efficiency of the datanet, we prvoide the point clouds generated from the 3dcompat models. The processing of how we generate the data is from this file `prepare_3d_data/GLB2PC-NonStyle.py`. You can also generate the point clouds from models in your sides. Note that the preprocessed point clouds do not include material information. Material information are stored in 2D images only.
 
+- Download pretrained 2D ResNets on ImageNet from PyTorch website, and put them into the initmodel folder.
+```
+model_urls = {
+    'resnet18': 'https://download.pytorch.org/models/resnet18-5c106cde.pth',
+    'resnet34': 'https://download.pytorch.org/models/resnet34-333f7ec4.pth',
+    'resnet50': 'https://download.pytorch.org/models/resnet50-19c8e357.pth',
+    'resnet101': 'https://download.pytorch.org/models/resnet101-5d3b4d8f.pth',
+    'resnet152': 'https://download.pytorch.org/models/resnet152-b121ed2d.pth',
+}
+```
+
 ## 2. 2D/3D Material Segmentation using BPNet (non-compositional)
 
 For the non-compositional material segmentation results, we build from origin BPNet.
@@ -36,13 +47,13 @@ For the non-compositional material segmentation results, we build from origin BP
 
 For Example, we train 10 compositions with:
 
-```sh tool/train.sh com10 /config/mat_seg/bpnet_10.yaml 1```
+```sh tool/train.sh com10 config/mat_seg/bpnet_10.yaml 1```
 
 - Test
 
 For Example, we evaluate 10 compositions with:
 
-```sh tool/test.sh com10 /config/mat_seg/bpnet_10.yaml 1```
+```sh tool/test.sh com10 config/mat_seg/bpnet_10.yaml 1```
 
 ## 3. GCR using BPNet
 
@@ -66,7 +77,7 @@ NUMBER_OF_THREADS is the threads to use per process (gpu), so optimally, it shou
 
 For Example, we train 10 compositions with:
 
-```sh tool/train.sh com10 /config/compat/bpnet_10.yaml 1```
+```sh tool/train.sh com10 config/compat/bpnet_10.yaml 1```
 
 ### 3.3 Pretrain Models
 
@@ -81,7 +92,7 @@ Our pretrained Compositions of 10 models is in [comp10](https://drive.google.com
 
 For Example, we evaluate  10 compositions with:
 
-```sh tool/test.sh com10 /config/compat/bpnet_10.yaml 1```
+```sh tool/test.sh com10 config/compat/bpnet_10.yaml 1```
 
 ## License
 This code is released under MIT License (see LICENSE file for details). In simple words, if you copy/use parts of this code please keep the copyright note in place.

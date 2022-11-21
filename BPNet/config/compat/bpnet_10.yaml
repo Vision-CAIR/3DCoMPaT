@@ -21,7 +21,7 @@ TRAIN:
 
   sync_bn_2d: False
   ignore_label: 0
-  train_gpu: [ 0,1,2,3]
+  train_gpu: [ 0,1,2,3] # define how many gpus are you using?
   workers: 32 # data loader workers
   batch_size: 16  # batch size for training
   batch_size_val: 8   # batch size for validation during training, memory and speed tradeoff

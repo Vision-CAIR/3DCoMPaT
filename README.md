@@ -1,6 +1,6 @@
 <div align="center">
 
-# 3D CoMPaT: Composition of Materials on Parts of 3D Things (ECCV 2022)
+# 3D CoMPaT: Composition of Materials on Parts of 3D Things (ECCV 2022, oral)
 
 [![Project Page](https://img.shields.io/badge/Project%20Page-red?style=for-the-badge)](https://3dcompat-dataset.org/)
 [![Paper](https://img.shields.io/badge/Paper-green?style=for-the-badge&logo=adobe-acrobat-reader)](https://3dcompat-dataset.org/pdf/paper.pdf)
