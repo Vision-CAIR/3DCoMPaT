@@ -17,7 +17,7 @@ from metrics import iou
 
 from MinkowskiEngine import SparseTensor, CoordsManager
 from util import config
-from util.util import AverageMeter, intersectionAndUnionGPU
+from util.util import AverageMeter, intersectionAndUnionGPU, MaxMatinPart
 from tqdm import tqdm
 from tool.trainstylenew import get_model
 
@@ -433,7 +433,7 @@ def validate_cross(model, val_loader):
     bbox3d = BboxEval()
     bboxmat3d = BboxEvalGTMat()
     bboxpart3d = BboxEvalGTPart()
-
+    ## TODO: add selection method on it choose 'top5' 'gt' 'top1' and GTMat, GT Part and Normal.
     bbox2dtop5 = BboxEval(shape='top5')
     bboxmat2dtop5 = BboxEvalGTMat(shape='top5')
     bboxpart2dtop5 = BboxEvalGTPart(shape='top5')
@@ -480,48 +480,48 @@ def validate_cross(model, val_loader):
         resnet_predictions = pickle.load(handle)
     with open('data/test_output_top5.json', 'rb') as handle:
         point_predictions = json.load(handle)
-    yc2uj={0: 0,
-     1: 1,
-     2: 2,
-     3: 3,
-     4: 4,
-     5: 5,
-     6: 6,
-     7: 7,
-     8: 8,
-     9: 9,
-     10: 10,
-     12: 11,
-     13: 12,
-     14: 13,
-     15: 14,
-     16: 15,
-     17: 16,
-     18: 17,
-     19: 18,
-     20: 19,
-     21: 20,
-     22: 21,
-     23: 22,
-     24: 23,
-     25: 24,
-     26: 25,
-     27: 26,
-     28: 27,
-     29: 28,
-     30: 29,
-     31: 30,
-     32: 31,
-     33: 32,
-     34: 33,
-     35: 34,
-     36: 35,
-     37: 36,
-     38: 37,
-     39: 38,
-     40: 39,
-     41: 40,
-     42: 41}
+    yc2uj = {0: 0,
+             1: 1,
+             2: 2,
+             3: 3,
+             4: 4,
+             5: 5,
+             6: 6,
+             7: 7,
+             8: 8,
+             9: 9,
+             10: 10,
+             12: 11,
+             13: 12,
+             14: 13,
+             15: 14,
+             16: 15,
+             17: 16,
+             18: 17,
+             19: 18,
+             20: 19,
+             21: 20,
+             22: 21,
+             23: 22,
+             24: 23,
+             25: 24,
+             26: 25,
+             27: 26,
+             28: 27,
+             29: 28,
+             30: 29,
+             31: 30,
+             32: 31,
+             33: 32,
+             34: 33,
+             35: 34,
+             36: 35,
+             37: 36,
+             38: 37,
+             39: 38,
+             40: 39,
+             41: 40,
+             42: 41}
     with torch.no_grad():
         for i, batch_data in enumerate(tqdm(val_loader)):
             if args.data_name == 'scannet_cross':
@@ -536,8 +536,9 @@ def validate_cross(model, val_loader):
             else:
                 raise NotImplemented
             # ############ 3D ############ #
-            # o3d=output_3d.detach().topk(5)[1]
+            o3d = output_3d.detach().topk(5)[1]
             output_3d = output_3d.detach().max(1)[1]
+
             intersection, union, target = intersectionAndUnionGPU(output_3d, label_3d.detach(), args.classes,
                                                                   args.ignore_label)
             if args.multiprocessing_distributed:
@@ -572,7 +573,6 @@ def validate_cross(model, val_loader):
             target_meter_3dmat.update(target)
             # accuracy_3dmat = sum(intersection_meter_3dmat.val) / (sum(target_meter_3dmat.val) + 1e-10)
             # ############ mat ############ #
-            # omat=output_mat.detach().topk(5, dim=1)[1]
             output_mat = output_mat.detach().max(1)[1]
             intersection, union, target = intersectionAndUnionGPU(output_mat, mat.detach(), args.mat,
                                                                   args.ignore_label)
@@ -598,8 +598,9 @@ def validate_cross(model, val_loader):
                 pred_mat = np.unique(b)
                 gt_mat = np.unique(e)
                 gt_part = np.unique(d)
+                b, pred_part_2_mats = MaxMatinPart(a, b)
                 # Top1
-
+                ## With seperated classifier:
                 # if model_id[0] in resnet_predictions:
                 #     com_id=model_id[0]
                 #     top1 = resnet_predictions[com_id][0].item()
@@ -611,23 +612,24 @@ def validate_cross(model, val_loader):
                 # if mid in point_predictions:
                 #     top5 = point_predictions[mid]
                 #     c = top5
-
-                bbox2d.update(c, pred_mat, pred_part, a, b,
+                ## TODO: Add Selection on the result
+                bbox2d.update(c, pred_mat, pred_part, a, b, pred_part_2_mats,
                               f, gt_mat, gt_part, d, e, part13, model_id)
                 bboxmat2d.update(c, pred_part, a, f, gt_part, d)  # GT MAT
                 bboxpart2d.update(c, pred_mat, b, f, gt_mat, e)  # GT Part
                 # Top5
-                bbox2dtop5.update(c, pred_mat, pred_part, a, b,
+                bbox2dtop5.update(c, pred_mat, pred_part, a, b, pred_part_2_mats,
                                   f, gt_mat, gt_part, d, e, part13, model_id)
                 bboxmat2dtop5.update(c, pred_part, a, f, gt_part, d)  # GT MAT
                 bboxpart2dtop5.update(c, pred_mat, b, f, gt_mat, e)  # GT Part
                 # GT
-                bbox2dgt.update(c, pred_mat, pred_part, a, b,
+                bbox2dgt.update(c, pred_mat, pred_part, a, b, pred_part_2_mats,
                                 f, gt_mat, gt_part, d, e, part13, model_id)
                 bboxmat2dgt.update(c, pred_part, a, f, gt_part, d)  # GT MAT
                 bboxpart2dgt.update(c, pred_mat, b, f, gt_mat, e)  # GT Part
 
             if main_process() and i % 50 == 0:
+                ## TODO: Add Selection on the result
                 logger.info(
                     'Val TOP 1 result 2d: object acc/value/value_all/value_bbox/value_bbox_all {:.4f}/{:.4f}/{:.4f}/{:.4f}/{:.4f}.'.format(
                         bbox2d.obj(), bbox2d.value(), bbox2d.value_all(), bbox2d.value_bbox(), bbox2d.value_all_bbox()))
@@ -663,7 +665,7 @@ def validate_cross(model, val_loader):
                     'Val GT result 2d gt part: object acc/value/value_all/value_bbox/value_bbox_all {:.4f}/{:.4f}/{:.4f}/{:.4f}/{:.4f}.'.format(
                         bboxpart2dgt.obj(), bboxpart2dgt.value(), bboxpart2dgt.value_all(),
                         bboxpart2dgt.value_bbox(), bboxpart2dgt.value_all_bbox()))
-############# 2d with seperate shape classifier
+            ############# 2d with seperate shape classifier
             for a, b, c, d, e, f in zip(output_2d.cpu().numpy(), output_mat.cpu().numpy(), ocls.cpu().numpy(),
                                         label_2d.cpu().numpy(), mat.cpu().numpy(), cls.cpu().numpy()):
                 pred_part = np.unique(a)
@@ -671,9 +673,8 @@ def validate_cross(model, val_loader):
                 gt_mat = np.unique(e)
                 gt_part = np.unique(d)
                 # Top1
-
                 if model_id[0] in resnet_predictions:
-                    com_id=model_id[0]
+                    com_id = model_id[0]
                     top1 = resnet_predictions[com_id][0].item()
                     top5 = resnet_predictions[com_id][1].tolist()
                     gt = resnet_predictions[com_id][2].item()
@@ -683,37 +684,40 @@ def validate_cross(model, val_loader):
                 # if mid in point_predictions:
                 #     top5 = point_predictions[mid]
                 #     c = top5
-
-                bbox2dcls.update(c, pred_mat, pred_part, a, b,
-                              f, gt_mat, gt_part, d, e, part13, model_id)
+                b, pred_part_2_mats = MaxMatinPart(a, b)
+                bbox2dcls.update(c, pred_mat, pred_part, a, b, pred_part_2_mats,
+                                 f, gt_mat, gt_part, d, e, part13, model_id)
                 bboxmat2dcls.update(c, pred_part, a, f, gt_part, d)  # GT MAT
                 bboxpart2dcls.update(c, pred_mat, b, f, gt_mat, e)  # GT Part
                 # Top5
-                bbox2dtop5cls.update(c, pred_mat, pred_part, a, b,
-                                  f, gt_mat, gt_part, d, e, part13, model_id)
+                bbox2dtop5cls.update(c, pred_mat, pred_part, a, b, pred_part_2_mats,
+                                     f, gt_mat, gt_part, d, e, part13, model_id)
                 bboxmat2dtop5cls.update(c, pred_part, a, f, gt_part, d)  # GT MAT
                 bboxpart2dtop5cls.update(c, pred_mat, b, f, gt_mat, e)  # GT Part
                 # GT
-                bbox2dgtcls.update(c, pred_mat, pred_part, a, b,
-                                f, gt_mat, gt_part, d, e, part13, model_id)
+                bbox2dgtcls.update(c, pred_mat, pred_part, a, b, pred_part_2_mats,
+                                   f, gt_mat, gt_part, d, e, part13, model_id)
                 bboxmat2dgtcls.update(c, pred_part, a, f, gt_part, d)  # GT MAT
                 bboxpart2dgtcls.update(c, pred_mat, b, f, gt_mat, e)  # GT Part
 
             if main_process() and i % 50 == 0:
                 logger.info(
                     'Val TOP 1 result separate classifier 2d: object acc/value/value_all/value_bbox/value_bbox_all {:.4f}/{:.4f}/{:.4f}/{:.4f}/{:.4f}.'.format(
-                        bbox2dcls.obj(), bbox2dcls.value(), bbox2dcls.value_all(), bbox2dcls.value_bbox(), bbox2dcls.value_all_bbox()))
+                        bbox2dcls.obj(), bbox2dcls.value(), bbox2dcls.value_all(), bbox2dcls.value_bbox(),
+                        bbox2dcls.value_all_bbox()))
                 logger.info(
                     'Val TOP 1 result separate classifier 2d gt mat: object acc/value/value_all/value_bbox/value_bbox_all {:.4f}/{:.4f}/{:.4f}/{:.4f}/{:.4f}.'.format(
                         bboxmat2dcls.obj(), bboxmat2dcls.value(), bboxmat2dcls.value_all(), bboxmat2dcls.value_bbox(),
                         bboxmat2dcls.value_all_bbox()))
                 logger.info(
                     'Val TOP 1 result separate classifier 2d gt part: object acc/value/value_all/value_bbox/value_bbox_all {:.4f}/{:.4f}/{:.4f}/{:.4f}/{:.4f}.'.format(
-                        bboxpart2dcls.obj(), bboxpart2dcls.value(), bboxpart2dcls.value_all(), bboxpart2dcls.value_bbox(),
+                        bboxpart2dcls.obj(), bboxpart2dcls.value(), bboxpart2dcls.value_all(),
+                        bboxpart2dcls.value_bbox(),
                         bboxpart2dcls.value_all_bbox()))
                 logger.info(
                     'Val TOP 5 result separate classifier 2d: object acc/value/value_all/value_bbox/value_bbox_all {:.4f}/{:.4f}/{:.4f}/{:.4f}/{:.4f}.'.format(
-                        bbox2dtop5cls.obj(), bbox2dtop5cls.value(), bbox2dtop5cls.value_all(), bbox2dtop5cls.value_bbox(),
+                        bbox2dtop5cls.obj(), bbox2dtop5cls.value(), bbox2dtop5cls.value_all(),
+                        bbox2dtop5cls.value_bbox(),
                         bbox2dtop5cls.value_all_bbox()))
                 logger.info(
                     'Val TOP 5 result separate classifier 2d gt mat: object acc/value/value_all/value_bbox/value_bbox_all {:.4f}/{:.4f}/{:.4f}/{:.4f}/{:.4f}.'.format(
@@ -735,7 +739,8 @@ def validate_cross(model, val_loader):
                     'Val GT result separate classifier 2d gt part: object acc/value/value_all/value_bbox/value_bbox_all {:.4f}/{:.4f}/{:.4f}/{:.4f}/{:.4f}.'.format(
                         bboxpart2dgt.obj(), bboxpart2dgt.value(), bboxpart2dgt.value_all(),
                         bboxpart2dgt.value_bbox(), bboxpart2dgt.value_all_bbox()))
-
+            pred_2d, pred_mat = MaxMatinPart(output_2d, output_mat)
+            pred_3d, pred_3dmat = MaxMatinPart(output_3d, output_3dmat)
 
             for a, b, c, d, e, f in zip(np.expand_dims(output_3d.cpu().numpy(), axis=0),
                                         np.expand_dims(output_3dmat.cpu().numpy(), axis=0), ocls.cpu().numpy(),
@@ -745,23 +750,25 @@ def validate_cross(model, val_loader):
                 pred_mat = np.unique(b)
                 gt_part = np.unique(d)
                 gt_mat = np.unique(e)
+                b, pred_part_2_mats = MaxMatinPart(a, b)
+                # e, pred_part_2_mats3d = MaxMatinPart(d, e)
                 # mid=model_id[0].split('_')[0]
                 # if mid in point_predictions:
                 #     top5 = point_predictions[mid]
                 #     c = top5
                 #     f=yc2uj[f]
                 # Top1
-                bbox3d.update(c, pred_mat, pred_part, a, b,
+                bbox3d.update(c, pred_mat, pred_part, a, b, pred_part_2_mats,
                               f, gt_mat, gt_part, d, e, part13, model_id)
                 bboxmat3d.update(c, pred_part, a, f, gt_part, d)  # GT MAT
                 bboxpart3d.update(c, pred_mat, b, f, gt_mat, e)  # GT Part
                 # Top5
-                bbox3dtop5.update(c, pred_mat, pred_part, a, b,
+                bbox3dtop5.update(c, pred_mat, pred_part, a, b, pred_part_2_mats,
                                   f, gt_mat, gt_part, d, e, part13, model_id)
                 bboxmat3dtop5.update(c, pred_part, a, f, gt_part, d)  # GT MAT
                 bboxpart3dtop5.update(c, pred_mat, b, f, gt_mat, e)  # GT Part
                 # GT
-                bbox3dgt.update(c, pred_mat, pred_part, a, b,
+                bbox3dgt.update(c, pred_mat, pred_part, a, b, pred_part_2_mats,
                                 f, gt_mat, gt_part, d, e, part13, model_id)
                 bboxmat3dgt.update(c, pred_part, a, f, gt_part, d)  # GT MAT
                 bboxpart3dgt.update(c, pred_mat, b, f, gt_mat, e)  # GT Part
@@ -802,7 +809,7 @@ def validate_cross(model, val_loader):
                     'Val GT result 3d gt part: object acc/value/value_all/value_bbox/value_bbox_all {:.4f}/{:.4f}/{:.4f}/{:.4f}/{:.4f}.'.format(
                         bboxpart3dgt.obj(), bboxpart3dgt.value(), bboxpart3dgt.value_all(),
                         bboxpart3dgt.value_bbox(), bboxpart3dgt.value_all_bbox()))
-########### Classifer 3d
+            ########### Classifer 3d
             for a, b, c, d, e, f in zip(np.expand_dims(output_3d.cpu().numpy(), axis=0),
                                         np.expand_dims(output_3dmat.cpu().numpy(), axis=0), ocls.cpu().numpy(),
                                         np.expand_dims(label_3d.cpu().numpy(), axis=0),
@@ -816,37 +823,41 @@ def validate_cross(model, val_loader):
                     top5 = point_predictions[mid]
                     c = top5
                     f = yc2uj[f]
+                b, pred_part_2_mats = MaxMatinPart(a, b)
                 # Top1
-                bbox3dcls.update(c, pred_mat, pred_part, a, b,
-                              f, gt_mat, gt_part, d, e, part13, model_id)
+                bbox3dcls.update(c, pred_mat, pred_part, a, b, pred_part_2_mats,
+                                 f, gt_mat, gt_part, d, e, part13, model_id)
                 bboxmat3dcls.update(c, pred_part, a, f, gt_part, d)  # GT MAT
                 bboxpart3dcls.update(c, pred_mat, b, f, gt_mat, e)  # GT Part
                 # Top5
-                bbox3dtop5cls.update(c, pred_mat, pred_part, a, b,
-                                  f, gt_mat, gt_part, d, e, part13, model_id)
+                bbox3dtop5cls.update(c, pred_mat, pred_part, a, b, pred_part_2_mats,
+                                     f, gt_mat, gt_part, d, e, part13, model_id)
                 bboxmat3dtop5cls.update(c, pred_part, a, f, gt_part, d)  # GT MAT
                 bboxpart3dtop5cls.update(c, pred_mat, b, f, gt_mat, e)  # GT Part
                 # GT
-                bbox3dgtcls.update(c, pred_mat, pred_part, a, b,
-                                f, gt_mat, gt_part, d, e, part13, model_id)
+                bbox3dgtcls.update(c, pred_mat, pred_part, a, b, pred_part_2_mats,
+                                   f, gt_mat, gt_part, d, e, part13, model_id)
                 bboxmat3dgtcls.update(c, pred_part, a, f, gt_part, d)  # GT MAT
                 bboxpart3dgtcls.update(c, pred_mat, b, f, gt_mat, e)  # GT Part
 
             if main_process() and i % 50 == 0:
                 logger.info(
                     'Val TOP 1 result separate classifier 3d: object acc/value/value_all/value_bbox/value_bbox_all {:.4f}/{:.4f}/{:.4f}/{:.4f}/{:.4f}.'.format(
-                        bbox3dcls.obj(), bbox3dcls.value(), bbox3dcls.value_all(), bbox3dcls.value_bbox(), bbox3dcls.value_all_bbox()))
+                        bbox3dcls.obj(), bbox3dcls.value(), bbox3dcls.value_all(), bbox3dcls.value_bbox(),
+                        bbox3dcls.value_all_bbox()))
                 logger.info(
                     'Val TOP 1 result separate classifier 3d gt mat: object acc/value/value_all/value_bbox/value_bbox_all {:.4f}/{:.4f}/{:.4f}/{:.4f}/{:.4f}.'.format(
                         bboxmat3dcls.obj(), bboxmat3dcls.value(), bboxmat3dcls.value_all(), bboxmat3dcls.value_bbox(),
                         bboxmat3dcls.value_all_bbox()))
                 logger.info(
                     'Val TOP 1 result separate classifier 3d gt part: object acc/value/value_all/value_bbox/value_bbox_all {:.4f}/{:.4f}/{:.4f}/{:.4f}/{:.4f}.'.format(
-                        bboxpart3dcls.obj(), bboxpart3dcls.value(), bboxpart3dcls.value_all(), bboxpart3dcls.value_bbox(),
+                        bboxpart3dcls.obj(), bboxpart3dcls.value(), bboxpart3dcls.value_all(),
+                        bboxpart3dcls.value_bbox(),
                         bboxpart3dcls.value_all_bbox()))
                 logger.info(
                     'Val TOP 5 result separate classifier 3d: object acc/value/value_all/value_bbox/value_bbox_all {:.4f}/{:.4f}/{:.4f}/{:.4f}/{:.4f}.'.format(
-                        bbox3dtop5cls.obj(), bbox3dtop5cls.value(), bbox3dtop5cls.value_all(), bbox3dtop5cls.value_bbox(),
+                        bbox3dtop5cls.obj(), bbox3dtop5cls.value(), bbox3dtop5cls.value_all(),
+                        bbox3dtop5cls.value_bbox(),
                         bbox3dtop5cls.value_all_bbox()))
                 logger.info(
                     'Val TOP 5 result separate classifier 3d gt mat: object acc/value/value_all/value_bbox/value_bbox_all {:.4f}/{:.4f}/{:.4f}/{:.4f}/{:.4f}.'.format(
@@ -862,7 +873,8 @@ def validate_cross(model, val_loader):
                         bbox3dgtcls.value_all_bbox()))
                 logger.info(
                     'Val gtcls result separate classifier 3d gtcls mat: object acc/value/value_all/value_bbox/value_bbox_all {:.4f}/{:.4f}/{:.4f}/{:.4f}/{:.4f}.'.format(
-                        bboxmat3dgtcls.obj(), bboxmat3dgtcls.value(), bboxmat3dgtcls.value_all(), bboxmat3dgtcls.value_bbox(),
+                        bboxmat3dgtcls.obj(), bboxmat3dgtcls.value(), bboxmat3dgtcls.value_all(),
+                        bboxmat3dgtcls.value_bbox(),
                         bboxmat3dgtcls.value_all_bbox()))
                 logger.info(
                     'Val gtcls result separate classifier 3d gtcls part: object acc/value/value_all/value_bbox/value_bbox_all {:.4f}/{:.4f}/{:.4f}/{:.4f}/{:.4f}.'.format(

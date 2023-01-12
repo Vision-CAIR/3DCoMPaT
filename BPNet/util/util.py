@@ -10,6 +10,7 @@ from torch import nn
 import torch.nn.init as initer
 from six.moves import cPickle
 
+
 def save_checkpoint(state, is_best, sav_path, filename='model_last.pth.tar'):
     filename = join(sav_path, filename)
     torch.save(state, filename)
@@ -79,7 +80,6 @@ def intersectionAndUnionGPU(output, target, K, ignore_index=255):
     return area_intersection.cuda(), area_union.cuda(), area_target.cuda()
 
 
-
 def check_mkdir(dir_name):
     if not os.path.exists(dir_name):
         os.mkdir(dir_name)
@@ -88,6 +88,7 @@ def check_mkdir(dir_name):
 def check_makedirs(dir_name):
     if not os.path.exists(dir_name):
         os.makedirs(dir_name)
+
 
 def pickle_data(file_name, *args):
     """
@@ -128,6 +129,7 @@ import pdb
 from PIL import Image
 import numpy as np
 import cv2
+
 
 class Compat:
     def __init__(self):
@@ -180,7 +182,8 @@ class Compat:
             total_value += 1.0
         return sum_value / total_value
 
-    def update(self, pred_obj=None, pred_mat=None, pred_part=None, pred_bboxes=None, gt_obj=None, gt_mat=None, gt_part=None, gt_bboxes=None):
+    def update(self, pred_obj=None, pred_mat=None, pred_part=None, pred_bboxes=None, gt_obj=None, gt_mat=None,
+               gt_part=None, gt_bboxes=None):
         order = gt_part
         self.all_objs += 1.0  # total number of obj
         self.per_obj_occ[gt_obj] += 1.0  # how is obj distributed in the dataset
@@ -193,11 +196,13 @@ class Compat:
         value_all_bbox = 1.0
         value_all = 1.0
         value = []
-        area_intersection, area_union, area_target=self.intersectionAndUnion(pred_bboxes,gt_bboxes,90)
-        cor_id=np.where(area_intersection/(area_union+1e-12)>0.5)[0]
+        area_intersection, area_union, area_target = self.intersectionAndUnion(pred_bboxes, gt_bboxes, 90)
+        cor_id = np.where(area_intersection / (area_union + 1e-12) > 0.5)[0]
+
         def get_corresponding_box(pred, gt):
             gt = list(gt)
             return gt.index(pred)
+
         for i, gt in enumerate(gt_part):
             if gt in pred_part:
                 self.per_obj_parts_correct[gt_obj] += 1.0
@@ -206,9 +211,9 @@ class Compat:
                 value_all = 0.0
                 value.append(0)
             if gt in pred_part:
-#                 j = get_corresponding_box(gt, pred_part)
+                #                 j = get_corresponding_box(gt, pred_part)
                 if gt in cor_id:
-#                 if (self.intersectionAndUnion(pred_bboxes[i], gt_bboxes[j])):
+                    #                 if (self.intersectionAndUnion(pred_bboxes[i], gt_bboxes[j])):
                     self.per_obj_parts_correct_bboxes[gt_obj] += 1.0
                 else:
                     value_all_bbox = 0.0
@@ -234,6 +239,29 @@ class Compat:
         area_union = area_output + area_target - area_intersection
         return area_intersection, area_union, area_target
 
+
+def MaxMatinPart(pred_part_logit, pred_mat_logit):
+    from collections import Counter
+    pred_part = pred_part_logit.detach().max(1)[1]
+    pred_mat = pred_mat_logit.detach().max(1)[1]
+
+    pred_mat_numpy = np.array(pred_mat)
+    pred_part_numpy = np.array(pred_part)
+    part2mat = dict()
+    for i in range(len(pred_part_numpy)):
+        unique_part = np.unique(pred_part_numpy[i])
+        based_part = pred_part_numpy[i]
+        fixed_mat = pred_mat_numpy[i].copy()
+        for j in unique_part:
+            position = np.where(based_part == j)
+            pred_value = fixed_mat[position]
+            pred_value_counter = Counter(pred_value)
+            max_element = pred_value_counter.most_common(1)[0][0]
+            part2mat.update({j, max_element}
+                            )
+            fixed_mat[position] = max_element
+        pred_mat_numpy[i] = fixed_mat
+    return pred_mat_numpy, part2mat
 
 # def init_weights(model, conv='kaiming', batchnorm='normal', linear='kaiming', lstm='kaiming'):
 #     """
