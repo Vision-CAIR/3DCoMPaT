@@ -1,3 +1,9 @@
+**This repository has been deprecated and is no longer maintained.**
+
+Please check out the new version of our dataset instead:
+
+https://github.com/Vision-CAIR/3DCoMPaT-v2
+
 <div align="center">
 
 # 3D CoMPaT: Composition of Materials on Parts of 3D Things (ECCV 2022, oral)
