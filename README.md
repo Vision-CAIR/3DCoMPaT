@@ -1,4 +1,4 @@
-**This repository has been deprecated and is no longer maintained.**
+**⚠️ This repository has been deprecated and is no longer maintained. ⚠️**
 
 Please check out the new version of our dataset instead:
 
